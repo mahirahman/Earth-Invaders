@@ -39,7 +39,8 @@ We use [SemVer](http://semver.org/) for versioning.
 
 * [MIT](https://mit-license.org)
 
-##Modules From
+## Modules From
+
 * [DaFluffyPotato - Text Render](https://github.com/DaFluffyPotato)
 * [Nearoo - Text Input](https://github.com/Nearoo/pygame-text-input)
 
