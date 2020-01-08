@@ -1,5 +1,5 @@
 # Side Scrolling Shooter Game
-# Mahi Rahman, Son Tran, Sebastien Olife, Daniel Nguyen, Tejas Amrale, Peter Sorial, Spandan Kolapkar
+# Mahi Rahman, Son Tran, Daniel Nguyen, Tejas Amrale, Peter Sorial
 # Version 1.0.0
 
 import pygame, sys, random, time, os, math
@@ -38,12 +38,6 @@ font_dat = {'A':[3],'B':[3],'C':[3],'D':[3],'E':[3],'F':[3],'G':[3],'H':[3],'I':
 font = text.generate_font('assets/font.png',font_dat,5,8,(248,248,248))
 font_select = text.generate_font('assets/font.png',font_dat,5,8,(160,239,120))
 
-#Variables
-global up_key, down_key, select_key
-up_key = 273
-down_key = 274
-select_key = 120
-
 class menu_background(object):
     def __init__(self):
         self.particles = []
@@ -64,11 +58,10 @@ class menu_background(object):
             if particle[0] > 400:
                 self.particles.remove(particle)
 
-#Main-Menu
 def menu():
     bg = menu_background()
     logo = pygame.image.load('assets/images/logo.png')
-    menu_options = ['Play','Highscores','Settings','Credits','Quit']
+    menu_options = ['Play','Controls','Highscores','Settings','Credits','Quit']
     menu_choice = 0
     in_menu = True
 
@@ -79,7 +72,7 @@ def menu():
         bg.render(display)
 
         display.blit(logo,(56,20))
-        text.show_text('Default Controls: Arrow Keys + X',2,240,1,9999,font,display)
+        text.show_text('Menu Controls: Arrow Keys + Space',2,240,1,9999,font,display)
 
         n = 0
         for option in menu_options:
@@ -97,23 +90,67 @@ def menu():
                 if event.key == K_ESCAPE:
                     pygame.quit()
                     sys.exit()
-                if event.key == up_key:
+                if event.key == K_UP:
                     menu_choice -= 1
                     if menu_choice < 0:
                         menu_choice = len(menu_options)-1
-                if event.key == down_key:
+                if event.key == K_DOWN:
                     menu_choice += 1
                     if menu_choice >= len(menu_options):
                         menu_choice = 0
-                if event.key == select_key:
+                if event.key == K_SPACE:
                     choice = menu_options[menu_choice]
+                    if choice == 'Play':
+                        play()
+                    if choice == 'Controls':
+                        controls()
+                    if choice == 'Highscores':
+                        highscores()
+                    if choice == 'Credits':
+                        credits()
+                    if choice == 'Settings':
+                        settings()
                     if choice == 'Quit':
                         pygame.quit()
                         sys.exit()
-                    if choice == 'Play':
-                        game = Game()  #pygame will initialize here
-                        while True: #While pygame is initialize
-                            #pg.display.set_mode((0, 0), pg.FULLSCREEN)
+
+        screen.blit(pygame.transform.scale(display,(WIDTH,HEIGHT)),(0,0))
+        pygame.display.update()
+        fps.tick(60)
+
+def play():
+    bg = menu_background()
+    menu_options = ['Level 1','Level 2','Back']
+    menu_choice = 0
+    in_play = True
+    while in_play:
+        bg.render(display)
+
+        n = 0
+        for option in menu_options:
+            if menu_choice == n:
+                text.show_text('> ' + option,200-int(get_text_width(option,1)/2)-5,100+n*20,1,9999,font_select,display)
+            else:
+                text.show_text(option,200-int(get_text_width(option,1)/2),100+n*20,1,9999,font,display)
+            n += 1
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
+                if event.key == K_UP:
+                    menu_choice -= 1
+                    if menu_choice < 0:
+                        menu_choice = len(menu_options)-1
+                if event.key == K_DOWN:
+                    menu_choice += 1
+                    if menu_choice >= len(menu_options):
+                        menu_choice = 0
+                if event.key == K_SPACE:
+                    choice = menu_options[menu_choice]
+                    if choice == 'Level 1':
+                        game = Game()
+                        while True:
                             pg.mouse.set_visible(False)
                             pg.mixer.music.load('assets/audio/level1.wav')
                             pg.mixer.music.play(-1)
@@ -123,18 +160,32 @@ def menu():
                                 game.you_win()
                             else:
                                 game.game_over()
-                    if choice == 'Highscores':
-                        highscores()
-                    if choice == 'Credits':
-                        credits()
-                    if choice == 'Settings':
-                        settings()
-
+                    if choice == 'Level 2':
+                        print("Level")
+                    if choice == 'Back':
+                        in_play = False
+                if event.key == K_ESCAPE:
+                    in_play = False
         screen.blit(pygame.transform.scale(display,(WIDTH,HEIGHT)),(0,0))
         pygame.display.update()
         fps.tick(60)
 
-#Highscores
+def controls():
+    bg = menu_background()
+    in_controls = True
+    while in_controls:
+        bg.render(display)
+        text.show_text('Use WASD and Space for Player 1\nUse Arrow keys and Right Enter for Player 2\nFor pausing press P',4,4,1,9999,font,display)
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
+                in_controls = False
+        screen.blit(pygame.transform.scale(display,(WIDTH,HEIGHT)),(0,0))
+        pygame.display.update()
+        fps.tick(60)
+
 def highscores():
     bg = menu_background()
     in_highscores = True
@@ -167,7 +218,6 @@ def highscores():
         pygame.display.update()
         fps.tick(60)
 
-#Settings
 def settings():
     bg = menu_background()
     menu_options = ['Display Settings','Volume','Back']
@@ -188,15 +238,15 @@ def settings():
                 pygame.quit()
                 sys.exit()
             if event.type == KEYDOWN:
-                if event.key == up_key:
+                if event.key == K_UP:
                     menu_choice -= 1
                     if menu_choice < 0:
                         menu_choice = len(menu_options)-1
-                if event.key == down_key:
+                if event.key == K_DOWN:
                     menu_choice += 1
                     if menu_choice >= len(menu_options):
                         menu_choice = 0
-                if event.key == select_key:
+                if event.key == K_SPACE:
                     choice = menu_options[menu_choice]
                     if choice == 'Display Settings':
                         display_config()
@@ -231,15 +281,15 @@ def display_config():
                 pygame.quit()
                 sys.exit()
             if event.type == KEYDOWN:
-                if event.key == up_key:
+                if event.key == K_UP:
                     menu_choice -= 1
                     if menu_choice < 0:
                         menu_choice = len(menu_options)-1
-                if event.key == down_key:
+                if event.key == K_DOWN:
                     menu_choice += 1
                     if menu_choice >= len(menu_options):
                         menu_choice = 0
-                if event.key == select_key:
+                if event.key == K_SPACE:
                     choice = menu_options[menu_choice]
                     if choice == 'Windowed':
                         screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -273,15 +323,15 @@ def volume():
                 pygame.quit()
                 sys.exit()
             if event.type == KEYDOWN:
-                if event.key == up_key:
+                if event.key == K_UP:
                     menu_choice -= 1
                     if menu_choice < 0:
                         menu_choice = len(menu_options)-1
-                if event.key == down_key:
+                if event.key == K_DOWN:
                     menu_choice += 1
                     if menu_choice >= len(menu_options):
                         menu_choice = 0
-                if event.key == select_key:
+                if event.key == K_SPACE:
                     choice = menu_options[menu_choice]
                     if choice == '100/':
                         pygame.mixer.music.set_volume(1)
@@ -301,15 +351,14 @@ def volume():
         pygame.display.update()
         fps.tick(60)
 
-#Credits
 def credits():
     bg = menu_background()
     in_credits = True
-    credits_dat = 'Star Invaders Level Design and Game Code by:\n\nMahi Rahman\nSon Tran\nDaniel Nguyen\nSebastien Olife\nTejas Amrale\nPeter Sorial\nSpandan Kolapkar\n\nWritten In - Python 3.7 and Pygame\nTools - Photoshop CS6, bfxr.net, Tiled Editor, Pytmx'
     while in_credits:
         bg.render(display)
-        text.show_text(credits_dat,4,4,1,9999,font,display)
-        text.show_text('(c) 2019, MFHS',4,240,1,9999,font,display)
+        text.show_text('Star Invaders Level Design and Code by',4,4,1,9999,font,display)
+        text.show_text('Mahi Rahman\nSon Tran\nDaniel Nguyen\nTejas Amrale\nPeter Sorial\nSpandan Kolapkar',4,24,1,9999,font,display)
+        text.show_text('Written In - Python 3.7 and Pygame\nTools - Photoshop CS6, bfxr.net, Tiled Editor, Pytmx',4,84,1,9999,font,display)
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -338,10 +387,9 @@ def draw_player_health(surf, x, y, pct):
     pygame.draw.rect(surf, col, fill_rect)
     pygame.draw.rect(surf, WHITE, outline_rect, 2)
 
-#Main Game Class
 class Game:
-    def __init__(self):     #Variables are initialized
-        #fps = pygame.time.Clock()
+    
+    def __init__(self):
         self.particles = []
         self.timer = 0
         self.color_options = [(0,0,35)]
@@ -828,7 +876,7 @@ class Game:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     menu()
-                if event.key == pygame.K_h:
+                if event.key == pygame.K_j:
                     self.draw_debug = not self.draw_debug
                 if event.key == pygame.K_UP:
                     self.player2.jump()
@@ -856,7 +904,7 @@ class Game:
 
                     for event in events:
                         if event.type == pygame.KEYDOWN:
-                            if event.key == pygame.K_RETURN:
+                            if event.key == pygame.K_SPACE:
                                 enter1 = False
 
                     pygame.display.update()
@@ -878,7 +926,7 @@ class Game:
 
                     for event in events:
                         if event.type == pygame.KEYDOWN:
-                            if event.key == pygame.K_RETURN:
+                            if event.key == pygame.K_SPACE:
                                 enter2 = False
 
                     pygame.display.update()
@@ -932,7 +980,7 @@ class Game:
 
                     for event in events:
                         if event.type == pygame.KEYDOWN:
-                            if event.key == pygame.K_RETURN:
+                            if event.key == pygame.K_SPACE:
                                 enter1 = False
 
                     pygame.display.update()
@@ -954,7 +1002,7 @@ class Game:
 
                     for event in events:
                         if event.type == pygame.KEYDOWN:
-                            if event.key == pygame.K_RETURN:
+                            if event.key == pygame.K_SPACE:
                                 enter2 = False
 
                     pygame.display.update()
@@ -1001,7 +1049,7 @@ class Game:
                     waiting = False
                     self.quit()
                 if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_RETURN:
+                    if event.key == pygame.K_SPACE:
                         waiting = False
                     if event.key == pygame.K_ESCAPE:
                         menu()
