@@ -44,7 +44,7 @@ class menu_background(object):
         self.timer = 0
         self.color_options = [(0,0,35)]
     def render(self,surface):
-        surface.fill((0,0,10))
+        surface.fill((0,0,15))
         self.timer += 1
         if self.timer > 20:
             self.timer = 0
@@ -392,7 +392,6 @@ class Game:
     def __init__(self):
         self.particles = []
         self.timer = 0
-        self.color_options = [(0,0,35)]
         self.font_name = pygame.font.match_font('8bit')
         self.load_data()
 
@@ -904,7 +903,7 @@ class Game:
 
                     for event in events:
                         if event.type == pygame.KEYDOWN:
-                            if event.key == pygame.K_SPACE:
+                            if event.key == pygame.K_RETURN:
                                 enter1 = False
 
                     pygame.display.update()
@@ -926,7 +925,7 @@ class Game:
 
                     for event in events:
                         if event.type == pygame.KEYDOWN:
-                            if event.key == pygame.K_SPACE:
+                            if event.key == pygame.K_RETURN:
                                 enter2 = False
 
                     pygame.display.update()
@@ -980,7 +979,7 @@ class Game:
 
                     for event in events:
                         if event.type == pygame.KEYDOWN:
-                            if event.key == pygame.K_SPACE:
+                            if event.key == pygame.K_RETURN:
                                 enter1 = False
 
                     pygame.display.update()
@@ -1002,7 +1001,7 @@ class Game:
 
                     for event in events:
                         if event.type == pygame.KEYDOWN:
-                            if event.key == pygame.K_SPACE:
+                            if event.key == pygame.K_RETURN:
                                 enter2 = False
 
                     pygame.display.update()
@@ -1049,24 +1048,9 @@ class Game:
                     waiting = False
                     self.quit()
                 if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_SPACE:
+                    if event.key == pygame.K_RETURN:
                         waiting = False
                     if event.key == pygame.K_ESCAPE:
                         menu()
-
-    def render(self,surface):
-        surface.fill((0,0,10))
-        self.timer += 1
-        if self.timer > 20:
-            self.timer = 0
-            c = random.choice(self.color_options)
-            x = random.randint(0,400)
-            for i in range(1):
-                self.particles.append([x,-10-i*2.5,c,8-i])
-        for particle in self.particles:
-            pygame.draw.circle(surface,particle[2],(int(particle[0]-math.sin(particle[1]/4500)*10),int(particle[1])),particle[3])
-            particle[1] += 2.5
-            if particle[0] > 400:
-                self.particles.remove(particle)
 
 menu()
