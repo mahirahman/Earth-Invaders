@@ -388,7 +388,7 @@ def draw_player_health(surf, x, y, pct):
     pygame.draw.rect(surf, WHITE, outline_rect, 2)
 
 class Game:
-    
+
     def __init__(self):
         self.particles = []
         self.timer = 0
@@ -440,6 +440,7 @@ class Game:
         self.mob_small_2 = pygame.sprite.Group()
         self.mob_bullets = pygame.sprite.Group()
         self.mob_flying = pygame.sprite.Group()
+        self.mob_charge = pygame.sprite.Group()
         self.mob_big = pygame.sprite.Group()
         self.items = pygame.sprite.Group()
         self.spike = pygame.sprite.Group()
@@ -460,6 +461,8 @@ class Game:
                 Mob_small_1(self, obj_center.x, obj_center.y)
             if tile_object.name == 'flying':
                 Mob_flying(self, obj_center.x, obj_center.y)
+            if tile_object.name == 'charge':
+                Mob_charge(self,obj_center.x, obj_center.y)
             if tile_object.name in ['health']:
                 Item(self, obj_center, tile_object.name)
             if tile_object.name in ['coin']:

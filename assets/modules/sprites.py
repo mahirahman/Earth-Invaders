@@ -1292,6 +1292,200 @@ class Mob_flying(pg.sprite.Sprite):
             dir = vec(0, 1)
             Mob_Bullet(self.game, pos, dir, angle)
 
+class Mob_charge(pg.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.mob_charge
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.current_frame = 0
+        self.last_update = 0
+        self.load_images()
+        self.image = self.walk_frame_L[0]
+        self.health_bars = self.image.copy()
+        self.rect = self.image.get_rect()
+        self.hit_rect = MOB_HIT_RECT.copy()
+        self.hit_rect.center = self.rect.center
+        self.pos = vec(x, y)
+        self.vel = vec(0, 0)
+        self.acc = vec(0, 0)
+        self.rect.center = self.pos
+        self.rot = 0
+        self.health = MOB_HEALTH
+        self.target = game.player
+        self.target2 = game.player2
+        self.alive = True
+        self.facing = False
+        self.col = GREEN
+        self.lock_in = False
+        self.charge_dir = 'left'
+        self.charging = False
+        self.chargesequence = False
+        self.detected = False
+        self.charge_time = 0
+        self.round = 1
+
+    def load_images(self):
+        self.walk_frame_R = []
+
+        i = 1
+        while i <= 4:
+            frame = pg.image.load('assets/sprites/enemy/low/3/R_run_' + str(i) + '.png').convert_alpha()
+            frame = pg.transform.scale(frame, (24, 36))
+            i = i + 1
+            self.walk_frame_R.append(frame)
+
+        self.walk_frame_L = []
+
+        i = 1
+        while i <= 4:
+            frame = pg.image.load('assets/sprites/enemy/low/3/L_run_' + str(i) + '.png').convert_alpha()
+            frame = pg.transform.scale(frame, (24, 36))
+            i = i + 1
+            self.walk_frame_L.append(frame)
+
+    def animate(self):
+        now = pg.time.get_ticks()
+        if self.charging:
+            anim_speed = 150
+        else:
+            anim_speed = 200
+
+        if self.facing:
+            if now - self.last_update > anim_speed:
+                self.last_update = now
+                self.current_frame = (self.current_frame + 1) % len(self.walk_frame_L)
+                self.image = self.walk_frame_L[self.current_frame]
+                self.rect = self.image.get_rect()
+        else:
+            if now - self.last_update > anim_speed:
+                self.last_update = now
+                self.current_frame = (self.current_frame + 1) % len(self.walk_frame_R)
+                self.image = self.walk_frame_R[self.current_frame]
+                self.rect = self.image.get_rect()
+
+    def update(self):
+        self.draw_health()
+        target_dist = self.target.pos - self.pos
+        target2_dist = self.target2.pos - self.pos
+        if target_dist.length_squared() < DETECT_RADIUS**2 and not self.charging and not self.detected and not self.chargesequence:
+            self.detected = True
+
+        elif target2_dist.length_squared() < DETECT_RADIUS**2 and not self.charging and not self.detected and not self.chargesequence:
+            self.detected = True
+
+        elif not self.charging and not self.detected and not self.chargesequence:
+            self.animate()
+            self.acc.x += self.vel.x * PLAYER_FRICTION
+            self.vel += self.acc
+            self.pos += self.vel + 0.5 * self.acc
+            self.pos += self.vel * self.game.dt
+            self.rect.center = self.pos
+            self.moving()
+
+        elif self.detected and not self.charging and not self.chargesequence:
+            # if player on the left, self.rot is -179, if player is on top of alien, self.rot is 0, if player is on the right of alien, self.rot is 90
+            if self.detected:
+                self.rot = (self.game.player.pos - self.pos).angle_to(vec(1, 0))
+                self.lock_in = False
+                if not self.lock_in:
+                    if self.rot < 0:
+                        self.charge_dir = 'left'
+                        self.step = 0
+                        self.lock_in = True
+                        self.charge_counter = 0
+                    elif self.rot > 0:
+                        self.charge_dir = 'right'
+                        self.lock_in = True
+                        self.step = 0
+                        self.charge_counter = 0
+                    else:
+                        self.charge_dir = 'left'
+                        self.lock_in = True
+                        self.step = 0
+                        self.charge_counter = 0
+                self.chargesequence = True
+
+        elif self.detected and not self.charging and self.chargesequence:
+            if self.chargesequence:
+                time = pg.time.get_ticks()
+                if self.charge_counter != 3:
+                    if time - self.step > 500:
+                        self.pos.x += 3
+                        self.step = time
+                        self.charge_counter += 1
+                else:
+                    self.charging = True
+
+        elif self.detected and self.charging and self.chargesequence:
+            if self.charging:
+                self.charge_time = pg.time.get_ticks()
+                if self.charge_time <= int(10000*self.round):
+                    self.animate()
+                    self.acc.x += self.vel.x * PLAYER_FRICTION
+                    self.vel += self.acc
+                    self.pos += self.vel + 0.5 * self.acc
+                    self.pos += self.vel * self.game.dt
+                    self.rect.center = self.pos
+                    self.chargeaccel()
+                else:
+                    self.round += 1
+                    self.detected = False
+                    self.chargesequence = False
+                    self.charging = False
+
+        self.hit_rect.centerx = self.pos.x
+        collide_with_walls(self, self.game.invis_wall, 'x')
+        self.hit_rect.centery = self.pos.y
+        collide_with_walls(self, self.game.walls, 'y')
+        self.rect.center = self.hit_rect.center
+
+    def moving(self):
+        if not self.facing:
+            self.acc = vec(0.2, 0.5)
+            self.rect.centerx +=2
+            hits2 = pg.sprite.spritecollide(self, self.game.invis_wall, False)
+            self.rect.centerx -=2
+            if hits2:
+                self.facing = True
+
+        else:
+            self.acc = vec(-0.2, 0.5)
+            self.rect.centerx -= 2
+            hits = pg.sprite.spritecollide(self, self.game.invis_wall, False)
+            self.rect.centerx += 2
+            if hits:
+                self.facing = False
+
+    def chargeaccel(self):
+        if not self.facing:
+            self.acc = vec(0.5, 0.5)
+            self.rect.centerx +=2
+            hits2 = pg.sprite.spritecollide(self, self.game.invis_wall, False)
+            self.rect.centerx -=2
+            if hits2:
+                self.facing = True
+
+        else:
+            self.acc = vec(-0.5, 0.5)
+            self.rect.centerx -= 2
+            hits = pg.sprite.spritecollide(self, self.game.invis_wall, False)
+            self.rect.centerx += 2
+            if hits:
+                self.facing = False
+
+    def draw_health(self):
+        if self.health > 60:
+            self.col = GREEN
+        elif self.health > 30:
+            self.col = YELLOW
+        else:
+            self.col = RED
+        width = int(self.rect.width * self.health / MOB_HEALTH)
+        self.health_bar = pg.Rect(0, 0, width, 2)
+        if self.health < MOB_HEALTH:
+            pg.draw.rect(self.image, self.col, self.health_bar)
+            self.load_images()
+
 class Obstacle(pg.sprite.Sprite):
     def __init__(self, game, x, y, w, h):
         self.groups = game.walls
