@@ -608,6 +608,20 @@ class Game:
                 self.player.hit()
                 self.player.knockback(hit)
 
+            hits = pygame.sprite.spritecollide(self.player, self.mob_charge, False, collide_hit_rect)
+            for hit in hits:
+                self.player_hurt['player_hurt'].play()
+                self.score -= 5
+                self.player.health -= 5
+                if self.player.health <= 0:
+                    self.player.alive = False
+                if hit.charging:
+                    self.player.knockback_charge(hit)
+                else:
+                    self.player.knockback(hit)
+                self.player.hit()
+
+
         if self.player2.collision:  #if player 2 collision is enabled
             hits = pygame.sprite.spritecollide(self.player2, self.items, False, collide_hit_rect)
             for hit in hits:
@@ -702,6 +716,19 @@ class Game:
                     self.player2.alive = False
                 if self.player2.alive:
                     self.player2.hit()
+
+            hits = pygame.sprite.spritecollide(self.player2, self.mob_charge, False, collide_hit_rect)
+            for hit in hits:
+                self.player_hurt['player_hurt'].play()
+                self.score -= 5
+                self.player2.health -= 5
+                if self.player2.health <= 0:
+                    self.player2.alive = False
+                if hit.charging:
+                    self.player2.knockback_charge(hit)
+                else:
+                    self.player2.knockback(hit)
+                self.player2.hit()
         else:
             pass
 
@@ -793,6 +820,24 @@ class Game:
             if hit.health <= 0:
                 hit.kill()
                 self.score += 30
+
+        hits = pygame.sprite.groupcollide(self.mob_charge, self.bullets, False, True)
+        for hit in hits:
+            self.enemy_hurt['enemy_hurt'].play()
+            self.score += 5
+            hit.health -= BULLET_DAMAGE
+            if hit.health <= 0:
+                hit.kill()
+                self.score += 40
+
+        hits = pygame.sprite.groupcollide(self.mob_charge, self.bullets2, False, True)
+        for hit in hits:
+            self.enemy_hurt['enemy_hurt'].play()
+            self.score += 5
+            hit.health -= BULLET_DAMAGE
+            if hit.health <= 0:
+                hit.kill()
+                self.score += 40
 
         if self.score < 0:
             self.score = 0
@@ -886,8 +931,6 @@ class Game:
                     self.player.jump()
                 if event.key == pygame.K_p:
                     self.paused = not self.paused
-                if event.key == pygame.K_o:
-                    print(self.player.vel)
 
     def you_win(self):
         enter = True

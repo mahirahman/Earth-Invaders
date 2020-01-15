@@ -277,16 +277,55 @@ class Player(pg.sprite.Sprite):
 
         elif hit.facing and self.facing_R: #hit.facing = left, not hit.facing = right, facing_R = right, not facing_R = left
             self.pos += vec(-MOB_KNOCKBACK, 0)
+            self.vel += vec(-8, -5)
         elif hit.facing and not self.facing_R and not self.running:
             self.pos += vec(-MOB_KNOCKBACK, 0)
+            self.vel += vec(-8, -5)
         elif hit.facing and not self.facing_R and self.running:
             self.pos += vec(MOB_KNOCKBACK, 0)
+            self.vel += vec(8, -5)
         elif not hit.facing and self.facing_R and self.running:
             self.pos += vec(-MOB_KNOCKBACK, 0)
+            self.vel += vec(-8, -5)
         elif not hit.facing and self.facing_R and not self.running:
             self.pos += vec(MOB_KNOCKBACK, 0)
+            self.vel += vec(8, -5)
         elif not hit.facing and not self.facing_R:
             self.pos += vec(MOB_KNOCKBACK, 0)
+            self.vel += vec(8, -5)
+
+    def knockback_charge(self, hit):
+        if self.jumping:
+            if self.facing_R and hit.facing:
+                self.vel += vec(-8, -5)
+            elif self.facing_R and not hit.facing:
+                self.vel += vec(-8, -5)
+            elif not self.facing_R and not hit.facing:
+                self.vel += vec(8, -5)
+            elif not self.facing_R and hit.facing:
+                self.vel += vec(8, -5)
+
+            if self.vel.y < -5:
+                self.vel.y = -5
+
+        elif hit.facing and self.facing_R: #hit.facing = left, not hit.facing = right, facing_R = right, not facing_R = left
+            self.pos += vec(-MOB_KNOCKBACK_CHARGE, -2)
+            self.vel += vec(-13, -7)
+        elif hit.facing and not self.facing_R and not self.running:
+            self.pos += vec(-MOB_KNOCKBACK_CHARGE, -2)
+            self.vel += vec(-13, -7)
+        elif hit.facing and not self.facing_R and self.running:
+            self.pos += vec(MOB_KNOCKBACK_CHARGE, -2)
+            self.vel += vec(13, -7)
+        elif not hit.facing and self.facing_R and self.running:
+            self.pos += vec(-MOB_KNOCKBACK_CHARGE, -2)
+            self.vel += vec(-13, -7)
+        elif not hit.facing and self.facing_R and not self.running:
+            self.pos += vec(MOB_KNOCKBACK_CHARGE, -2)
+            self.vel += vec(13, -7)
+        elif not hit.facing and not self.facing_R:
+            self.pos += vec(MOB_KNOCKBACK_CHARGE, -2)
+            self.vel += vec(13, -7)
 
     def update(self):
         self.animate()
@@ -583,26 +622,69 @@ class Player2(pg.sprite.Sprite):
 
     def knockback(self, hit):
         if self.jumping:
-            if self.facing_R:
-                self.vel += vec(-3, -5)
-            else:
-                self.vel += vec(3, -5)
+            if self.facing_R and hit.facing:
+                self.vel += vec(-8, -5)
+            elif self.facing_R and not hit.facing:
+                self.vel += vec(-8, -5)
+            elif not self.facing_R and not hit.facing:
+                self.vel += vec(8, -5)
+            elif not self.facing_R and hit.facing:
+                self.vel += vec(8, -5)
 
             if self.vel.y < -5:
                 self.vel.y = -5
 
         elif hit.facing and self.facing_R: #hit.facing = left, not hit.facing = right, facing_R = right, not facing_R = left
             self.pos += vec(-MOB_KNOCKBACK, 0)
+            self.vel += vec(-8, -5)
         elif hit.facing and not self.facing_R and not self.running:
             self.pos += vec(-MOB_KNOCKBACK, 0)
+            self.vel += vec(-8, -5)
         elif hit.facing and not self.facing_R and self.running:
             self.pos += vec(MOB_KNOCKBACK, 0)
+            self.vel += vec(8, -5)
         elif not hit.facing and self.facing_R and self.running:
             self.pos += vec(-MOB_KNOCKBACK, 0)
+            self.vel += vec(-8, -5)
         elif not hit.facing and self.facing_R and not self.running:
             self.pos += vec(MOB_KNOCKBACK, 0)
+            self.vel += vec(8, -5)
         elif not hit.facing and not self.facing_R:
             self.pos += vec(MOB_KNOCKBACK, 0)
+            self.vel += vec(8, -5)
+
+    def knockback_charge(self, hit):
+        if self.jumping:
+            if self.facing_R and hit.facing:
+                self.vel += vec(-8, -5)
+            elif self.facing_R and not hit.facing:
+                self.vel += vec(-8, -5)
+            elif not self.facing_R and not hit.facing:
+                self.vel += vec(8, -5)
+            elif not self.facing_R and hit.facing:
+                self.vel += vec(8, -5)
+
+            if self.vel.y < -5:
+                self.vel.y = -5
+
+        elif hit.facing and self.facing_R: #hit.facing = left, not hit.facing = right, facing_R = right, not facing_R = left
+            self.pos += vec(-MOB_KNOCKBACK_CHARGE, -2)
+            self.vel += vec(-13, -7)
+        elif hit.facing and not self.facing_R and not self.running:
+            self.pos += vec(-MOB_KNOCKBACK_CHARGE, -2)
+            self.vel += vec(-13, -7)
+        elif hit.facing and not self.facing_R and self.running:
+            self.pos += vec(MOB_KNOCKBACK_CHARGE, -2)
+            self.vel += vec(13, -7)
+        elif not hit.facing and self.facing_R and self.running:
+            self.pos += vec(-MOB_KNOCKBACK_CHARGE, -2)
+            self.vel += vec(-13, -7)
+        elif not hit.facing and self.facing_R and not self.running:
+            self.pos += vec(MOB_KNOCKBACK_CHARGE, -2)
+            self.vel += vec(13, -7)
+        elif not hit.facing and not self.facing_R:
+            self.pos += vec(MOB_KNOCKBACK_CHARGE, -2)
+            self.vel += vec(13, -7)
 
     def update(self):
         self.animate()
@@ -1346,7 +1428,7 @@ class Mob_charge(pg.sprite.Sprite):
     def animate(self):
         now = pg.time.get_ticks()
         if self.charging:
-            anim_speed = 150
+            anim_speed = 50
         else:
             anim_speed = 200
 
@@ -1382,56 +1464,57 @@ class Mob_charge(pg.sprite.Sprite):
             self.rect.center = self.pos
             self.moving()
 
-        elif self.detected and not self.charging and not self.chargesequence:
-            # if player on the left, self.rot is -179, if player is on top of alien, self.rot is 0, if player is on the right of alien, self.rot is 90
-            if self.detected:
-                self.rot = (self.game.player.pos - self.pos).angle_to(vec(1, 0))
-                self.lock_in = False
-                if not self.lock_in:
-                    if self.rot < 0:
-                        self.charge_dir = 'left'
-                        self.step = 0
-                        self.lock_in = True
-                        self.charge_counter = 0
-                    elif self.rot > 0:
-                        self.charge_dir = 'right'
-                        self.lock_in = True
-                        self.step = 0
-                        self.charge_counter = 0
-                    else:
-                        self.charge_dir = 'left'
-                        self.lock_in = True
-                        self.step = 0
-                        self.charge_counter = 0
-                self.chargesequence = True
+        if self.detected and not self.charging and not self.chargesequence:
+            # if player on the left, self.rot is 175, if player is on top of alien, self.rot is 90, if player is on the right of alien, self.rot is 3
+            self.rot = (self.game.player.pos - self.pos).angle_to(vec(1, 0))
+            self.lock_in = False
+            if not self.lock_in:
+                if self.rot < 90:
+                    self.facing = True
+                    self.step = 0
+                    self.charge_counter = 0
+                    self.lock_in = True
+                elif self.rot > 90:
+                    self.facing = False
+                    self.step = 0
+                    self.charge_counter = 0
+                    self.lock_in = True
+                else:
+                    self.facing = True
+                    self.step = 0
+                    self.charge_counter = 0
+                    self.lock_in = True
+            self.chargesequence = True
 
         elif self.detected and not self.charging and self.chargesequence:
-            if self.chargesequence:
-                time = pg.time.get_ticks()
-                if self.charge_counter != 3:
-                    if time - self.step > 500:
+            self.rot = (self.game.player.pos - self.pos).angle_to(vec(1, 0))
+            time = pg.time.get_ticks()
+            if self.charge_counter != 3:
+                if time - self.step > 500:
+                    if self.facing:
+                        self.pos.x -= 3
+                    else:
                         self.pos.x += 3
-                        self.step = time
-                        self.charge_counter += 1
-                else:
-                    self.charging = True
+                    self.step = time
+                    self.charge_counter += 1
+            else:
+                self.charging = True
 
         elif self.detected and self.charging and self.chargesequence:
-            if self.charging:
-                self.charge_time = pg.time.get_ticks()
-                if self.charge_time <= int(10000*self.round):
-                    self.animate()
-                    self.acc.x += self.vel.x * PLAYER_FRICTION
-                    self.vel += self.acc
-                    self.pos += self.vel + 0.5 * self.acc
-                    self.pos += self.vel * self.game.dt
-                    self.rect.center = self.pos
-                    self.chargeaccel()
-                else:
-                    self.round += 1
-                    self.detected = False
-                    self.chargesequence = False
-                    self.charging = False
+            self.charge_time = pg.time.get_ticks()
+            if self.charge_time <= int(10000*self.round):
+                self.animate()
+                self.acc.x += self.vel.x * PLAYER_FRICTION
+                self.vel += self.acc
+                self.pos += self.vel + 0.5 * self.acc
+                self.pos += self.vel * self.game.dt
+                self.rect.center = self.pos
+                self.chargeaccel()
+            else:
+                self.round += 1
+                self.detected = False
+                self.chargesequence = False
+                self.charging = False
 
         self.hit_rect.centerx = self.pos.x
         collide_with_walls(self, self.game.invis_wall, 'x')
