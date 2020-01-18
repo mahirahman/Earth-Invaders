@@ -937,47 +937,42 @@ class Game:
         while enter:
             player1name = pygame_textinput.TextInput(font_family = "assets/8bit.ttf", antialias = False)
             enter1 = True
-            if self.score > 0:
-                while enter1:
-                    screen.fill((60,179,113))
-                    events = pygame.event.get()
-                    self.draw_text("enter player 1 name", self.pixel_font, 35, WHITE, int(WIDTH/2), int(HEIGHT/2)-50, align="center")
-                    screen.blit(player1name.get_surface(), (int(WIDTH/2)-35, int(HEIGHT/2)))
+            while enter1:
+                screen.fill((60,179,113))
+                events = pygame.event.get()
+                self.draw_text("enter player 1 name", self.pixel_font, 35, WHITE, int(WIDTH/2), int(HEIGHT/2)-50, align="center")
+                screen.blit(player1name.get_surface(), (int(WIDTH/2)-35, int(HEIGHT/2)))
 
-                    if player1name.update(events):
-                        pass
+                if player1name.update(events):
+                    pass
 
-                    for event in events:
-                        if event.type == pygame.KEYDOWN:
-                            if event.key == pygame.K_RETURN:
-                                enter1 = False
+                for event in events:
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_RETURN:
+                            enter1 = False
 
-                    pygame.display.update()
-                    fps.tick(60)
-            else:
-                enter1 = False
+                pygame.display.update()
+                fps.tick(60)
 
             player2name = pygame_textinput.TextInput(font_family = "assets/8bit.ttf", antialias = False)
             enter2 = True
-            if self.score2 > 0:
-                while enter2:
-                    screen.fill((60,179,113))
-                    events = pygame.event.get()
-                    self.draw_text("enter player 2 name", self.pixel_font, 35, WHITE, int(WIDTH/2), int(HEIGHT/2)-50, align="center")
-                    screen.blit(player2name.get_surface(), (int(WIDTH/2)-35, int(HEIGHT/2)))
+            while enter2:
+                screen.fill((60,179,113))
+                events = pygame.event.get()
+                self.draw_text("enter player 2 name", self.pixel_font, 35, WHITE, int(WIDTH/2), int(HEIGHT/2)-50, align="center")
+                screen.blit(player2name.get_surface(), (int(WIDTH/2)-35, int(HEIGHT/2)))
 
-                    if player2name.update(events):
-                        pass
+                if player2name.update(events):
+                    pass
 
-                    for event in events:
-                        if event.type == pygame.KEYDOWN:
-                            if event.key == pygame.K_RETURN:
-                                enter2 = False
+                for event in events:
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_RETURN:
+                            enter2 = False
 
-                    pygame.display.update()
-                    fps.tick(60)
-            else:
-                enter1 = False
+                pygame.display.update()
+                fps.tick(60)
+
             enter = False
 
         screen.fill((60,179,113))
@@ -1013,47 +1008,41 @@ class Game:
         while enter:
             player1name = pygame_textinput.TextInput(font_family = "assets/8bit.ttf", antialias = False)
             enter1 = True
-            if self.score > 0:
-                while enter1:
-                    screen.fill((110, 0, 0))
-                    events = pygame.event.get()
-                    self.draw_text("enter player 1 name", self.pixel_font, 35, WHITE, int(WIDTH/2), int(HEIGHT/2)-50, align="center")
-                    screen.blit(player1name.get_surface(), (int(WIDTH/2)-35, int(HEIGHT/2)))
+            while enter1:
+                screen.fill((110, 0, 0))
+                events = pygame.event.get()
+                self.draw_text("enter player 1 name", self.pixel_font, 35, WHITE, int(WIDTH/2), int(HEIGHT/2)-50, align="center")
+                screen.blit(player1name.get_surface(), (int(WIDTH/2)-35, int(HEIGHT/2)))
 
-                    if player1name.update(events):
-                        pass
+                if player1name.update(events):
+                    pass
 
-                    for event in events:
-                        if event.type == pygame.KEYDOWN:
-                            if event.key == pygame.K_RETURN:
-                                enter1 = False
+                for event in events:
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_RETURN:
+                            enter1 = False
 
-                    pygame.display.update()
-                    fps.tick(60)
-            else:
-                enter1 = False
+                pygame.display.update()
+                fps.tick(60)
 
             player2name = pygame_textinput.TextInput(font_family = "assets/8bit.ttf", antialias = False)
             enter2 = True
-            if self.score2 > 0:
-                while enter2:
-                    screen.fill((110, 0, 0))
-                    events = pygame.event.get()
-                    self.draw_text("enter player 2 name", self.pixel_font, 35, WHITE, int(WIDTH/2), int(HEIGHT/2)-50, align="center")
-                    screen.blit(player2name.get_surface(), (int(WIDTH/2)-35, int(HEIGHT/2)))
+            while enter2:
+                screen.fill((110, 0, 0))
+                events = pygame.event.get()
+                self.draw_text("enter player 2 name", self.pixel_font, 35, WHITE, int(WIDTH/2), int(HEIGHT/2)-50, align="center")
+                screen.blit(player2name.get_surface(), (int(WIDTH/2)-35, int(HEIGHT/2)))
 
-                    if player2name.update(events):
-                        pass
+                if player2name.update(events):
+                    pass
 
-                    for event in events:
-                        if event.type == pygame.KEYDOWN:
-                            if event.key == pygame.K_RETURN:
-                                enter2 = False
+                for event in events:
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_RETURN:
+                            enter2 = False
 
-                    pygame.display.update()
-                    fps.tick(60)
-            else:
-                enter1 = False
+                pygame.display.update()
+                fps.tick(60)
             enter = False
 
         screen.fill((0, 0, 0))
