@@ -1385,7 +1385,7 @@ class Mob_charge(pg.sprite.Sprite):
         self.image = self.walk_frame_L[0]
         self.health_bars = self.image.copy()
         self.rect = self.image.get_rect()
-        self.hit_rect = MOB_HIT_RECT.copy()
+        self.hit_rect = MOB_CHARGE_HIT_RECT.copy()
         self.hit_rect.center = self.rect.center
         self.pos = vec(x, y)
         self.vel = vec(0, 0)
@@ -1470,34 +1470,34 @@ class Mob_charge(pg.sprite.Sprite):
             self.lock_in = False
             if not self.lock_in:
                 if self.rot < 90:
-                    self.facing = True
-                    self.step = 0
-                    self.charge_counter = 0
-                    self.lock_in = True
-                elif self.rot > 90:
                     self.facing = False
                     self.step = 0
                     self.charge_counter = 0
                     self.lock_in = True
-                else:
+                elif self.rot > 90:
                     self.facing = True
+                    self.step = 0
+                    self.charge_counter = 0
+                    self.lock_in = True
+                else:
+                    self.facing = False
                     self.step = 0
                     self.charge_counter = 0
                     self.lock_in = True
             self.chargesequence = True
 
         elif self.detected and not self.charging and self.chargesequence:
-            self.rot = (self.game.player.pos - self.pos).angle_to(vec(1, 0))
             time = pg.time.get_ticks()
             if self.charge_counter != 3:
                 if time - self.step > 500:
                     if self.facing:
-                        self.pos.x -= 3
-                    else:
                         self.pos.x += 3
+                    else:
+                        self.pos.x -= 3
                     self.step = time
                     self.charge_counter += 1
             else:
+                self.charge_counter = 0
                 self.charging = True
 
         elif self.detected and self.charging and self.chargesequence:

@@ -833,11 +833,11 @@ class Game:
         hits = pygame.sprite.groupcollide(self.mob_charge, self.bullets2, False, True)
         for hit in hits:
             self.enemy_hurt['enemy_hurt'].play()
-            self.score += 5
+            self.score2 += 5
             hit.health -= BULLET_DAMAGE
             if hit.health <= 0:
                 hit.kill()
-                self.score += 40
+                self.score2 += 40
 
         if self.score < 0:
             self.score = 0

@@ -43,6 +43,7 @@ COIN = {'coin': 'coin.wav'}
 #Mob
 MOB_SPEED = vec(0.2, 0.5)
 MOB_HIT_RECT = pg.Rect(0, 0, 24, 36)
+MOB_CHARGE_HIT_RECT = pg.Rect(0, 0, 24, 30)
 MOB_BIG_HIT_RECT = pg.Rect(0, 0, 24, 36)
 MOB_FLYING_HIT_RECT = pg.Rect(0, 0, 24, 30)
 MOB_HEALTH = 100
