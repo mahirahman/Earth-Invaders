@@ -84,8 +84,8 @@ def menu():
 
     while in_menu:
         bg.render(display)
-
         display.blit(logo,(63,46))
+
         text.show_text('Menu Controls: Arrow Keys + Space',2,240,1,9999,font,display)
 
         n = 0
@@ -189,8 +189,10 @@ def controls():
     in_controls = True
     while in_controls:
         bg.render(display)
-
+        
+        text.show_text('Press ESC to go back',2,240,1,9999,font,display)
         text_array = ['Use WASD and Space for Player 1','Use Arrow keys and Right Enter for Player 2','For pausing press P']
+
         n = 0
         for list in text_array:
             text.show_text(list,200-int(get_text_width(list,2)/2),95+n*20,1,9999,font,display)
@@ -201,7 +203,8 @@ def controls():
                 pygame.quit()
                 sys.exit()
             if event.type == KEYDOWN:
-                in_controls = False
+                if event.key == K_ESCAPE:
+                    in_controls = False
         screen.blit(pygame.transform.scale(display,(WIDTH,HEIGHT)),(0,0))
         pygame.display.update()
         fps.tick(60)
@@ -212,6 +215,8 @@ def highscores():
     while in_highscores:
         bg.render(display)
 
+        text.show_text('Press ESC to go back',2,240,1,9999,font,display)
+        
         with open("assets/highscores.txt", "r") as array:
             leaderboard = array.readlines()
 
@@ -228,7 +233,12 @@ def highscores():
                 pygame.quit()
                 sys.exit()
             if event.type == KEYDOWN:
-                in_highscores = False
+                if event.key == K_w:
+                    print("Scroll UP")
+                if event.key == K_s:
+                    print("Scroll Down")
+                if event.key == K_ESCAPE:
+                    in_highscores = False
 
         screen.blit(pygame.transform.scale(display,(WIDTH,HEIGHT)),(0,0))
         pygame.display.update()
@@ -373,7 +383,9 @@ def credits():
     while in_credits:
         bg.render(display)
         
+        text.show_text('Press ESC to go back',2,240,1,9999,font,display)
         credits_array = ['Mahi Rahman','Son Tran','Daniel Nguyen','Tejas Amrale','Peter Sorial','Spandan Kolapkar']
+        
         n = 0
         for names in credits_array:
             text.show_text(names,200-int(get_text_width(names,1)/2),70+n*20,1,9999,font,display)
@@ -384,7 +396,9 @@ def credits():
                 pygame.quit()
                 sys.exit()
             if event.type == KEYDOWN:
-                in_credits = False
+                if event.key == K_ESCAPE:
+                    in_credits = False
+
         screen.blit(pygame.transform.scale(display,(WIDTH,HEIGHT)),(0,0))
         pygame.display.update()
         fps.tick(60)
