@@ -39,24 +39,39 @@ font = text.generate_font('assets/font.png',font_dat,5,8,(248,248,248))
 font_select = text.generate_font('assets/font.png',font_dat,5,8,(160,239,120))
 
 class menu_background(object):
-    def __init__(self):
-        self.particles = []
-        self.timer = 0
-        self.color_options = [(0,0,35)]
     def render(self,surface):
-        surface.fill((0,0,15))
-        self.timer += 1
-        if self.timer > 20:
-            self.timer = 0
-            c = random.choice(self.color_options)
-            x = random.randint(0,400)
-            for i in range(1):
-                self.particles.append([x,-10-i*2.5,c,8-i])
-        for particle in self.particles:
-            pygame.draw.circle(surface,particle[2],(int(particle[0]-math.sin(particle[1]/4500)*10),int(particle[1])),particle[3])
-            particle[1] += 2.5
-            if particle[0] > 400:
-                self.particles.remove(particle)
+        surface.fill((9,10,15))
+
+        star_field_slow = []
+        star_field_medium = []
+
+        for slow_stars in range(10): 
+            star_loc_x = random.randrange(0, WIDTH)
+            star_loc_y = random.randrange(0, HEIGHT)
+            star_field_slow.append([star_loc_x, star_loc_y]) 
+
+        for medium_stars in range(10):
+            star_loc_x = random.randrange(0, WIDTH)
+            star_loc_y = random.randrange(0, HEIGHT)
+            star_field_medium.append([star_loc_x, star_loc_y])
+
+        for star in star_field_slow:
+            star[1] += 1
+            if star[1] > HEIGHT:
+                star[0] = random.randrange(0, WIDTH)
+                star[1] = random.randrange(-20, -5)
+            pygame.draw.circle(screen, (128, 128, 128), star, 3)
+
+        for star in star_field_medium:
+            star[1] += 4
+            if star[1] > HEIGHT:
+                star[0] = random.randrange(0, WIDTH)
+                star[1] = random.randrange(-20, -5)
+            pygame.draw.circle(screen, (192, 192, 192), star, 5)
+
+
+        pygame.display.flip()
+        fps.tick(60)
 
 def menu():
     bg = menu_background()
@@ -175,7 +190,13 @@ def controls():
     in_controls = True
     while in_controls:
         bg.render(display)
-        text.show_text('Use WASD and Space for Player 1\nUse Arrow keys and Right Enter for Player 2\nFor pausing press P',4,4,1,9999,font,display)
+
+        text_array = ['Use WASD and Space for Player 1','Use Arrow keys and Right Enter for Player 2','For pausing press P']
+        n = 0
+        for list in text_array:
+            text.show_text(list,200-int(get_text_width(list,2)/2),75+n*20,1,9999,font,display)
+            n += 1
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -204,9 +225,9 @@ def highscores():
 
         f = open("assets/highscores.txt", "r")
         scores = f.read()
-
-        text.show_text('LEADERBOARD',180,20,1,9999,font,display)
         text.show_text(scores,165,50,1,9999,font,display)
+
+        text.show_text('LEADERBOARD',200-int(get_text_width('LEADERBOARD',2)/2),20,1,9999,font,display)
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()

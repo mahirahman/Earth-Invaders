@@ -1,10 +1,11 @@
-import pygame as pg
-pg.init()
-vec = pg.math.Vector2
+import pygame
+pygame.init()
+vec = pygame.math.Vector2
 
 #Game
-WIDTH = 512
-HEIGHT = 400
+
+WIDTH = pygame.display.Info().current_w
+HEIGHT = pygame.display.Info().current_h
 
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
@@ -15,8 +16,8 @@ YELLOW = (255, 255, 0)
 PLAYER_HEALTH = 200
 PLAYER_SPEED = 280
 PLAYER_ROT_SPEED = 200
-PLAYER_HIT_RECT = pg.Rect(0, 0, 30, 45)
-PLAYER_HIT_RECT2 = pg.Rect(0, 0, 30, 45)
+PLAYER_HIT_RECT = pygame.Rect(0, 0, 30, 45)
+PLAYER_HIT_RECT2 = pygame.Rect(0, 0, 30, 45)
 PLAYER_ACC = 0.5
 PLAYER_FRICTION = -0.12
 BARREL_OFFSET_R = vec(32, -10)
@@ -42,10 +43,10 @@ COIN = {'coin': 'coin.wav'}
 
 #Mob
 MOB_SPEED = vec(0.2, 0.5)
-MOB_HIT_RECT = pg.Rect(0, 0, 24, 36)
-MOB_CHARGE_HIT_RECT = pg.Rect(0, 0, 24, 30)
-MOB_BIG_HIT_RECT = pg.Rect(0, 0, 24, 36)
-MOB_FLYING_HIT_RECT = pg.Rect(0, 0, 24, 30)
+MOB_HIT_RECT = pygame.Rect(0, 0, 24, 36)
+MOB_CHARGE_HIT_RECT = pygame.Rect(0, 0, 24, 30)
+MOB_BIG_HIT_RECT = pygame.Rect(0, 0, 24, 36)
+MOB_FLYING_HIT_RECT = pygame.Rect(0, 0, 24, 30)
 MOB_HEALTH = 100
 MOB_DAMAGE = 10
 MOB_KNOCKBACK = 30
