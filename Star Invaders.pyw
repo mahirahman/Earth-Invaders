@@ -69,7 +69,6 @@ class menu_background(object):
                 star[1] = random.randrange(-20, -5)
             pygame.draw.circle(screen, (192, 192, 192), star, 5)
 
-
         pygame.display.flip()
         fps.tick(60)
 
@@ -86,7 +85,7 @@ def menu():
     while in_menu:
         bg.render(display)
 
-        display.blit(logo,(56,20))
+        display.blit(logo,(63,46))
         text.show_text('Menu Controls: Arrow Keys + Space',2,240,1,9999,font,display)
 
         n = 0
@@ -194,7 +193,7 @@ def controls():
         text_array = ['Use WASD and Space for Player 1','Use Arrow keys and Right Enter for Player 2','For pausing press P']
         n = 0
         for list in text_array:
-            text.show_text(list,200-int(get_text_width(list,2)/2),75+n*20,1,9999,font,display)
+            text.show_text(list,200-int(get_text_width(list,2)/2),95+n*20,1,9999,font,display)
             n += 1
 
         for event in pygame.event.get():
@@ -373,9 +372,13 @@ def credits():
     in_credits = True
     while in_credits:
         bg.render(display)
-        text.show_text('Star Invaders Level Design and Code by',4,4,1,9999,font,display)
-        text.show_text('Mahi Rahman\nSon Tran\nDaniel Nguyen\nTejas Amrale\nPeter Sorial\nSpandan Kolapkar',4,24,1,9999,font,display)
-        text.show_text('Written In - Python 3.7 and Pygame\nTools - Photoshop CS6, bfxr.net, Tiled Editor, Pytmx',4,84,1,9999,font,display)
+        
+        credits_array = ['Mahi Rahman','Son Tran','Daniel Nguyen','Tejas Amrale','Peter Sorial','Spandan Kolapkar']
+        n = 0
+        for names in credits_array:
+            text.show_text(names,200-int(get_text_width(names,1)/2),70+n*20,1,9999,font,display)
+            n += 1
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
