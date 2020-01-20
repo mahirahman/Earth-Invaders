@@ -213,21 +213,17 @@ def highscores():
     while in_highscores:
         bg.render(display)
 
-        with open("assets/raw_highscores.txt", "r") as array:
-            leaderboard = []
-            for line in array:
-                leaderboard.append(line.split())
-                leaderboard.sort(key=lambda i: int(i[1]), reverse=True)
+        with open("assets/highscores.txt", "r") as array:
+            leaderboard = array.readlines()
 
-        with open("assets/highscores.txt", "w+") as f:
-            for NAME,SCORE in leaderboard:
-                f.write(f'{NAME} - {SCORE} Points\n')
+        leaderboard = list(map(lambda line: tuple(line.split()), leaderboard))
+        leaderboard.sort(key=lambda line: int(line[1]), reverse=True)
+        leaderboard = list(map(lambda line: f"{line[0]} - {line[1]} Points\n", leaderboard)) 
+        for n,score in enumerate(leaderboard):
+            text.show_text(score,200-int(get_text_width(score,2)/2),50+n*20,1,9999,font,display)
 
-        f = open("assets/highscores.txt", "r")
-        scores = f.read()
-        text.show_text(scores,165,50,1,9999,font,display)
+        text.show_text('LEADERBOARD',200-int(get_text_width('LEADERBOARD',1)/2),20,1,9999,font,display)
 
-        text.show_text('LEADERBOARD',200-int(get_text_width('LEADERBOARD',2)/2),20,1,9999,font,display)
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -1007,7 +1003,7 @@ class Game:
 
         if self.score > 0  or self.score2 > 0:
             for NAME, SCORE in highscore.items():
-                f = open("assets/raw_highscores.txt", "a")
+                f = open("assets/highscores.txt", "a")
                 f.write(str(NAME) + ' ' + str(SCORE) + '\n')
                 f.close()
 
@@ -1077,7 +1073,7 @@ class Game:
 
         if self.score > 0  or self.score2 > 0:
             for NAME, SCORE in highscore.items():
-                f = open("assets/raw_highscores.txt", "a")
+                f = open("assets/highscores.txt", "a")
                 f.write(str(NAME) + ' ' + str(SCORE) + '\n')
                 f.close()
 
