@@ -4,11 +4,11 @@ vec = pygame.math.Vector2
 
 #Game
 
-#WIDTH = 512
-#HEIGHT = 400
+WIDTH = 512
+HEIGHT = 400
 
-WIDTH = pygame.display.Info().current_w
-HEIGHT = pygame.display.Info().current_h
+#WIDTH = pygame.display.Info().current_w
+#HEIGHT = pygame.display.Info().current_h
 
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
