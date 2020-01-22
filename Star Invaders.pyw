@@ -45,12 +45,12 @@ class menu_background(object):
         star_field_slow = []
         star_field_medium = []
 
-        for slow_stars in range(10): 
+        for slow_stars in range(4): 
             star_loc_x = random.randrange(0, WIDTH)
             star_loc_y = random.randrange(0, HEIGHT)
             star_field_slow.append([star_loc_x, star_loc_y]) 
 
-        for medium_stars in range(10):
+        for medium_stars in range(4):
             star_loc_x = random.randrange(0, WIDTH)
             star_loc_y = random.randrange(0, HEIGHT)
             star_field_medium.append([star_loc_x, star_loc_y])
@@ -69,7 +69,7 @@ class menu_background(object):
                 star[1] = random.randrange(-20, -5)
             pygame.draw.circle(screen, (192, 192, 192), star, 5)
 
-        pygame.display.flip()
+        pygame.display.update()
         fps.tick(60)
 
 def menu():
