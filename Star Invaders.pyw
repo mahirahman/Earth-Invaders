@@ -440,23 +440,29 @@ class Game:
         self.bullet_mob = pygame.transform.scale(self.bullet_mob, (17, 8))
 
         self.effects_sound = {}
-        for type in EFFECTS_SOUND:
-            self.effects_sound[type] = pygame.mixer.Sound('assets/audio/'+EFFECTS_SOUND[type])
+        for audio in EFFECTS_SOUND:
+            self.effects_sound[audio] = pygame.mixer.Sound('assets/audio/'+EFFECTS_SOUND[audio])
+            
         self.shoot_sound = {}
         for audio in SHOOT_SOUND:
             self.shoot_sound[audio] = pygame.mixer.Sound('assets/audio/'+SHOOT_SOUND[audio])
+            
         self.enemy_hurt = {}
         for audio in ENEMY_HURT:
             self.enemy_hurt[audio] = pygame.mixer.Sound('assets/audio/'+ENEMY_HURT[audio])
+            
         self.player_jump = {}
         for audio in PLAYER_JUMP:
             self.player_jump[audio] = pygame.mixer.Sound('assets/audio/'+PLAYER_JUMP[audio])
+            
         self.player_hurt = {}
         for audio in PLAYER_HURT:
             self.player_hurt[audio] = pygame.mixer.Sound('assets/audio/'+PLAYER_HURT[audio])
+            
         self.enemy_morph = {}
         for audio in ENEMY_MORPH:
             self.enemy_morph[audio] = pygame.mixer.Sound('assets/audio/'+ENEMY_MORPH[audio])
+            
         self.coin = {}
         for audio in COIN:
             self.coin[audio] = pygame.mixer.Sound('assets/audio/'+COIN[audio])
@@ -478,7 +484,7 @@ class Game:
         self.mob_big = pygame.sprite.Group()
         self.items = pygame.sprite.Group()
         self.spike = pygame.sprite.Group()
-        self.map = TiledMap('assets/levels/lvl_1.tmx')
+        self.map = TiledMap('assets/levels/test/lvl_1.tmx')
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
         self.fall_death = pygame.sprite.Group()

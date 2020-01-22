@@ -39,8 +39,9 @@ BULLET_DAMAGE = 10
 ENEMY_HURT = {'enemy_hurt': 'enemy_hurt.wav'}
 ENEMY_MORPH = {'morph': 'morph.wav'}
 PLAYER_JUMP = {'jump': 'jump.wav'}
-PLAYER_HURT = {'player_hurt': 'player_hurt.wav'}
 SHOOT_SOUND = {'shoot': 'shoot.wav'}
+
+PLAYER_HURT = {'player_hurt': 'player_hurt.wav'}
 EFFECTS_SOUND = {'collect': 'health.wav'}
 COIN = {'coin': 'coin.wav'}
 
