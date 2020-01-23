@@ -1,6 +1,5 @@
 # Side Scrolling Shooter Game
 # Mahi Rahman, Son Tran, Daniel Nguyen, Tejas Amrale, Peter Sorial
-# Version 1.0.0
 
 import pygame, sys, random, time, os, math
 from pygame.locals import *
@@ -781,8 +780,8 @@ class Game:
             if hit.health <= 0:
                 hit.kill()
                 self.score2 += 10
-                chance = random.randint(1,4)
-                if chance == 1:
+                chance = random.randint(0,9)
+                if chance == 0:
                     self.enemy_morph['morph'].play()
                     Mob_Big(self, hit.pos.x, hit.pos.y, hit.facing)
                 else:
@@ -796,8 +795,8 @@ class Game:
             if hit.health <= 0:
                 hit.kill()
                 self.score += 10
-                chance = random.randint(1,4)
-                if chance == 1:
+                chance = random.randint(0,9)
+                if chance == 0:
                     self.enemy_morph['morph'].play()
                     Mob_Big(self, hit.pos.x, hit.pos.y, hit.facing)
                 else:

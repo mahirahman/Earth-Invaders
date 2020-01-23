@@ -1084,13 +1084,13 @@ class Mob_Big(pg.sprite.Sprite):
     def animate(self):
         now = pg.time.get_ticks()
         if self.facing:
-            if now - self.last_update > 200:
+            if now - self.last_update > 100:
                 self.last_update = now
                 self.current_frame = (self.current_frame + 1) % len(self.walk_frame_L)
                 self.image = self.walk_frame_L[self.current_frame]
                 self.rect = self.image.get_rect()
         else:
-            if now - self.last_update > 200:
+            if now - self.last_update > 100:
                 self.last_update = now
                 self.current_frame = (self.current_frame + 1) % len(self.walk_frame_R)
                 self.image = self.walk_frame_R[self.current_frame]
@@ -1118,9 +1118,9 @@ class Mob_Big(pg.sprite.Sprite):
     def moving(self):
         if not self.facing:
             self.acc = vec(0.1, 0.5)
-            self.rect.centerx +=2
+            self.rect.centerx += 2
             hits2 = pg.sprite.spritecollide(self, self.game.invis_wall, False)
-            self.rect.centerx -=2
+            self.rect.centerx -= 2
             if hits2:
                 self.facing = True
 

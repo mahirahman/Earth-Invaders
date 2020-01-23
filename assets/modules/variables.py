@@ -4,11 +4,11 @@ vec = pygame.math.Vector2
 
 #Game
 
-#WIDTH = 512
-#HEIGHT = 400
+WIDTH = 512
+HEIGHT = 400
 
-WIDTH = pygame.display.Info().current_w
-HEIGHT = pygame.display.Info().current_h
+#WIDTH = pygame.display.Info().current_w
+#HEIGHT = pygame.display.Info().current_h
 
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
@@ -38,12 +38,11 @@ BULLET_DAMAGE = 10
 #Sounds
 ENEMY_HURT = {'enemy_hurt': 'enemy_hurt.wav'}
 ENEMY_MORPH = {'morph': 'morph.wav'}
-PLAYER_JUMP = {'jump': 'jump.wav'}
-SHOOT_SOUND = {'shoot': 'shoot.wav'}
-
+COIN = {'coin': 'coin.wav'}
 PLAYER_HURT = {'player_hurt': 'player_hurt.wav'}
 EFFECTS_SOUND = {'collect': 'health.wav'}
-COIN = {'coin': 'coin.wav'}
+PLAYER_JUMP = {'jump': 'jump.wav'}
+SHOOT_SOUND = {'shoot': 'shoot.wav'}
 
 #Mob
 MOB_SPEED = vec(0.2, 0.5)
