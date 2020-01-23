@@ -36,13 +36,14 @@ BULLET_RATE = 150
 BULLET_DAMAGE = 10
 
 #Sounds
-ENEMY_HURT = {'enemy_hurt': 'enemy_hurt.wav'}
-ENEMY_MORPH = {'morph': 'morph.wav'}
-COIN = {'coin': 'coin.wav'}
-PLAYER_HURT = {'player_hurt': 'player_hurt.wav'}
-EFFECTS_SOUND = {'collect': 'health.wav'}
-PLAYER_JUMP = {'jump': 'jump.wav'}
-SHOOT_SOUND = {'shoot': 'shoot.wav'}
+
+coin = {'coin': 'coin.wav'}
+enemy_hurt = {'enemy_hurt': 'enemy_hurt.wav'}
+health = {'health': 'health.wav'}
+jump = {'jump': 'jump.wav'}
+morph = {'morph': 'morph.wav'}
+player_hurt = {'player_hurt': 'player_hurt.wav'}
+shoot = {'shoot': 'shoot.wav'}
 
 #Mob
 MOB_SPEED = vec(0.2, 0.5)

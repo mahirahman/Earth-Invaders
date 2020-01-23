@@ -789,14 +789,10 @@ class Player2(pg.sprite.Sprite):
             self.health = PLAYER_HEALTH
 
     def jump(self):
-        self.rect.x += 1
-        self.rect.y -= 1
         hits = pg.sprite.spritecollide(self, self.game.walls, False)
-        self.rect.x -= 1
-        self.rect.y += 1
         if hits:
-            self.vel.y = -10
             self.game.player_jump['jump'].play()
+            self.vel.y = -10
 
     def death(self):
         if not self.alive:
