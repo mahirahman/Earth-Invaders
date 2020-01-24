@@ -35,16 +35,6 @@ BULLET_LIFETIME = 1000
 BULLET_RATE = 150
 BULLET_DAMAGE = 10
 
-#Sounds
-
-coin = {'coin': 'coin.wav'}
-enemy_hurt = {'enemy_hurt': 'enemy_hurt.wav'}
-health = {'health': 'health.wav'}
-jump = {'jump': 'jump.wav'}
-morph = {'morph': 'morph.wav'}
-player_hurt = {'player_hurt': 'player_hurt.wav'}
-shoot = {'shoot': 'shoot.wav'}
-
 #Mob
 MOB_SPEED = vec(0.2, 0.5)
 MOB_HIT_RECT = pygame.Rect(0, 0, 24, 36)

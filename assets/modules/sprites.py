@@ -1,15 +1,15 @@
-import pygame as pg
+import pygame
 import random
 from assets.modules.variables import *
 from assets.modules.tilemap import collide_hit_rect
 from os import path
 import pytweening as tween
 from itertools import chain
-vec = pg.math.Vector2
+vec = pygame.math.Vector2
 
 def collide_with_walls(sprite, group, dir):
     if dir == 'x':
-        hits = pg.sprite.spritecollide(sprite, group, False, collide_hit_rect)
+        hits = pygame.sprite.spritecollide(sprite, group, False, collide_hit_rect)
         if hits:
             if hits[0].rect.centerx > sprite.hit_rect.centerx:
                 sprite.pos.x = hits[0].rect.left - sprite.hit_rect.width / 2
@@ -18,7 +18,7 @@ def collide_with_walls(sprite, group, dir):
             sprite.vel.x = 0
             sprite.hit_rect.centerx = sprite.pos.x
     if dir == 'y':
-        hits = pg.sprite.spritecollide(sprite, group, False, collide_hit_rect)
+        hits = pygame.sprite.spritecollide(sprite, group, False, collide_hit_rect)
         if hits:
             if hits[0].rect.centery > sprite.hit_rect.centery:
                 sprite.pos.y = hits[0].rect.top - sprite.hit_rect.height / 2
@@ -27,83 +27,83 @@ def collide_with_walls(sprite, group, dir):
             sprite.vel.y = 0
             sprite.hit_rect.centery = sprite.pos.y
 
-class Bullet(pg.sprite.Sprite):
+class Bullet(pygame.sprite.Sprite):
     def __init__(self, game, pos, dir, facing_R):
         self.groups = game.all_sprites, game.bullets
-        pg.sprite.Sprite.__init__(self, self.groups)
+        pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         if facing_R:
             self.image = game.bullet_img_R
         else:
             self.image = game.bullet_img_L
         self.rect = self.image.get_rect()
-        self.hit_rect = pg.Rect(0, 0, 17, 8)
+        self.hit_rect = pygame.Rect(0, 0, 17, 8)
         self.hit_rect.center = self.rect.center
         self.pos = vec(pos)
         self.rect.center = pos
         self.vel = dir * BULLET_SPEED
-        self.spawn_time = pg.time.get_ticks()
+        self.spawn_time = pygame.time.get_ticks()
 
     def update(self):
         self.pos += self.vel
         self.rect.center = self.pos
-        if pg.time.get_ticks() - self.spawn_time > BULLET_LIFETIME:
+        if pygame.time.get_ticks() - self.spawn_time > BULLET_LIFETIME:
             self.kill()
-        if pg.sprite.spritecollideany(self, self.game.walls):
+        if pygame.sprite.spritecollideany(self, self.game.walls):
             self.kill()
 
-class Bullet2(pg.sprite.Sprite):
+class Bullet2(pygame.sprite.Sprite):
     def __init__(self, game, pos, dir, facing_R):
         self.groups = game.all_sprites, game.bullets2
-        pg.sprite.Sprite.__init__(self, self.groups)
+        pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         if facing_R:
             self.image = game.bullet_img_R
         else:
             self.image = game.bullet_img_L
         self.rect = self.image.get_rect()
-        self.hit_rect = pg.Rect(0, 0, 17, 8)
+        self.hit_rect = pygame.Rect(0, 0, 17, 8)
         self.hit_rect.center = self.rect.center
         self.pos = vec(pos)
         self.rect.center = pos
         self.vel = dir * BULLET_SPEED
-        self.spawn_time = pg.time.get_ticks()
+        self.spawn_time = pygame.time.get_ticks()
 
     def update(self):
         self.pos += self.vel
         self.rect.center = self.pos
-        if pg.time.get_ticks() - self.spawn_time > BULLET_LIFETIME:
+        if pygame.time.get_ticks() - self.spawn_time > BULLET_LIFETIME:
             self.kill()
-        if pg.sprite.spritecollideany(self, self.game.walls):
+        if pygame.sprite.spritecollideany(self, self.game.walls):
             self.kill()
 
-class Mob_Bullet(pg.sprite.Sprite):
+class Mob_Bullet(pygame.sprite.Sprite):
     def __init__(self, game, pos, dir, angle):
         self.groups = game.all_sprites, game.mob_bullets
-        pg.sprite.Sprite.__init__(self, self.groups)
+        pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = game.bullet_mob
-        self.image = pg.transform.rotate(self.image, angle)
+        self.image = pygame.transform.rotate(self.image, angle)
         self.rect = self.image.get_rect()
-        self.hit_rect = pg.Rect(0, 0, 17, 8)
+        self.hit_rect = pygame.Rect(0, 0, 17, 8)
         self.hit_rect.center = self.rect.center
         self.pos = vec(pos)
         self.rect.center = pos
         self.vel = dir * MOB_BULLET_SPEED
-        self.spawn_time = pg.time.get_ticks()
+        self.spawn_time = pygame.time.get_ticks()
 
     def update(self):
         self.pos += self.vel
         self.rect.center = self.pos
-        if pg.time.get_ticks() - self.spawn_time > MOB_BULLET_LIFETIME:
+        if pygame.time.get_ticks() - self.spawn_time > MOB_BULLET_LIFETIME:
             self.kill()
-        if pg.sprite.spritecollideany(self, self.game.walls):
+        if pygame.sprite.spritecollideany(self, self.game.walls):
             self.kill()
 
-class Player(pg.sprite.Sprite):
+class Player(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites
-        pg.sprite.Sprite.__init__(self, self.groups)
+        pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.current_frame = 0
         self.last_update = 0
@@ -134,8 +134,8 @@ class Player(pg.sprite.Sprite):
 
         i = 1
         while i <= 4:
-            frame = pg.image.load('assets/sprites/player/1/idle/R_idle_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (64, 64))
+            frame = pygame.image.load('assets/sprites/player/1/idle/R_idle_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (64, 64))
             i = i + 1
             self.standing_frame_R.append(frame)
 
@@ -143,8 +143,8 @@ class Player(pg.sprite.Sprite):
 
         i = 1
         while i <= 4:
-            frame = pg.image.load('assets/sprites/player/1/idle/L_idle_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (64, 64))
+            frame = pygame.image.load('assets/sprites/player/1/idle/L_idle_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (64, 64))
             i = i + 1
             self.standing_frame_L.append(frame)
 
@@ -153,8 +153,8 @@ class Player(pg.sprite.Sprite):
 
         i = 1
         while i <= 14:
-            frame = pg.image.load('assets/sprites/player/1/run/R_run_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (64, 64))
+            frame = pygame.image.load('assets/sprites/player/1/run/R_run_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (64, 64))
             i = i + 1
             self.run_frame_R.append(frame)
 
@@ -162,8 +162,8 @@ class Player(pg.sprite.Sprite):
 
         i = 1
         while i <= 14:
-            frame = pg.image.load('assets/sprites/player/1/run/L_run_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (64, 64))
+            frame = pygame.image.load('assets/sprites/player/1/run/L_run_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (64, 64))
             i = i + 1
             self.run_frame_L.append(frame)
 
@@ -171,8 +171,8 @@ class Player(pg.sprite.Sprite):
 
         i = 1
         while i <= 4:
-            frame = pg.image.load('assets/sprites/player/1/shoot/R_shoot_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (64, 64))
+            frame = pygame.image.load('assets/sprites/player/1/shoot/R_shoot_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (64, 64))
             i = i + 1
             self.shoot_frame_R.append(frame)
 
@@ -180,8 +180,8 @@ class Player(pg.sprite.Sprite):
 
         i = 1
         while i <= 4:
-            frame = pg.image.load('assets/sprites/player/1/shoot/L_shoot_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (64, 64))
+            frame = pygame.image.load('assets/sprites/player/1/shoot/L_shoot_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (64, 64))
             i = i + 1
             self.shoot_frame_L.append(frame)
 
@@ -189,8 +189,8 @@ class Player(pg.sprite.Sprite):
 
         i = 1
         while i <= 8:
-            frame = pg.image.load('assets/sprites/player/1/death/L_death_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (64, 64))
+            frame = pygame.image.load('assets/sprites/player/1/death/L_death_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (64, 64))
             i = i + 1
             self.death_frame_L.append(frame)
 
@@ -198,32 +198,32 @@ class Player(pg.sprite.Sprite):
 
         i = 1
         while i <= 8:
-            frame = pg.image.load('assets/sprites/player/1/death/R_death_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (64, 64))
+            frame = pygame.image.load('assets/sprites/player/1/death/R_death_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (64, 64))
             i = i + 1
             self.death_frame_R.append(frame)
 
         self.jump_frame_L = []
-        frame = pg.image.load('assets/sprites/player/1/jump/L_jump.png').convert_alpha()
-        frame = pg.transform.scale(frame, (64, 64))
+        frame = pygame.image.load('assets/sprites/player/1/jump/L_jump.png').convert_alpha()
+        frame = pygame.transform.scale(frame, (64, 64))
         self.jump_frame_L.append(frame)
 
         self.jump_frame_R = []
-        frame = pg.image.load('assets/sprites/player/1/jump/R_jump.png').convert_alpha()
-        frame = pg.transform.scale(frame, (64, 64))
+        frame = pygame.image.load('assets/sprites/player/1/jump/R_jump.png').convert_alpha()
+        frame = pygame.transform.scale(frame, (64, 64))
         self.jump_frame_R.append(frame)
 
     def get_keys(self):
         if self.control:
-            keys = pg.key.get_pressed()
-            if keys[pg.K_d]:
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_d]:
                 self.acc.x = PLAYER_ACC
                 self.facing_R = True
-            if keys[pg.K_a]:
+            if keys[pygame.K_a]:
                 self.acc.x = -PLAYER_ACC
                 self.facing_R = False
-            if keys[pg.K_SPACE]:
-                now = pg.time.get_ticks()
+            if keys[pygame.K_SPACE]:
+                now = pygame.time.get_ticks()
                 if self.running and self.shooting:
                     if now - self.last_shot > BULLET_RATE:
                         self.last_shot = now
@@ -231,13 +231,13 @@ class Player(pg.sprite.Sprite):
                             pos = self.pos + BARREL_OFFSET_RUN_R
                             dir = vec(1,0)
                             Bullet(self.game, pos, dir, self.facing_R)
-                            self.game.shoot_sound['shoot'].play()
+                            pygame.mixer.Sound.play(self.game.shoot)
                             self.shooting = True
                         else:
                             pos = self.pos + BARREL_OFFSET_RUN_L
                             dir = vec(-1,0)
                             Bullet(self.game, pos, dir, self.facing_R)
-                            self.game.shoot_sound['shoot'].play()
+                            pygame.mixer.Sound.play(self.game.shoot)
                             self.shooting = True
                 else:
                     if now - self.last_shot > BULLET_RATE:
@@ -246,13 +246,13 @@ class Player(pg.sprite.Sprite):
                             pos = self.pos + BARREL_OFFSET_R
                             dir = vec(1, 0)
                             Bullet(self.game, pos, dir, self.facing_R)
-                            self.game.shoot_sound['shoot'].play()
+                            pygame.mixer.Sound.play(self.game.shoot)
                             self.shooting = True
                         else:
                             pos = self.pos + BARREL_OFFSET_L
                             dir = vec(-1, 0)
                             Bullet(self.game, pos, dir, self.facing_R)
-                            self.game.shoot_sound['shoot'].play()
+                            pygame.mixer.Sound.play(self.game.shoot)
                             self.shooting = True
         else:
             pass
@@ -333,7 +333,7 @@ class Player(pg.sprite.Sprite):
         self.get_keys()
         if self.damaged:
             try:
-                self.image.fill((255, 255, 255, next(self.damage_alpha)), special_flags=pg.BLEND_RGBA_MULT)
+                self.image.fill((255, 255, 255, next(self.damage_alpha)), special_flags=pygame.BLEND_RGBA_MULT)
             except:
                 self.damaged = False
                 self.load_images()
@@ -360,7 +360,7 @@ class Player(pg.sprite.Sprite):
             self.health = PLAYER_HEALTH
 
     def animate(self):
-        now = pg.time.get_ticks()
+        now = pygame.time.get_ticks()
 
         if self.vel.x != 0:
             self.running = True
@@ -429,16 +429,16 @@ class Player(pg.sprite.Sprite):
             pass
 
     def jump(self):
-        hits = pg.sprite.spritecollide(self, self.game.walls, False)
+        hits = pygame.sprite.spritecollide(self, self.game.walls, False)
         if hits:
-            self.game.player_jump['jump'].play()
+            pygame.mixer.Sound.play(self.game.jump_1)
             self.vel.y = -10
 
     def death(self):
         if not self.alive:
             self.control = False
             self.collision = False
-            now = pg.time.get_ticks()
+            now = pygame.time.get_ticks()
             if self.facing_R:
                 if now - self.death_time > 150:
                     self.death_time = now
@@ -454,16 +454,16 @@ class Player(pg.sprite.Sprite):
                     self.rect = self.image.get_rect()
 
             if self.death_anim >= 7:
-                self.hit_rect = pg.Rect(0, 0, 0, 0)
+                self.hit_rect = pygame.Rect(0, 0, 0, 0)
                 self.shooting = False
                 self.game.playersalive += 1
                 self.kill()
 
 
-class Player2(pg.sprite.Sprite):
+class Player2(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites
-        pg.sprite.Sprite.__init__(self, self.groups)
+        pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.current_frame = 0
         self.last_update = 0
@@ -494,8 +494,8 @@ class Player2(pg.sprite.Sprite):
 
         i = 1
         while i <= 4:
-            frame = pg.image.load('assets/sprites/player/2/idle/R_idle_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (64, 64))
+            frame = pygame.image.load('assets/sprites/player/2/idle/R_idle_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (64, 64))
             i = i + 1
             self.standing_frame_R.append(frame)
 
@@ -503,8 +503,8 @@ class Player2(pg.sprite.Sprite):
 
         i = 1
         while i <= 4:
-            frame = pg.image.load('assets/sprites/player/2/idle/L_idle_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (64, 64))
+            frame = pygame.image.load('assets/sprites/player/2/idle/L_idle_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (64, 64))
             i = i + 1
             self.standing_frame_L.append(frame)
 
@@ -513,8 +513,8 @@ class Player2(pg.sprite.Sprite):
 
         i = 1
         while i <= 14:
-            frame = pg.image.load('assets/sprites/player/2/run/R_run_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (64, 64))
+            frame = pygame.image.load('assets/sprites/player/2/run/R_run_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (64, 64))
             i = i + 1
             self.run_frame_R.append(frame)
 
@@ -522,8 +522,8 @@ class Player2(pg.sprite.Sprite):
 
         i = 1
         while i <= 14:
-            frame = pg.image.load('assets/sprites/player/2/run/L_run_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (64, 64))
+            frame = pygame.image.load('assets/sprites/player/2/run/L_run_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (64, 64))
             i = i + 1
             self.run_frame_L.append(frame)
 
@@ -531,8 +531,8 @@ class Player2(pg.sprite.Sprite):
 
         i = 1
         while i <= 4:
-            frame = pg.image.load('assets/sprites/player/2/shoot/R_shoot_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (64, 64))
+            frame = pygame.image.load('assets/sprites/player/2/shoot/R_shoot_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (64, 64))
             i = i + 1
             self.shoot_frame_R.append(frame)
 
@@ -540,8 +540,8 @@ class Player2(pg.sprite.Sprite):
 
         i = 1
         while i <= 4:
-            frame = pg.image.load('assets/sprites/player/2/shoot/L_shoot_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (64, 64))
+            frame = pygame.image.load('assets/sprites/player/2/shoot/L_shoot_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (64, 64))
             i = i + 1
             self.shoot_frame_L.append(frame)
 
@@ -549,8 +549,8 @@ class Player2(pg.sprite.Sprite):
 
         i = 1
         while i <= 8:
-            frame = pg.image.load('assets/sprites/player/2/death/L_death_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (64, 64))
+            frame = pygame.image.load('assets/sprites/player/2/death/L_death_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (64, 64))
             i = i + 1
             self.death_frame_L.append(frame)
 
@@ -558,33 +558,32 @@ class Player2(pg.sprite.Sprite):
 
         i = 1
         while i <= 8:
-            frame = pg.image.load('assets/sprites/player/2/death/R_death_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (64, 64))
+            frame = pygame.image.load('assets/sprites/player/2/death/R_death_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (64, 64))
             i = i + 1
             self.death_frame_R.append(frame)
 
         self.jump_frame_L = []
-        frame = pg.image.load('assets/sprites/player/2/jump/L_jump.png').convert_alpha()
-        frame = pg.transform.scale(frame, (64, 64))
+        frame = pygame.image.load('assets/sprites/player/2/jump/L_jump.png').convert_alpha()
+        frame = pygame.transform.scale(frame, (64, 64))
         self.jump_frame_L.append(frame)
 
         self.jump_frame_R = []
-        frame = pg.image.load('assets/sprites/player/2/jump/R_jump.png').convert_alpha()
-        frame = pg.transform.scale(frame, (64, 64))
+        frame = pygame.image.load('assets/sprites/player/2/jump/R_jump.png').convert_alpha()
+        frame = pygame.transform.scale(frame, (64, 64))
         self.jump_frame_R.append(frame)
 
     def get_keys(self):
-        self.rot_speed = 0
         if self.control:
-            keys = pg.key.get_pressed()
-            if keys[pg.K_RIGHT]:
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_RIGHT]:
                 self.acc.x = PLAYER_ACC
                 self.facing_R = True
-            if keys[pg.K_LEFT]:
+            if keys[pygame.K_LEFT]:
                 self.acc.x = -PLAYER_ACC
                 self.facing_R = False
-            if keys[pg.K_RETURN]:
-                now = pg.time.get_ticks()
+            if keys[pygame.K_RETURN]:
+                now = pygame.time.get_ticks()
                 if self.running and self.shooting:
                     if now - self.last_shot > BULLET_RATE:
                         self.last_shot = now
@@ -592,13 +591,13 @@ class Player2(pg.sprite.Sprite):
                             pos = self.pos + BARREL_OFFSET_RUN_R
                             dir = vec(1,0)
                             Bullet2(self.game, pos, dir, self.facing_R)
-                            self.game.shoot_sound['shoot'].play()
+                            pygame.mixer.Sound.play(self.game.shoot)
                             self.shooting = True
                         else:
                             pos = self.pos + BARREL_OFFSET_RUN_L
                             dir = vec(-1,0)
                             Bullet2(self.game, pos, dir, self.facing_R)
-                            self.game.shoot_sound['shoot'].play()
+                            pygame.mixer.Sound.play(self.game.shoot)
                             self.shooting = True
                 else:
                     if now - self.last_shot > BULLET_RATE:
@@ -607,13 +606,13 @@ class Player2(pg.sprite.Sprite):
                             pos = self.pos + BARREL_OFFSET_R
                             dir = vec(1, 0)
                             Bullet2(self.game, pos, dir, self.facing_R)
-                            self.game.shoot_sound['shoot'].play()
+                            pygame.mixer.Sound.play(self.game.shoot)
                             self.shooting = True
                         else:
                             pos = self.pos + BARREL_OFFSET_L
                             dir = vec(-1, 0)
                             Bullet2(self.game, pos, dir, self.facing_R)
-                            self.game.shoot_sound['shoot'].play()
+                            pygame.mixer.Sound.play(self.game.shoot)
                             self.shooting = True
 
     def hit(self):
@@ -692,7 +691,7 @@ class Player2(pg.sprite.Sprite):
         self.get_keys()
         if self.damaged:
             try:
-                self.image.fill((255, 255, 255, next(self.damage_alpha)), special_flags=pg.BLEND_RGBA_MULT)
+                self.image.fill((255, 255, 255, next(self.damage_alpha)), special_flags=pygame.BLEND_RGBA_MULT)
             except:
                 self.damaged = False
                 self.load_images()
@@ -715,7 +714,7 @@ class Player2(pg.sprite.Sprite):
         self.death()
 
     def animate(self):
-        now = pg.time.get_ticks()
+        now = pygame.time.get_ticks()
 
         if self.vel.x != 0:
             self.running = True
@@ -789,16 +788,16 @@ class Player2(pg.sprite.Sprite):
             self.health = PLAYER_HEALTH
 
     def jump(self):
-        hits = pg.sprite.spritecollide(self, self.game.walls, False)
-        if hits:
-            self.game.player_jump['jump'].play()
+        hits = pygame.sprite.spritecollide(self, self.game.walls, False)
+        if hits:       
+            pygame.mixer.Sound.play(self.game.jump_2)
             self.vel.y = -10
 
     def death(self):
         if not self.alive:
             self.control = False
             self.collision = False
-            now = pg.time.get_ticks()
+            now = pygame.time.get_ticks()
             if self.facing_R:
                 if now - self.death_time > 150:
                     self.death_time = now
@@ -814,15 +813,15 @@ class Player2(pg.sprite.Sprite):
                     self.rect = self.image.get_rect()
 
             if self.death_anim >= 7:
-                self.hit_rect = pg.Rect(0, 0, 0, 0)
+                self.hit_rect = pygame.Rect(0, 0, 0, 0)
                 self.shooting = False
                 self.game.playersalive += 1
                 self.kill()
 
-class Mob_small_1(pg.sprite.Sprite):
+class Mob_small_1(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.mob_small_1
-        pg.sprite.Sprite.__init__(self, self.groups)
+        pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.current_frame = 0
         self.last_update = 0
@@ -849,8 +848,8 @@ class Mob_small_1(pg.sprite.Sprite):
 
         i = 1
         while i <= 4:
-            frame = pg.image.load('assets/sprites/enemy/low/1/R_run_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (24, 36))
+            frame = pygame.image.load('assets/sprites/enemy/low/1/R_run_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (24, 36))
             i = i + 1
             self.walk_frame_R.append(frame)
 
@@ -858,13 +857,13 @@ class Mob_small_1(pg.sprite.Sprite):
 
         i = 1
         while i <= 4:
-            frame = pg.image.load('assets/sprites/enemy/low/1/L_run_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (24, 36))
+            frame = pygame.image.load('assets/sprites/enemy/low/1/L_run_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (24, 36))
             i = i + 1
             self.walk_frame_L.append(frame)
 
     def animate(self):
-        now = pg.time.get_ticks()
+        now = pygame.time.get_ticks()
         if self.facing:
             if now - self.last_update > 200:
                 self.last_update = now
@@ -900,7 +899,7 @@ class Mob_small_1(pg.sprite.Sprite):
         if not self.facing:
             self.acc = vec(0.2, 0.5)
             self.rect.centerx +=2
-            hits2 = pg.sprite.spritecollide(self, self.game.invis_wall, False)
+            hits2 = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
             self.rect.centerx -=2
             if hits2:
                 self.facing = True
@@ -908,7 +907,7 @@ class Mob_small_1(pg.sprite.Sprite):
         else:
             self.acc = vec(-0.2, 0.5)
             self.rect.centerx -= 2
-            hits = pg.sprite.spritecollide(self, self.game.invis_wall, False)
+            hits = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
             self.rect.centerx += 2
             if hits:
                 self.facing = False
@@ -921,15 +920,15 @@ class Mob_small_1(pg.sprite.Sprite):
         else:
             self.col = RED
         width = int(self.rect.width * self.health / MOB_HEALTH)
-        self.health_bar = pg.Rect(0, 0, width, 2)
+        self.health_bar = pygame.Rect(0, 0, width, 2)
         if self.health < MOB_HEALTH:
-            pg.draw.rect(self.image, self.col, self.health_bar)
+            pygame.draw.rect(self.image, self.col, self.health_bar)
             self.load_images()
 
-class Mob_small_2(pg.sprite.Sprite):
+class Mob_small_2(pygame.sprite.Sprite):
     def __init__(self, game, x, y, facing):
         self.groups = game.all_sprites, game.mob_small_2
-        pg.sprite.Sprite.__init__(self, self.groups)
+        pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.current_frame = 0
         self.last_update = 0
@@ -956,8 +955,8 @@ class Mob_small_2(pg.sprite.Sprite):
 
         i = 1
         while i <= 4:
-            frame = pg.image.load('assets/sprites/enemy/low/2/R_run_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (24, 36))
+            frame = pygame.image.load('assets/sprites/enemy/low/2/R_run_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (24, 36))
             i = i + 1
             self.walk_frame_R.append(frame)
 
@@ -965,13 +964,13 @@ class Mob_small_2(pg.sprite.Sprite):
 
         i = 1
         while i <= 4:
-            frame = pg.image.load('assets/sprites/enemy/low/2/L_run_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (24, 36))
+            frame = pygame.image.load('assets/sprites/enemy/low/2/L_run_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (24, 36))
             i = i + 1
             self.walk_frame_L.append(frame)
 
     def animate(self):
-        now = pg.time.get_ticks()
+        now = pygame.time.get_ticks()
         if self.facing:
             if now - self.last_update > 200:
                 self.last_update = now
@@ -1007,7 +1006,7 @@ class Mob_small_2(pg.sprite.Sprite):
         if not self.facing:
             self.acc = vec(0.2, 0.5)
             self.rect.centerx +=2
-            hits2 = pg.sprite.spritecollide(self, self.game.invis_wall, False)
+            hits2 = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
             self.rect.centerx -=2
             if hits2:
                 self.facing = True
@@ -1015,7 +1014,7 @@ class Mob_small_2(pg.sprite.Sprite):
         else:
             self.acc = vec(-0.2, 0.5)
             self.rect.centerx -= 2
-            hits = pg.sprite.spritecollide(self, self.game.invis_wall, False)
+            hits = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
             self.rect.centerx += 2
             if hits:
                 self.facing = False
@@ -1028,16 +1027,16 @@ class Mob_small_2(pg.sprite.Sprite):
         else:
             self.col = RED
         width = int(self.rect.width * self.health / MOB_HEALTH)
-        self.health_bar = pg.Rect(0, 0, width, 2)
+        self.health_bar = pygame.Rect(0, 0, width, 2)
         if self.health < MOB_HEALTH:
-            pg.draw.rect(self.image, self.col, self.health_bar)
+            pygame.draw.rect(self.image, self.col, self.health_bar)
             self.load_images()
 
-class Mob_Big(pg.sprite.Sprite):
+class Mob_Big(pygame.sprite.Sprite):
     def __init__(self, game, x, y, facing):
         self.game = game
         self.groups = game.all_sprites, game.mob_big
-        pg.sprite.Sprite.__init__(self, self.groups)
+        pygame.sprite.Sprite.__init__(self, self.groups)
         self.current_frame = 0
         self.last_update = 0
         self.load_images()
@@ -1063,8 +1062,8 @@ class Mob_Big(pg.sprite.Sprite):
 
         i = 1
         while i <= 4:
-            frame = pg.image.load('assets/sprites/enemy/high/R_run_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (36, 48))
+            frame = pygame.image.load('assets/sprites/enemy/high/R_run_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (36, 48))
             i = i + 1
             self.walk_frame_R.append(frame)
 
@@ -1072,13 +1071,13 @@ class Mob_Big(pg.sprite.Sprite):
 
         i = 1
         while i <= 4:
-            frame = pg.image.load('assets/sprites/enemy/high/L_run_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (36, 48))
+            frame = pygame.image.load('assets/sprites/enemy/high/L_run_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (36, 48))
             i = i + 1
             self.walk_frame_L.append(frame)
 
     def animate(self):
-        now = pg.time.get_ticks()
+        now = pygame.time.get_ticks()
         if self.facing:
             if now - self.last_update > 100:
                 self.last_update = now
@@ -1115,7 +1114,7 @@ class Mob_Big(pg.sprite.Sprite):
         if not self.facing:
             self.acc = vec(0.1, 0.5)
             self.rect.centerx += 2
-            hits2 = pg.sprite.spritecollide(self, self.game.invis_wall, False)
+            hits2 = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
             self.rect.centerx -= 2
             if hits2:
                 self.facing = True
@@ -1123,7 +1122,7 @@ class Mob_Big(pg.sprite.Sprite):
         else:
             self.acc = vec(-0.1, 0.5)
             self.rect.centerx -= 2
-            hits = pg.sprite.spritecollide(self, self.game.invis_wall, False)
+            hits = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
             self.rect.centerx += 2
             if hits:
                 self.facing = False
@@ -1136,15 +1135,15 @@ class Mob_Big(pg.sprite.Sprite):
         else:
             self.col = RED
         width = int(self.rect.width * self.health / 300)
-        self.health_bar = pg.Rect(0, 0, width, -5)
+        self.health_bar = pygame.Rect(0, 0, width, -5)
         if self.health < 300:
-            pg.draw.rect(self.image, self.col, self.health_bar)
+            pygame.draw.rect(self.image, self.col, self.health_bar)
             self.load_images()
 
-class Mob_flying(pg.sprite.Sprite):
+class Mob_flying(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.mob_flying
-        pg.sprite.Sprite.__init__(self, self.groups)
+        pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.current_frame = 0
         self.last_update = 0
@@ -1174,8 +1173,8 @@ class Mob_flying(pg.sprite.Sprite):
 
         i = 1
         while i <= 4:
-            frame = pg.image.load('assets/sprites/enemy/med/R_run_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (24, 36))
+            frame = pygame.image.load('assets/sprites/enemy/med/R_run_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (24, 36))
             i = i + 1
             self.walk_frame_R.append(frame)
 
@@ -1183,13 +1182,13 @@ class Mob_flying(pg.sprite.Sprite):
 
         i = 1
         while i <= 4:
-            frame = pg.image.load('assets/sprites/enemy/med/L_run_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (24, 36))
+            frame = pygame.image.load('assets/sprites/enemy/med/L_run_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (24, 36))
             i = i + 1
             self.walk_frame_L.append(frame)
 
     def animate(self):
-        now = pg.time.get_ticks()
+        now = pygame.time.get_ticks()
         if self.facing:
             if now - self.last_update > 200:
                 self.last_update = now
@@ -1307,7 +1306,7 @@ class Mob_flying(pg.sprite.Sprite):
 
         if self.vel.y != 0.2 and self.vel.y != -0.2:
             self.vel.y = 0.2
-        now = pg.time.get_ticks()
+        now = pygame.time.get_ticks()
 
         if not self.facing:
             if now - self.wobble > 750 and self.vel.y == -0.2:
@@ -1319,7 +1318,7 @@ class Mob_flying(pg.sprite.Sprite):
 
             self.acc = vec(0.15, 0)
             self.rect.centerx +=2
-            hits2 = pg.sprite.spritecollide(self, self.game.invis_wall, False)
+            hits2 = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
             self.rect.centerx -=2
             if hits2:
                 self.facing = True
@@ -1334,7 +1333,7 @@ class Mob_flying(pg.sprite.Sprite):
 
             self.acc = vec(-0.15, 0)
             self.rect.centerx -= 2
-            hits = pg.sprite.spritecollide(self, self.game.invis_wall, False)
+            hits = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
             self.rect.centerx += 2
             if hits:
                 self.facing = False
@@ -1347,13 +1346,13 @@ class Mob_flying(pg.sprite.Sprite):
         else:
             self.col = RED
         width = int(self.rect.width * self.health / 150)
-        self.health_bar = pg.Rect(0, 0, width, 2)
+        self.health_bar = pygame.Rect(0, 0, width, 2)
         if self.health < 150:
-            pg.draw.rect(self.image, self.col, self.health_bar)
+            pygame.draw.rect(self.image, self.col, self.health_bar)
             self.load_images()
 
     def shoot(self):
-        now = pg.time.get_ticks()
+        now = pygame.time.get_ticks()
         if now - self.last_shot > MOB_BULLET_RATE:
             self.last_shot = now
             pos = self.pos
@@ -1370,10 +1369,10 @@ class Mob_flying(pg.sprite.Sprite):
             dir = vec(0, 1)
             Mob_Bullet(self.game, pos, dir, angle)
 
-class Mob_charge(pg.sprite.Sprite):
+class Mob_charge(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.mob_charge
-        pg.sprite.Sprite.__init__(self, self.groups)
+        pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.current_frame = 0
         self.last_update = 0
@@ -1407,8 +1406,8 @@ class Mob_charge(pg.sprite.Sprite):
 
         i = 1
         while i <= 4:
-            frame = pg.image.load('assets/sprites/enemy/low/3/R_run_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (24, 36))
+            frame = pygame.image.load('assets/sprites/enemy/low/3/R_run_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (24, 36))
             i = i + 1
             self.walk_frame_R.append(frame)
 
@@ -1416,13 +1415,13 @@ class Mob_charge(pg.sprite.Sprite):
 
         i = 1
         while i <= 4:
-            frame = pg.image.load('assets/sprites/enemy/low/3/L_run_' + str(i) + '.png').convert_alpha()
-            frame = pg.transform.scale(frame, (24, 36))
+            frame = pygame.image.load('assets/sprites/enemy/low/3/L_run_' + str(i) + '.png').convert_alpha()
+            frame = pygame.transform.scale(frame, (24, 36))
             i = i + 1
             self.walk_frame_L.append(frame)
 
     def animate(self):
-        now = pg.time.get_ticks()
+        now = pygame.time.get_ticks()
         if self.charging:
             anim_speed = 50
         else:
@@ -1483,7 +1482,7 @@ class Mob_charge(pg.sprite.Sprite):
             self.chargesequence = True
 
         elif self.detected and not self.charging and self.chargesequence:
-            time = pg.time.get_ticks()
+            time = pygame.time.get_ticks()
             if self.charge_counter != 3:
                 if time - self.step > 500:
                     if self.facing:
@@ -1497,7 +1496,7 @@ class Mob_charge(pg.sprite.Sprite):
                 self.charging = True
 
         elif self.detected and self.charging and self.chargesequence:
-            self.charge_time = pg.time.get_ticks()
+            self.charge_time = pygame.time.get_ticks()
             if self.charge_time <= int(10000*self.round):
                 self.animate()
                 self.acc.x += self.vel.x * PLAYER_FRICTION
@@ -1522,7 +1521,7 @@ class Mob_charge(pg.sprite.Sprite):
         if not self.facing:
             self.acc = vec(0.2, 0.5)
             self.rect.centerx +=2
-            hits2 = pg.sprite.spritecollide(self, self.game.invis_wall, False)
+            hits2 = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
             self.rect.centerx -=2
             if hits2:
                 self.facing = True
@@ -1530,7 +1529,7 @@ class Mob_charge(pg.sprite.Sprite):
         else:
             self.acc = vec(-0.2, 0.5)
             self.rect.centerx -= 2
-            hits = pg.sprite.spritecollide(self, self.game.invis_wall, False)
+            hits = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
             self.rect.centerx += 2
             if hits:
                 self.facing = False
@@ -1539,7 +1538,7 @@ class Mob_charge(pg.sprite.Sprite):
         if not self.facing:
             self.acc = vec(0.5, 0.5)
             self.rect.centerx +=2
-            hits2 = pg.sprite.spritecollide(self, self.game.invis_wall, False)
+            hits2 = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
             self.rect.centerx -=2
             if hits2:
                 self.facing = True
@@ -1547,7 +1546,7 @@ class Mob_charge(pg.sprite.Sprite):
         else:
             self.acc = vec(-0.5, 0.5)
             self.rect.centerx -= 2
-            hits = pg.sprite.spritecollide(self, self.game.invis_wall, False)
+            hits = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
             self.rect.centerx += 2
             if hits:
                 self.facing = False
@@ -1560,86 +1559,86 @@ class Mob_charge(pg.sprite.Sprite):
         else:
             self.col = RED
         width = int(self.rect.width * self.health / MOB_HEALTH)
-        self.health_bar = pg.Rect(0, 0, width, 2)
+        self.health_bar = pygame.Rect(0, 0, width, 2)
         if self.health < MOB_HEALTH:
-            pg.draw.rect(self.image, self.col, self.health_bar)
+            pygame.draw.rect(self.image, self.col, self.health_bar)
             self.load_images()
 
-class Obstacle(pg.sprite.Sprite):
+class Obstacle(pygame.sprite.Sprite):
     def __init__(self, game, x, y, w, h):
         self.groups = game.walls
-        pg.sprite.Sprite.__init__(self, self.groups)
+        pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.rect = pg.Rect(x, y, w, h)
+        self.rect = pygame.Rect(x, y, w, h)
         self.x = x
         self.y = y
         self.rect.x = x
         self.rect.y = y
 
-class Spike(pg.sprite.Sprite):
+class Spike(pygame.sprite.Sprite):
     def __init__(self, game, x, y, w, h):
         self.groups = game.spike
-        pg.sprite.Sprite.__init__(self, self.groups)
+        pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.rect = pg.Rect(x, y, w, h)
+        self.rect = pygame.Rect(x, y, w, h)
         self.x = x
         self.y = y
         self.rect.x = x
         self.rect.y = y
 
-class Fall(pg.sprite.Sprite):
+class Fall(pygame.sprite.Sprite):
     def __init__(self, game, x, y, w, h):
         self.groups = game.fall_death
-        pg.sprite.Sprite.__init__(self, self.groups)
+        pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.rect = pg.Rect(x, y, w, h)
+        self.rect = pygame.Rect(x, y, w, h)
         self.x = x
         self.y = y
         self.rect.x = x
         self.rect.y = y
 
-class Boundary(pg.sprite.Sprite):
+class Boundary(pygame.sprite.Sprite):
     def __init__(self, game, x, y, w, h):
         self.groups = game.boundary
-        pg.sprite.Sprite.__init__(self, self.groups)
+        pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.rect = pg.Rect(x, y, w, h)
+        self.rect = pygame.Rect(x, y, w, h)
         self.x = x
         self.y = y
         self.rect.x = x
         self.rect.y = y
 
-class Invis_wall(pg.sprite.Sprite):
+class Invis_wall(pygame.sprite.Sprite):
     def __init__(self, game, x, y, w, h):
         self.groups = game.invis_wall
-        pg.sprite.Sprite.__init__(self, self.groups)
+        pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.rect = pg.Rect(x, y, w, h)
+        self.rect = pygame.Rect(x, y, w, h)
         self.x = x
         self.y = y
         self.rect.x = x
         self.rect.y = y
 
-class Win_area(pg.sprite.Sprite):
+class Win_area(pygame.sprite.Sprite):
     def __init__(self, game, x, y, w, h):
         self.groups = game.win_game
-        pg.sprite.Sprite.__init__(self, self.groups)
+        pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.rect = pg.Rect(x, y, w, h)
+        self.rect = pygame.Rect(x, y, w, h)
         self.x = x
         self.y = y
         self.rect.x = x
         self.rect.y = y
 
-class Item(pg.sprite.Sprite):
+class Item(pygame.sprite.Sprite):
     def __init__(self, game, pos, type):
         self.groups = game.all_sprites, game.items
-        pg.sprite.Sprite.__init__(self, self.groups)
+        pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.load_image()
         self.image = self.item_images[type]
         self.rect = self.image.get_rect()
-        self.hit_rect = pg.Rect(0, 0, 20, 17)
+        self.hit_rect = pygame.Rect(0, 0, 20, 17)
         self.hit_rect.center = self.rect.center
         self.type = type
         self.pos = pos
@@ -1661,6 +1660,6 @@ class Item(pg.sprite.Sprite):
         coin = {'coin': 'assets/images/coin.png'}
         self.item_images = {}
         for item in chicken:
-            self.item_images[item] = pg.image.load(chicken[item]).convert_alpha()
+            self.item_images[item] = pygame.image.load(chicken[item]).convert_alpha()
         for item in coin:
-            self.item_images[item] = pg.image.load(coin[item]).convert_alpha()
+            self.item_images[item] = pygame.image.load(coin[item]).convert_alpha()

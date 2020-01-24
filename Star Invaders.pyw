@@ -164,9 +164,9 @@ def play():
                     if choice == 'Level 1':
                         game = Game()
                         while True:
-                            pg.mouse.set_visible(False)
-                            pg.mixer.music.load('assets/audio/level1.wav')
-                            pg.mixer.music.play(-1)
+                            pygame.mouse.set_visible(False)
+                            pygame.mixer.music.load('assets/audio/level1.wav')
+                            pygame.mixer.music.play(-1)
                             game.new()
                             game.run()
                             if game.win:
@@ -432,41 +432,20 @@ class Game:
     def load_data(self):
         self.pixel_font = ('assets/8bit.ttf')
         self.bullet_img_R = pygame.image.load('assets/images/bullet_R.png').convert_alpha()
-        self.bullet_img_R = pygame.transform.scale(self.bullet_img_R, (17, 8))
+        self.bullet_img_R = pygame.transform.scale(self.bullet_img_R, (12, 5))
         self.bullet_img_L = pygame.image.load('assets/images/bullet_L.png').convert_alpha()
-        self.bullet_img_L = pygame.transform.scale(self.bullet_img_L, (17, 8))
+        self.bullet_img_L = pygame.transform.scale(self.bullet_img_L, (12, 5))
         self.bullet_mob = pygame.image.load('assets/images/alien_projectile.png').convert_alpha()
         self.bullet_mob = pygame.transform.scale(self.bullet_mob, (17, 8))
-  
-        self.player_hurt = {}
-        for audio in player_hurt:
-            self.player_hurt[audio] = pygame.mixer.Sound('assets/audio/'+player_hurt[audio])
-            
-        self.enemy_morph = {}
-        for audio in morph:
-            self.enemy_morph[audio] = pygame.mixer.Sound('assets/audio/'+morph[audio])
-            
-        self.coin = {}
-        for audio in coin:
-            self.coin[audio] = pygame.mixer.Sound('assets/audio/'+coin[audio])
-
-        self.enemy_hurt = {}
-        for audio in enemy_hurt:
-            self.enemy_hurt[audio] = pygame.mixer.Sound('assets/audio/'+enemy_hurt[audio])
-
-        self.health = {}
-        for audio in health:
-            self.health[audio] = pygame.mixer.Sound('assets/audio/'+health[audio])
-
-        #Bottom 2 in sprites.py
-
-        self.player_jump = {}
-        for audio in jump:
-            self.player_jump[audio] = pygame.mixer.Sound('assets/audio/'+jump[audio])
-            
-        self.shoot_sound = {}
-        for audio in shoot:
-            self.shoot_sound[audio] = pygame.mixer.Sound('assets/audio/'+shoot[audio])
+        
+        self.coin = pygame.mixer.Sound("assets/audio/coin.wav")
+        self.enemy_hurt = pygame.mixer.Sound("assets/audio/enemy_hurt.wav")
+        self.health = pygame.mixer.Sound("assets/audio/health.wav")
+        self.jump_1 = pygame.mixer.Sound("assets/audio/jump_1.wav")
+        self.jump_2 = pygame.mixer.Sound("assets/audio/jump_2.wav")
+        self.morph = pygame.mixer.Sound("assets/audio/morph.wav")
+        self.player_hurt = pygame.mixer.Sound("assets/audio/player_hurt.wav")
+        self.shoot = pygame.mixer.Sound("assets/audio/shoot.wav")
 
     #Initialize variables and sets up tilemap
     def new(self):
@@ -561,11 +540,11 @@ class Game:
             for hit in hits:
                 if hit.type == 'health' and self.player.health < PLAYER_HEALTH:
                     hit.kill()
-                    self.health['health'].play()
+                    pygame.mixer.Sound.play(self.health)
                     self.player.add_health(20)
                 elif hit.type == 'coin':
                     hit.kill()
-                    self.coin['coin'].play()
+                    pygame.mixer.Sound.play(self.coin)
                     self.score += 5
 
             hits = pygame.sprite.spritecollide(self.player, self.spike, False, collide_hit_rect)
@@ -591,12 +570,12 @@ class Game:
                 self.player.health -= 5
                 if self.player.health <= 0:
                     self.player.alive = False
-                self.player_hurt['player_hurt'].play()
+                pygame.mixer.Sound.play(self.player_hurt)
                 self.player.hit()
 
             hits = pygame.sprite.spritecollide(self.player, self.mob_small_1, False, collide_hit_rect)
             for hit in hits:
-                self.player_hurt['player_hurt'].play()
+                pygame.mixer.Sound.play(self.player_hurt)
                 self.score -= 5
                 self.player.health -= MOB_DAMAGE
                 if self.player.health <= 0:
@@ -607,7 +586,7 @@ class Game:
 
             hits = pygame.sprite.spritecollide(self.player, self.mob_small_2, False, collide_hit_rect)
             for hit in hits:
-                self.player_hurt['player_hurt'].play()
+                pygame.mixer.Sound.play(self.player_hurt)
                 self.score -= 5
                 self.player.health -= MOB_DAMAGE
                 if self.player.health <= 0:
@@ -619,7 +598,7 @@ class Game:
 
             hits = pygame.sprite.spritecollide(self.player, self.mob_big, False, collide_hit_rect)
             for hit in hits:
-                self.player_hurt['player_hurt'].play()
+                pygame.mixer.Sound.play(self.player_hurt)
                 self.score -= 5
                 self.player.health -= 20
                 if self.player.health <= 0:
@@ -631,7 +610,7 @@ class Game:
             hits = pygame.sprite.spritecollide(self.player, self.mob_bullets, False, collide_hit_rect)
             for hit in hits:
                 hit.kill()
-                self.player_hurt['player_hurt'].play()
+                pygame.mixer.Sound.play(self.player_hurt)
                 self.score -= 1
                 self.player.health -= 5
                 if self.player.health <= 0:
@@ -641,7 +620,7 @@ class Game:
 
             hits = pygame.sprite.spritecollide(self.player, self.mob_flying, False, collide_hit_rect)
             for hit in hits:
-                self.player_hurt['player_hurt'].play()
+                pygame.mixer.Sound.play(self.player_hurt)
                 self.score -= 5
                 self.player.health -= 5
                 if self.player.health <= 0:
@@ -651,7 +630,7 @@ class Game:
 
             hits = pygame.sprite.spritecollide(self.player, self.mob_charge, False, collide_hit_rect)
             for hit in hits:
-                self.player_hurt['player_hurt'].play()
+                pygame.mixer.Sound.play(self.player_hurt)
                 self.score -= 5
                 self.player.health -= 5
                 if self.player.health <= 0:
@@ -668,11 +647,11 @@ class Game:
             for hit in hits:
                 if hit.type == 'health' and self.player2.health < PLAYER_HEALTH:
                     hit.kill()
-                    self.health['collect'].play()
+                    pygame.mixer.Sound.play(self.health)
                     self.player2.add_health(20)
                 elif hit.type == 'coin':
                     hit.kill()
-                    self.coin['coin'].play()
+                    pygame.mixer.Sound.play(self.coin)
                     self.score2 += 5
 
             hits = pygame.sprite.spritecollide(self.player2, self.spike, False, collide_hit_rect)
@@ -698,12 +677,12 @@ class Game:
                 self.player2.health -= 5
                 if self.player2.health <= 0:
                     self.player2.alive = False
-                self.player_hurt['player_hurt'].play()
+                pygame.mixer.Sound.play(self.player_hurt)
                 self.player2.hit()
 
             hits = pygame.sprite.spritecollide(self.player2, self.mob_small_1, False, collide_hit_rect)
             for hit in hits:
-                self.player_hurt['player_hurt'].play()
+                pygame.mixer.Sound.play(self.player_hurt)
                 self.score2 -= 5
                 self.player2.health -= MOB_DAMAGE
                 if self.player2.health <= 0:
@@ -714,7 +693,7 @@ class Game:
 
             hits = pygame.sprite.spritecollide(self.player2, self.mob_small_2, False, collide_hit_rect)
             for hit in hits:
-                self.player_hurt['player_hurt'].play()
+                pygame.mixer.Sound.play(self.player_hurt)
                 self.score2 -= 5
                 self.player2.health -= MOB_DAMAGE
                 if self.player2.health <= 0:
@@ -725,7 +704,7 @@ class Game:
 
             hits = pygame.sprite.spritecollide(self.player2, self.mob_big, False, collide_hit_rect)
             for hit in hits:
-                self.player_hurt['player_hurt'].play()
+                pygame.mixer.Sound.play(self.player_hurt)
                 self.score2 -= 5
                 self.player2.health -= 20
                 if self.player2.health <= 0:
@@ -737,7 +716,7 @@ class Game:
 
             hits = pygame.sprite.spritecollide(self.player2, self.mob_flying, False, collide_hit_rect)
             for hit in hits:
-                self.player_hurt['player_hurt'].play()
+                pygame.mixer.Sound.play(self.player_hurt)
                 self.score2 -= 5
                 self.player2.health -= 5
                 if self.player2.health <= 0:
@@ -750,7 +729,7 @@ class Game:
             hits = pygame.sprite.spritecollide(self.player2, self.mob_bullets, False, collide_hit_rect)
             for hit in hits:
                 hit.kill()
-                self.player_hurt['player_hurt'].play()
+                pygame.mixer.Sound.play(self.player_hurt)
                 self.score2 -= 1
                 self.player2.health -= 5
                 if self.player2.health <= 0:
@@ -760,7 +739,7 @@ class Game:
 
             hits = pygame.sprite.spritecollide(self.player2, self.mob_charge, False, collide_hit_rect)
             for hit in hits:
-                self.player_hurt['player_hurt'].play()
+                pygame.mixer.Sound.play(self.player_hurt)
                 self.score -= 5
                 self.player2.health -= 5
                 if self.player2.health <= 0:
@@ -776,7 +755,7 @@ class Game:
         #Bullet Collisions to Mobs
         hits = pygame.sprite.groupcollide(self.mob_small_1, self.bullets2, False, True)
         for hit in hits:
-            self.enemy_hurt['enemy_hurt'].play()
+            pygame.mixer.Sound.play(self.enemy_hurt)
             self.score2 += 1
             hit.health -= BULLET_DAMAGE
             if hit.health <= 0:
@@ -784,14 +763,14 @@ class Game:
                 self.score2 += 10
                 chance = random.randint(0,9)
                 if chance == 0:
-                    self.enemy_morph['morph'].play()
+                    pygame.mixer.Sound.play(self.morph)
                     Mob_Big(self, hit.pos.x, hit.pos.y, hit.facing)
                 else:
                     pass
 
         hits = pygame.sprite.groupcollide(self.mob_small_1, self.bullets, False, True)
         for hit in hits:
-            self.enemy_hurt['enemy_hurt'].play()
+            pygame.mixer.Sound.play(self.enemy_hurt)
             self.score += 1
             hit.health -= BULLET_DAMAGE
             if hit.health <= 0:
@@ -799,14 +778,14 @@ class Game:
                 self.score += 10
                 chance = random.randint(0,9)
                 if chance == 0:
-                    self.enemy_morph['morph'].play()
+                    pygame.mixer.Sound.play(self.morph)
                     Mob_Big(self, hit.pos.x, hit.pos.y, hit.facing)
                 else:
                     pass
 
         hits = pygame.sprite.groupcollide(self.mob_small_2, self.bullets2, False, True)
         for hit in hits:
-            self.enemy_hurt['enemy_hurt'].play()
+            pygame.mixer.Sound.play(self.enemy_hurt)
             self.score2 += 1
             hit.health -= BULLET_DAMAGE
             if hit.health <= 0:
@@ -815,7 +794,7 @@ class Game:
 
         hits = pygame.sprite.groupcollide(self.mob_small_2, self.bullets, False, True)
         for hit in hits:
-            self.enemy_hurt['enemy_hurt'].play()
+            pygame.mixer.Sound.play(self.enemy_hurt)
             self.score += 1
             hit.health -= BULLET_DAMAGE
             if hit.health <= 0:
@@ -824,29 +803,29 @@ class Game:
 
         hits = pygame.sprite.groupcollide(self.mob_flying, self.bullets, False, True)
         for hit in hits:
-            self.enemy_hurt['enemy_hurt'].play()
+            pygame.mixer.Sound.play(self.enemy_hurt)
             self.score += 2
             hit.health -= BULLET_DAMAGE
             if hit.health <= 0:
                 hit.kill()
                 self.score += 15
-                self.enemy_morph['morph'].play()
+                pygame.mixer.Sound.play(self.morph)
                 Mob_small_2(self, hit.pos.x, hit.pos.y, hit.facing)
 
         hits = pygame.sprite.groupcollide(self.mob_flying, self.bullets2, False, True)
         for hit in hits:
-            self.enemy_hurt['enemy_hurt'].play()
+            pygame.mixer.Sound.play(self.enemy_hurt)
             self.score2 += 2
             hit.health -= BULLET_DAMAGE
             if hit.health <= 0:
                 hit.kill()
                 self.score2 += 15
-                self.enemy_morph['morph'].play()
+                pygame.mixer.Sound.play(self.morph)
                 Mob_small_2(self, hit.pos.x, hit.pos.y, hit.facing)
 
         hits = pygame.sprite.groupcollide(self.mob_big, self.bullets2, False, True)
         for hit in hits:
-            self.enemy_hurt['enemy_hurt'].play()
+            pygame.mixer.Sound.play(self.enemy_hurt)
             self.score2 += 3
             hit.health -= BULLET_DAMAGE
             if hit.health <= 0:
@@ -855,7 +834,7 @@ class Game:
 
         hits = pygame.sprite.groupcollide(self.mob_big, self.bullets, False, True)
         for hit in hits:
-            self.enemy_hurt['enemy_hurt'].play()
+            pygame.mixer.Sound.play(self.enemy_hurt)
             self.score += 3
             hit.health -= BULLET_DAMAGE
             if hit.health <= 0:
@@ -864,7 +843,7 @@ class Game:
 
         hits = pygame.sprite.groupcollide(self.mob_charge, self.bullets, False, True)
         for hit in hits:
-            self.enemy_hurt['enemy_hurt'].play()
+            pygame.mixer.Sound.play(self.enemy_hurt)
             self.score += 5
             hit.health -= BULLET_DAMAGE
             if hit.health <= 0:
@@ -873,7 +852,7 @@ class Game:
 
         hits = pygame.sprite.groupcollide(self.mob_charge, self.bullets2, False, True)
         for hit in hits:
-            self.enemy_hurt['enemy_hurt'].play()
+            pygame.mixer.Sound.play(self.enemy_hurt)
             self.score2 += 5
             hit.health -= BULLET_DAMAGE
             if hit.health <= 0:
