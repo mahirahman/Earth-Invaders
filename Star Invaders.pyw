@@ -68,7 +68,7 @@ class menu_background(object):
                 star[1] = random.randrange(-20, -5)
             pygame.draw.circle(screen, (192, 192, 192), star, 5)
 
-        pygame.display.update()
+        pygame.display.flip()
         fps.tick(60)
 
 def menu():
@@ -128,7 +128,7 @@ def menu():
                         sys.exit()
 
         screen.blit(pygame.transform.scale(display,(WIDTH,HEIGHT)),(0,0))
-        pygame.display.update()
+        pygame.display.flip()
         fps.tick(60)
 
 def play():
@@ -180,7 +180,7 @@ def play():
                 if event.key == K_ESCAPE:
                     in_play = False
         screen.blit(pygame.transform.scale(display,(WIDTH,HEIGHT)),(0,0))
-        pygame.display.update()
+        pygame.display.flip()
         fps.tick(60)
 
 def controls():
@@ -205,7 +205,7 @@ def controls():
                 if event.key == K_ESCAPE:
                     in_controls = False
         screen.blit(pygame.transform.scale(display,(WIDTH,HEIGHT)),(0,0))
-        pygame.display.update()
+        pygame.display.flip()
         fps.tick(60)
 
 def highscores():
@@ -240,7 +240,7 @@ def highscores():
                     in_highscores = False
 
         screen.blit(pygame.transform.scale(display,(WIDTH,HEIGHT)),(0,0))
-        pygame.display.update()
+        pygame.display.flip()
         fps.tick(60)
 
 def settings():
@@ -282,7 +282,7 @@ def settings():
                 if event.key == K_ESCAPE:
                     in_settings = False
         screen.blit(pygame.transform.scale(display,(WIDTH,HEIGHT)),(0,0))
-        pygame.display.update()
+        pygame.display.flip()
         fps.tick(60)
 
 def display_config():
@@ -325,7 +325,7 @@ def display_config():
                 if event.key == K_ESCAPE:
                     in_config = False
         screen.blit(pygame.transform.scale(display,(WIDTH,HEIGHT)),(0,0))
-        pygame.display.update()
+        pygame.display.flip()
         fps.tick(60)
 
 def volume():
@@ -373,7 +373,7 @@ def volume():
                 if event.key == K_ESCAPE:
                     in_volume = False
         screen.blit(pygame.transform.scale(display,(WIDTH,HEIGHT)),(0,0))
-        pygame.display.update()
+        pygame.display.flip()
         fps.tick(60)
 
 def credits():
@@ -399,7 +399,7 @@ def credits():
                     in_credits = False
 
         screen.blit(pygame.transform.scale(display,(WIDTH,HEIGHT)),(0,0))
-        pygame.display.update()
+        pygame.display.flip()
         fps.tick(60)
 
 #HUD For Player
@@ -524,7 +524,7 @@ class Game:
             textinput.update(events)
             # Blit its surface onto the screen
             screen.blit(textinput.get_surface(), (10, 10))
-            pygame.display.update()
+            pygame.display.flip()
             fps.tick(60)
 
         self.all_sprites.update()
@@ -913,10 +913,6 @@ class Game:
         draw_player_health(screen, 10, 10, self.player.health / PLAYER_HEALTH)
         draw_player_health(screen, 350, 10, self.player2.health / PLAYER_HEALTH)
 
-        if self.paused:
-            self.display = pygame.Surface((self.map.width, self.map.height))
-            self.draw_text("PAUSE", self.pixel_font,65, WHITE, WIDTH/2, HEIGHT/2, align="center")
-
         #Display player 1's score
         self.draw_text("SCORE:" + str(self.score), self.pixel_font,15, WHITE, WIDTH/6.5, 37, align="center")
 
@@ -926,6 +922,10 @@ class Game:
         #Enemy counter
         self.draw_text('ALIENS: {}'.format(len(self.mob_small_1) + len(self.mob_big) + len(self.mob_flying) + len(self.mob_small_2)), self.pixel_font, 15, WHITE, WIDTH/2, 15, align="center")
         pygame.display.flip()
+
+        if self.paused:
+            self.display = pygame.Surface((self.map.width, self.map.height))
+            self.draw_text("PAUSE", self.pixel_font,65, WHITE, WIDTH/2, HEIGHT/2, align="center")
 
     def draw_text(self, text, font_name, size, color, x, y, align="center"):
         font = pygame.font.Font(font_name, size)
@@ -971,7 +971,7 @@ class Game:
                         if event.key == pygame.K_RETURN:
                             enter1 = False
 
-                pygame.display.update()
+                pygame.display.flip()
                 fps.tick(60)
 
             player2name = pygame_textinput.TextInput(font_family = "assets/8bit.ttf", antialias = False)
@@ -990,7 +990,7 @@ class Game:
                         if event.key == pygame.K_RETURN:
                             enter2 = False
 
-                pygame.display.update()
+                pygame.display.flip()
                 fps.tick(60)
 
             enter = False
@@ -1042,7 +1042,7 @@ class Game:
                         if event.key == pygame.K_RETURN:
                             enter1 = False
 
-                pygame.display.update()
+                pygame.display.flip()
                 fps.tick(60)
 
             player2name = pygame_textinput.TextInput(font_family = "assets/8bit.ttf", antialias = False)
@@ -1061,7 +1061,7 @@ class Game:
                         if event.key == pygame.K_RETURN:
                             enter2 = False
 
-                pygame.display.update()
+                pygame.display.flip()
                 fps.tick(60)
             enter = False
 
