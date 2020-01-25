@@ -231,13 +231,13 @@ class Player(pygame.sprite.Sprite):
                             pos = self.pos + BARREL_OFFSET_RUN_R
                             dir = vec(1,0)
                             Bullet(self.game, pos, dir, self.facing_R)
-                            pygame.mixer.Sound.play(self.game.shoot)
+                            self.game.shoot.play()
                             self.shooting = True
                         else:
                             pos = self.pos + BARREL_OFFSET_RUN_L
                             dir = vec(-1,0)
                             Bullet(self.game, pos, dir, self.facing_R)
-                            pygame.mixer.Sound.play(self.game.shoot)
+                            self.game.shoot.play()
                             self.shooting = True
                 else:
                     if now - self.last_shot > BULLET_RATE:
@@ -246,13 +246,13 @@ class Player(pygame.sprite.Sprite):
                             pos = self.pos + BARREL_OFFSET_R
                             dir = vec(1, 0)
                             Bullet(self.game, pos, dir, self.facing_R)
-                            pygame.mixer.Sound.play(self.game.shoot)
+                            self.game.shoot.play()
                             self.shooting = True
                         else:
                             pos = self.pos + BARREL_OFFSET_L
                             dir = vec(-1, 0)
                             Bullet(self.game, pos, dir, self.facing_R)
-                            pygame.mixer.Sound.play(self.game.shoot)
+                            self.game.shoot.play()
                             self.shooting = True
         else:
             pass
@@ -431,7 +431,7 @@ class Player(pygame.sprite.Sprite):
     def jump(self):
         hits = pygame.sprite.spritecollide(self, self.game.walls, False)
         if hits:
-            pygame.mixer.Sound.play(self.game.jump_1)
+            self.game.jump_1.play()
             self.vel.y = -10
 
     def death(self):
@@ -591,13 +591,13 @@ class Player2(pygame.sprite.Sprite):
                             pos = self.pos + BARREL_OFFSET_RUN_R
                             dir = vec(1,0)
                             Bullet2(self.game, pos, dir, self.facing_R)
-                            pygame.mixer.Sound.play(self.game.shoot)
+                            self.game.shoot.play()
                             self.shooting = True
                         else:
                             pos = self.pos + BARREL_OFFSET_RUN_L
                             dir = vec(-1,0)
                             Bullet2(self.game, pos, dir, self.facing_R)
-                            pygame.mixer.Sound.play(self.game.shoot)
+                            self.game.shoot.play()
                             self.shooting = True
                 else:
                     if now - self.last_shot > BULLET_RATE:
@@ -606,13 +606,13 @@ class Player2(pygame.sprite.Sprite):
                             pos = self.pos + BARREL_OFFSET_R
                             dir = vec(1, 0)
                             Bullet2(self.game, pos, dir, self.facing_R)
-                            pygame.mixer.Sound.play(self.game.shoot)
+                            self.game.shoot.play()
                             self.shooting = True
                         else:
                             pos = self.pos + BARREL_OFFSET_L
                             dir = vec(-1, 0)
                             Bullet2(self.game, pos, dir, self.facing_R)
-                            pygame.mixer.Sound.play(self.game.shoot)
+                            self.game.shoot.play()
                             self.shooting = True
 
     def hit(self):
@@ -790,7 +790,7 @@ class Player2(pygame.sprite.Sprite):
     def jump(self):
         hits = pygame.sprite.spritecollide(self, self.game.walls, False)
         if hits:       
-            pygame.mixer.Sound.play(self.game.jump_2)
+            self.game.jump_2.play()
             self.vel.y = -10
 
     def death(self):
