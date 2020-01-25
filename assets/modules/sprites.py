@@ -789,7 +789,7 @@ class Player2(pygame.sprite.Sprite):
 
     def jump(self):
         hits = pygame.sprite.spritecollide(self, self.game.walls, False)
-        if hits:       
+        if hits:
             self.game.jump_2.play()
             self.vel.y = -10
 
@@ -880,13 +880,7 @@ class Mob_small_1(pygame.sprite.Sprite):
     def update(self):
         self.draw_health()
         self.animate()
-        target_dist = self.target.pos - self.pos
-        target2_dist = self.target2.pos - self.pos
-        self.acc.x += self.vel.x * PLAYER_FRICTION
-        self.vel += self.acc
-        self.pos += self.vel + 0.5 * self.acc
-        self.pos += self.vel * self.game.dt
-        self.rect.center = self.pos
+        self.movement_equation()
         self.moving()
 
         self.hit_rect.centerx = self.pos.x
@@ -894,6 +888,13 @@ class Mob_small_1(pygame.sprite.Sprite):
         self.hit_rect.centery = self.pos.y
         collide_with_walls(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
+
+    def movement_equation(self):
+        self.acc.x += self.vel.x * PLAYER_FRICTION
+        self.vel += self.acc
+        self.pos += self.vel + 0.5 * self.acc
+        self.pos += self.vel * self.game.dt
+        self.rect.center = self.pos
 
     def moving(self):
         if not self.facing:
@@ -987,20 +988,20 @@ class Mob_small_2(pygame.sprite.Sprite):
     def update(self):
         self.draw_health()
         self.animate()
-        target_dist = self.target.pos - self.pos
-        target2_dist = self.target2.pos - self.pos
-        self.acc.x += self.vel.x * PLAYER_FRICTION
-        self.vel += self.acc
-        self.pos += self.vel + 0.5 * self.acc
-        self.pos += self.vel * self.game.dt
-        self.rect.center = self.pos
+        self.movement_equation()
         self.moving()
-
         self.hit_rect.centerx = self.pos.x
         collide_with_walls(self, self.game.invis_wall, 'x')
         self.hit_rect.centery = self.pos.y
         collide_with_walls(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
+
+    def movement_equation(self):
+        self.acc.x += self.vel.x * PLAYER_FRICTION
+        self.vel += self.acc
+        self.pos += self.vel + 0.5 * self.acc
+        self.pos += self.vel * self.game.dt
+        self.rect.center = self.pos
 
     def moving(self):
         if not self.facing:
@@ -1094,21 +1095,22 @@ class Mob_Big(pygame.sprite.Sprite):
     def update(self):
         self.draw_health()
         self.animate()
-        self.acc.x += self.vel.x * PLAYER_FRICTION
-        self.vel += self.acc
-        self.pos += self.vel + 0.5 * self.acc
-        self.pos += self.vel * self.game.dt
-        self.rect.center = self.pos
+        self.movement_equation()
         self.moving()
-
         self.hit_rect.centerx = self.pos.x
         collide_with_walls(self, self.game.invis_wall, 'x')
         self.hit_rect.centery = self.pos.y
         collide_with_walls(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
-
         if self.health <= 0:
             self.kill()
+
+    def movement_equation(self):
+        self.acc.x += self.vel.x * PLAYER_FRICTION
+        self.vel += self.acc
+        self.pos += self.vel + 0.5 * self.acc
+        self.pos += self.vel * self.game.dt
+        self.rect.center = self.pos
 
     def moving(self):
         if not self.facing:
@@ -1400,6 +1402,7 @@ class Mob_charge(pygame.sprite.Sprite):
         self.detected = False
         self.charge_time = 0
         self.round = 1
+        self.turn = False
 
     def load_images(self):
         self.walk_frame_R = []
@@ -1452,11 +1455,7 @@ class Mob_charge(pygame.sprite.Sprite):
 
         elif not self.charging and not self.detected and not self.chargesequence:
             self.animate()
-            self.acc.x += self.vel.x * PLAYER_FRICTION
-            self.vel += self.acc
-            self.pos += self.vel + 0.5 * self.acc
-            self.pos += self.vel * self.game.dt
-            self.rect.center = self.pos
+            self.movement_equation()
             self.moving()
 
         if self.detected and not self.charging and not self.chargesequence:
@@ -1464,31 +1463,52 @@ class Mob_charge(pygame.sprite.Sprite):
             self.rot = (self.game.player.pos - self.pos).angle_to(vec(1, 0))
             self.lock_in = False
             if not self.lock_in:
-                if self.rot < 90:
+                if self.rot < 90 and self.facing:
                     self.facing = False
                     self.step = 0
                     self.charge_counter = 0
                     self.lock_in = True
-                elif self.rot > 90:
+                    self.turn = True
+                    print("first option reach")
+                elif self.rot < 90 and not self.facing:
+                    self.step = 0
+                    self.charge_counter = 0
+                    self.lock_in = True
+                    self.turn = False
+                    print("first,2 option reach")
+                elif self.rot > 90 and self.facing:
+                    self.step = 0
+                    self.charge_counter = 0
+                    self.lock_in = True
+                    print("second option reach")
+                    self.turn = False
+                elif self.rot > 90 and not self.facing:
                     self.facing = True
                     self.step = 0
                     self.charge_counter = 0
                     self.lock_in = True
+                    self.turn = True
+                    print("second,2 option reach")
                 else:
-                    self.facing = False
+                    self.facing = True
                     self.step = 0
                     self.charge_counter = 0
                     self.lock_in = True
+                    self.turn = True
+                    print("third option reach")
             self.chargesequence = True
 
         elif self.detected and not self.charging and self.chargesequence:
             time = pygame.time.get_ticks()
-            if self.charge_counter != 3:
-                if time - self.step > 500:
-                    if self.facing:
-                        self.pos.x += 3
+            self.animate()
+            if self.charge_counter != 10:
+                if time - self.step > 200:
+                    if self.turn:
+                        self.movement_equation()
+                        self.charge_motion()
                     else:
-                        self.pos.x -= 3
+                        self.movement_equation_backward()
+                        self.charge_motion()
                     self.step = time
                     self.charge_counter += 1
             else:
@@ -1499,11 +1519,7 @@ class Mob_charge(pygame.sprite.Sprite):
             self.charge_time = pygame.time.get_ticks()
             if self.charge_time <= int(10000*self.round):
                 self.animate()
-                self.acc.x += self.vel.x * PLAYER_FRICTION
-                self.vel += self.acc
-                self.pos += self.vel + 0.5 * self.acc
-                self.pos += self.vel * self.game.dt
-                self.rect.center = self.pos
+                self.movement_equation()
                 self.chargeaccel()
             else:
                 self.round += 1
@@ -1516,6 +1532,38 @@ class Mob_charge(pygame.sprite.Sprite):
         self.hit_rect.centery = self.pos.y
         collide_with_walls(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
+
+    def movement_equation(self):
+        self.acc.x += self.vel.x * PLAYER_FRICTION
+        self.vel += self.acc
+        self.pos += self.vel + 0.5 * self.acc
+        self.pos += self.vel * self.game.dt
+        self.rect.center = self.pos
+
+    def movement_equation_backward(self):
+        self.acc.x -= self.vel.x * PLAYER_FRICTION
+        self.vel -= self.acc
+        self.pos -= self.vel + 0.5 * self.acc
+        self.pos -= self.vel * self.game.dt
+        self.rect.center = self.pos
+
+    def charge_motion(self):
+        print(self.facing)
+        if not self.facing:
+            self.acc = vec(-0.2, 0.5)
+            self.rect.centerx -=2
+            hits2 = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
+            self.rect.centerx +=2
+            if hits2:
+                self.acc = vec(0, 0.5)
+
+        else:
+            self.acc = vec(0.2, 0.5)
+            self.rect.centerx += 2
+            hits = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
+            self.rect.centerx -= 2
+            if hits:
+                self.acc = vec(0, 0.5)
 
     def moving(self):
         if not self.facing:

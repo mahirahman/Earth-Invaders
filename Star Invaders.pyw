@@ -44,10 +44,10 @@ class menu_background(object):
         star_field_slow = []
         star_field_medium = []
 
-        for slow_stars in range(4): 
+        for slow_stars in range(4):
             star_loc_x = random.randrange(0, WIDTH)
             star_loc_y = random.randrange(0, HEIGHT)
-            star_field_slow.append([star_loc_x, star_loc_y]) 
+            star_field_slow.append([star_loc_x, star_loc_y])
 
         for medium_stars in range(4):
             star_loc_x = random.randrange(0, WIDTH)
@@ -188,7 +188,7 @@ def controls():
     in_controls = True
     while in_controls:
         bg.render(display)
-        
+
         text.show_text('Press ESC to go back',2,240,1,9999,font,display)
         text_array = ['Use WASD and Space for Player 1','Use Arrow keys and Right Enter for Player 2','For pausing press P']
 
@@ -215,13 +215,13 @@ def highscores():
         bg.render(display)
 
         text.show_text('Press ESC to go back',2,240,1,9999,font,display)
-        
+
         with open("assets/highscores.txt", "r") as array:
             leaderboard = array.readlines()
 
         leaderboard = list(map(lambda line: tuple(line.split()), leaderboard))
         leaderboard.sort(key=lambda line: int(line[1]), reverse=True)
-        leaderboard = list(map(lambda line: f"{line[0]} - {line[1]} Points\n", leaderboard)) 
+        leaderboard = list(map(lambda line: f"{line[0]} - {line[1]} Points\n", leaderboard))
         for n,score in enumerate(leaderboard):
             text.show_text(score,200-int(get_text_width(score,2)/2),50+n*20,1,9999,font,display)
 
@@ -381,10 +381,10 @@ def credits():
     in_credits = True
     while in_credits:
         bg.render(display)
-        
+
         text.show_text('Press ESC to go back',2,240,1,9999,font,display)
         credits_array = ['Mahi Rahman','Son Tran','Daniel Nguyen','Tejas Amrale','Peter Sorial','Spandan Kolapkar']
-        
+
         n = 0
         for names in credits_array:
             text.show_text(names,200-int(get_text_width(names,1)/2),70+n*20,1,9999,font,display)
@@ -437,7 +437,7 @@ class Game:
         self.bullet_img_L = pygame.transform.scale(self.bullet_img_L, (12, 5))
         self.bullet_mob = pygame.image.load('assets/images/alien_projectile.png').convert_alpha()
         self.bullet_mob = pygame.transform.scale(self.bullet_mob, (17, 8))
-        
+
         self.coin = pygame.mixer.Sound("assets/audio/coin.wav")
         self.enemy_hurt = pygame.mixer.Sound("assets/audio/enemy_hurt.wav")
         self.health = pygame.mixer.Sound("assets/audio/health.wav")
@@ -740,7 +740,7 @@ class Game:
             hits = pygame.sprite.spritecollide(self.player2, self.mob_charge, False, collide_hit_rect)
             for hit in hits:
                 self.player_hurt.play()
-                self.score -= 5
+                self.score2 -= 5
                 self.player2.health -= 5
                 if self.player2.health <= 0:
                     self.player2.alive = False
