@@ -1469,18 +1469,15 @@ class Mob_charge(pygame.sprite.Sprite):
                     self.charge_counter = 0
                     self.lock_in = True
                     self.turn = True
-                    print("first option reach")
                 elif self.rot < 90 and not self.facing:
                     self.step = 0
                     self.charge_counter = 0
                     self.lock_in = True
                     self.turn = False
-                    print("first,2 option reach")
                 elif self.rot > 90 and self.facing:
                     self.step = 0
                     self.charge_counter = 0
                     self.lock_in = True
-                    print("second option reach")
                     self.turn = False
                 elif self.rot > 90 and not self.facing:
                     self.facing = True
@@ -1488,20 +1485,18 @@ class Mob_charge(pygame.sprite.Sprite):
                     self.charge_counter = 0
                     self.lock_in = True
                     self.turn = True
-                    print("second,2 option reach")
                 else:
                     self.facing = True
                     self.step = 0
                     self.charge_counter = 0
                     self.lock_in = True
                     self.turn = True
-                    print("third option reach")
             self.chargesequence = True
 
         elif self.detected and not self.charging and self.chargesequence:
             time = pygame.time.get_ticks()
             self.animate()
-            if self.charge_counter != 10:
+            if self.charge_counter != 5:
                 if time - self.step > 200:
                     if self.turn:
                         self.movement_equation()
@@ -1548,7 +1543,6 @@ class Mob_charge(pygame.sprite.Sprite):
         self.rect.center = self.pos
 
     def charge_motion(self):
-        print(self.facing)
         if not self.facing:
             self.acc = vec(-0.2, 0.5)
             self.rect.centerx -=2
