@@ -818,9 +818,9 @@ class Player2(pygame.sprite.Sprite):
                 self.game.playersalive += 1
                 self.kill()
 
-class Mob_small_1(pygame.sprite.Sprite):
+class Mob_small(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
-        self.groups = game.all_sprites, game.mob_small_1
+        self.groups = game.all_sprites, game.mob_small
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.current_frame = 0
@@ -883,113 +883,6 @@ class Mob_small_1(pygame.sprite.Sprite):
         self.movement_equation()
         self.moving()
 
-        self.hit_rect.centerx = self.pos.x
-        collide_with_walls(self, self.game.invis_wall, 'x')
-        self.hit_rect.centery = self.pos.y
-        collide_with_walls(self, self.game.walls, 'y')
-        self.rect.center = self.hit_rect.center
-
-    def movement_equation(self):
-        self.acc.x += self.vel.x * PLAYER_FRICTION
-        self.vel += self.acc
-        self.pos += self.vel + 0.5 * self.acc
-        self.pos += self.vel * self.game.dt
-        self.rect.center = self.pos
-
-    def moving(self):
-        if not self.facing:
-            self.acc = vec(0.2, 0.5)
-            self.rect.centerx +=2
-            hits2 = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
-            self.rect.centerx -=2
-            if hits2:
-                self.facing = True
-
-        else:
-            self.acc = vec(-0.2, 0.5)
-            self.rect.centerx -= 2
-            hits = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
-            self.rect.centerx += 2
-            if hits:
-                self.facing = False
-
-    def draw_health(self):
-        if self.health > 60:
-            self.col = GREEN
-        elif self.health > 30:
-            self.col = YELLOW
-        else:
-            self.col = RED
-        width = int(self.rect.width * self.health / MOB_HEALTH)
-        self.health_bar = pygame.Rect(0, 0, width, 2)
-        if self.health < MOB_HEALTH:
-            pygame.draw.rect(self.image, self.col, self.health_bar)
-            self.load_images()
-
-class Mob_small_2(pygame.sprite.Sprite):
-    def __init__(self, game, x, y, facing):
-        self.groups = game.all_sprites, game.mob_small_2
-        pygame.sprite.Sprite.__init__(self, self.groups)
-        self.game = game
-        self.current_frame = 0
-        self.last_update = 0
-        self.load_images()
-        self.image = self.walk_frame_L[0]
-        self.health_bars = self.image.copy()
-        self.rect = self.image.get_rect()
-        self.hit_rect = MOB_HIT_RECT.copy()
-        self.hit_rect.center = self.rect.center
-        self.pos = vec(x, y)
-        self.vel = vec(0, 0)
-        self.acc = vec(0, 0)
-        self.rect.center = self.pos
-        self.rot = 0
-        self.health = MOB_HEALTH
-        self.target = game.player
-        self.target2 = game.player2
-        self.alive = True
-        self.facing = facing
-        self.col = GREEN
-
-    def load_images(self):
-        self.walk_frame_R = []
-
-        i = 1
-        while i <= 4:
-            frame = pygame.image.load('assets/sprites/enemy/low/2/R_run_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (24, 36))
-            i = i + 1
-            self.walk_frame_R.append(frame)
-
-        self.walk_frame_L = []
-
-        i = 1
-        while i <= 4:
-            frame = pygame.image.load('assets/sprites/enemy/low/2/L_run_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (24, 36))
-            i = i + 1
-            self.walk_frame_L.append(frame)
-
-    def animate(self):
-        now = pygame.time.get_ticks()
-        if self.facing:
-            if now - self.last_update > 200:
-                self.last_update = now
-                self.current_frame = (self.current_frame + 1) % len(self.walk_frame_L)
-                self.image = self.walk_frame_L[self.current_frame]
-                self.rect = self.image.get_rect()
-        else:
-            if now - self.last_update > 200:
-                self.last_update = now
-                self.current_frame = (self.current_frame + 1) % len(self.walk_frame_R)
-                self.image = self.walk_frame_R[self.current_frame]
-                self.rect = self.image.get_rect()
-
-    def update(self):
-        self.draw_health()
-        self.animate()
-        self.movement_equation()
-        self.moving()
         self.hit_rect.centerx = self.pos.x
         collide_with_walls(self, self.game.invis_wall, 'x')
         self.hit_rect.centery = self.pos.y

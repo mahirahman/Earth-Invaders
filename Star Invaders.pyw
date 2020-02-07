@@ -456,8 +456,7 @@ class Game:
         self.walls = pygame.sprite.Group()
         self.invis_wall = pygame.sprite.Group()
         self.win_game = pygame.sprite.Group()
-        self.mob_small_1 = pygame.sprite.Group()
-        self.mob_small_2 = pygame.sprite.Group()
+        self.mob_small = pygame.sprite.Group()
         self.mob_bullets = pygame.sprite.Group()
         self.mob_flying = pygame.sprite.Group()
         self.mob_charge = pygame.sprite.Group()
@@ -478,7 +477,7 @@ class Game:
             if tile_object.name == 'player2':
                 self.player2 = Player2(self, tile_object.x, tile_object.y)
             if tile_object.name == 'enemy':
-                Mob_small_1(self, obj_center.x, obj_center.y)
+                Mob_small(self, obj_center.x, obj_center.y)
             if tile_object.name == 'flying':
                 Mob_flying(self, obj_center.x, obj_center.y)
             if tile_object.name == 'charge':
@@ -573,7 +572,7 @@ class Game:
                 self.player_hurt.play()
                 self.player.hit()
 
-            hits = pygame.sprite.spritecollide(self.player, self.mob_small_1, False, collide_hit_rect)
+            hits = pygame.sprite.spritecollide(self.player, self.mob_small, False, collide_hit_rect)
             for hit in hits:
                 self.player_hurt.play()
                 self.score -= 5
@@ -583,18 +582,6 @@ class Game:
                 if self.player.alive:
                     self.player.hit()
                 self.player.knockback(hit)
-
-            hits = pygame.sprite.spritecollide(self.player, self.mob_small_2, False, collide_hit_rect)
-            for hit in hits:
-                self.player_hurt.play()
-                self.score -= 5
-                self.player.health -= MOB_DAMAGE
-                if self.player.health <= 0:
-                    self.player.alive = False
-                if self.player.alive:
-                    self.player.hit()
-                self.player.knockback(hit)
-
 
             hits = pygame.sprite.spritecollide(self.player, self.mob_big, False, collide_hit_rect)
             for hit in hits:
@@ -680,18 +667,7 @@ class Game:
                 self.player_hurt.play()
                 self.player2.hit()
 
-            hits = pygame.sprite.spritecollide(self.player2, self.mob_small_1, False, collide_hit_rect)
-            for hit in hits:
-                self.player_hurt.play()
-                self.score2 -= 5
-                self.player2.health -= MOB_DAMAGE
-                if self.player2.health <= 0:
-                    self.player2.alive = False
-                if self.player2.alive:
-                    self.player2.hit()
-                self.player2.knockback(hit)
-
-            hits = pygame.sprite.spritecollide(self.player2, self.mob_small_2, False, collide_hit_rect)
+            hits = pygame.sprite.spritecollide(self.player2, self.mob_small, False, collide_hit_rect)
             for hit in hits:
                 self.player_hurt.play()
                 self.score2 -= 5
@@ -753,7 +729,7 @@ class Game:
             pass
 
         #Bullet Collisions to Mobs
-        hits = pygame.sprite.groupcollide(self.mob_small_1, self.bullets2, False, True)
+        hits = pygame.sprite.groupcollide(self.mob_small, self.bullets2, False, True)
         for hit in hits:
             self.enemy_hurt.play()
             self.score2 += 1
@@ -768,7 +744,7 @@ class Game:
                 else:
                     pass
 
-        hits = pygame.sprite.groupcollide(self.mob_small_1, self.bullets, False, True)
+        hits = pygame.sprite.groupcollide(self.mob_small, self.bullets, False, True)
         for hit in hits:
             self.enemy_hurt.play()
             self.score += 1
@@ -782,24 +758,6 @@ class Game:
                     Mob_Big(self, hit.pos.x, hit.pos.y, hit.facing)
                 else:
                     pass
-
-        hits = pygame.sprite.groupcollide(self.mob_small_2, self.bullets2, False, True)
-        for hit in hits:
-            self.enemy_hurt.play()
-            self.score2 += 1
-            hit.health -= BULLET_DAMAGE
-            if hit.health <= 0:
-                hit.kill()
-                self.score2 += 10
-
-        hits = pygame.sprite.groupcollide(self.mob_small_2, self.bullets, False, True)
-        for hit in hits:
-            self.enemy_hurt.play()
-            self.score += 1
-            hit.health -= BULLET_DAMAGE
-            if hit.health <= 0:
-                hit.kill()
-                self.score += 10
 
         hits = pygame.sprite.groupcollide(self.mob_flying, self.bullets, False, True)
         for hit in hits:
@@ -809,8 +767,6 @@ class Game:
             if hit.health <= 0:
                 hit.kill()
                 self.score += 15
-                self.morph.play()
-                Mob_small_2(self, hit.pos.x, hit.pos.y, hit.facing)
 
         hits = pygame.sprite.groupcollide(self.mob_flying, self.bullets2, False, True)
         for hit in hits:
@@ -820,8 +776,6 @@ class Game:
             if hit.health <= 0:
                 hit.kill()
                 self.score2 += 15
-                self.morph.play()
-                Mob_small_2(self, hit.pos.x, hit.pos.y, hit.facing)
 
         hits = pygame.sprite.groupcollide(self.mob_big, self.bullets2, False, True)
         for hit in hits:
@@ -920,7 +874,7 @@ class Game:
         self.draw_text("SCORE:" + str(self.score2), self.pixel_font,15, WHITE, WIDTH/1.2, 37, align="center")
 
         #Enemy counter
-        self.draw_text('ALIENS: {}'.format(len(self.mob_small_1) + len(self.mob_big) + len(self.mob_flying) + len(self.mob_small_2)), self.pixel_font, 15, WHITE, WIDTH/2, 15, align="center")
+        self.draw_text('ALIENS: {}'.format(len(self.mob_small) + len(self.mob_big) + len(self.mob_flying)), self.pixel_font, 15, WHITE, WIDTH/2, 15, align="center")
         pygame.display.flip()
 
         if self.paused:
