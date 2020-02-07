@@ -1008,17 +1008,17 @@ class Mob_Big(pygame.sprite.Sprite):
     def moving(self):
         if not self.facing:
             self.acc = vec(0.1, 0.5)
-            self.rect.centerx += 2
+            self.rect.centerx += 4
             hits2 = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
-            self.rect.centerx -= 2
+            self.rect.centerx -= 4
             if hits2:
                 self.facing = True
 
         else:
             self.acc = vec(-0.1, 0.5)
-            self.rect.centerx -= 2
+            self.rect.centerx -= 4
             hits = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
-            self.rect.centerx += 2
+            self.rect.centerx += 4
             if hits:
                 self.facing = False
 
