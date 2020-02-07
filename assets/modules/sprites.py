@@ -973,13 +973,13 @@ class Mob_Big(pygame.sprite.Sprite):
     def animate(self):
         now = pygame.time.get_ticks()
         if self.facing:
-            if now - self.last_update > 100:
+            if now - self.last_update > 80:
                 self.last_update = now
                 self.current_frame = (self.current_frame + 1) % len(self.walk_frame_L)
                 self.image = self.walk_frame_L[self.current_frame]
                 self.rect = self.image.get_rect()
         else:
-            if now - self.last_update > 100:
+            if now - self.last_update > 80:
                 self.last_update = now
                 self.current_frame = (self.current_frame + 1) % len(self.walk_frame_R)
                 self.image = self.walk_frame_R[self.current_frame]
@@ -1007,18 +1007,18 @@ class Mob_Big(pygame.sprite.Sprite):
 
     def moving(self):
         if not self.facing:
-            self.acc = vec(0.1, 0.5)
-            self.rect.centerx += 4
+            self.acc = vec(0.4, 0.5)
+            self.rect.centerx += 5
             hits2 = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
-            self.rect.centerx -= 4
+            self.rect.centerx -= 5
             if hits2:
                 self.facing = True
 
         else:
-            self.acc = vec(-0.1, 0.5)
-            self.rect.centerx -= 4
+            self.acc = vec(-0.4, 0.5)
+            self.rect.centerx -= 5
             hits = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
-            self.rect.centerx += 4
+            self.rect.centerx += 5
             if hits:
                 self.facing = False
 
