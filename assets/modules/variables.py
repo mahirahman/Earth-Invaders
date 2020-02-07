@@ -36,7 +36,6 @@ BULLET_RATE = 150
 BULLET_DAMAGE = 10
 
 #Mob
-MOB_SPEED = vec(0.2, 0.5)
 MOB_HIT_RECT = pygame.Rect(0, 0, 24, 36)
 MOB_CHARGE_HIT_RECT = pygame.Rect(0, 0, 24, 30)
 MOB_BIG_HIT_RECT = pygame.Rect(0, 0, 24, 36)

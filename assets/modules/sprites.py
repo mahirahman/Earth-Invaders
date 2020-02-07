@@ -1496,7 +1496,7 @@ class Mob_charge(pygame.sprite.Sprite):
         elif self.detected and not self.charging and self.chargesequence:
             time = pygame.time.get_ticks()
             self.animate()
-            if self.charge_counter != 5:
+            if self.charge_counter != 2:
                 if time - self.step > 200:
                     if self.turn:
                         self.movement_equation()
