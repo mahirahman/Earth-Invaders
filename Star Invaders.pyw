@@ -11,6 +11,7 @@ import assets.modules.pygame_textinput as pygame_textinput
 
 pygame.init()
 fps = pygame.time.Clock()
+stars = []
 pygame.display.set_caption('Star Invaders')
 pygame.display.set_icon(pygame.image.load("assets/favicon.ico"))
 pygame.mixer.music.set_volume(0.6)
@@ -37,42 +38,20 @@ font_dat = {'A':[3],'B':[3],'C':[3],'D':[3],'E':[3],'F':[3],'G':[3],'H':[3],'I':
 font = text.generate_font('assets/font.png',font_dat,5,8,(248,248,248))
 font_select = text.generate_font('assets/font.png',font_dat,5,8,(160,239,120))
 
-class menu_background(object):
-    def render(self,surface):
-        surface.fill((9,10,15))
+def bg_render(surface):
+    surface.fill((9,10,15))
 
-        star_field_slow = []
-        star_field_medium = []
+    for i in range(25):
+        stars.append([random.randint(0, WIDTH), random.randint(0, HEIGHT)])
+        pygame.draw.circle(screen, (200, 200, 200), stars[i], 2, 0)
+        stars[i][0] -= 5
+        if stars[i][0] < 0:
+            stars[i][0] = WIDTH
 
-        for slow_stars in range(4):
-            star_loc_x = random.randrange(0, WIDTH)
-            star_loc_y = random.randrange(0, HEIGHT)
-            star_field_slow.append([star_loc_x, star_loc_y])
-
-        for medium_stars in range(4):
-            star_loc_x = random.randrange(0, WIDTH)
-            star_loc_y = random.randrange(0, HEIGHT)
-            star_field_medium.append([star_loc_x, star_loc_y])
-
-        for star in star_field_slow:
-            star[1] += 1
-            if star[1] > HEIGHT:
-                star[0] = random.randrange(0, WIDTH)
-                star[1] = random.randrange(-20, -5)
-            pygame.draw.circle(screen, (128, 128, 128), star, 3)
-
-        for star in star_field_medium:
-            star[1] += 4
-            if star[1] > HEIGHT:
-                star[0] = random.randrange(0, WIDTH)
-                star[1] = random.randrange(-20, -5)
-            pygame.draw.circle(screen, (192, 192, 192), star, 5)
-
-        pygame.display.flip()
-        fps.tick(60)
+    pygame.display.flip()
+    fps.tick(60)
 
 def menu():
-    bg = menu_background()
     logo = pygame.image.load('assets/images/logo.png')
     menu_options = ['Play','Controls','Highscores','Settings','Credits','Quit']
     menu_choice = 0
@@ -82,7 +61,7 @@ def menu():
     pygame.mixer.music.play(-1)
 
     while in_menu:
-        bg.render(display)
+        bg_render(display)
         display.blit(logo,(63,46))
 
         text.show_text('Menu Controls: Arrow Keys + Space',2,240,1,9999,font,display)
@@ -132,12 +111,11 @@ def menu():
         fps.tick(60)
 
 def play():
-    bg = menu_background()
     menu_options = ['Level 1','Level 2','Back']
     menu_choice = 0
     in_play = True
     while in_play:
-        bg.render(display)
+        bg_render(display)
 
         n = 0
         for option in menu_options:
@@ -184,10 +162,9 @@ def play():
         fps.tick(60)
 
 def controls():
-    bg = menu_background()
     in_controls = True
     while in_controls:
-        bg.render(display)
+        bg_render(display)
 
         text.show_text('Press ESC to go back',2,240,1,9999,font,display)
         text_array = ['Use WASD and Space for Player 1','Use Arrow keys and Right Enter for Player 2','For pausing press P']
@@ -209,10 +186,9 @@ def controls():
         fps.tick(60)
 
 def highscores():
-    bg = menu_background()
     in_highscores = True
     while in_highscores:
-        bg.render(display)
+        bg_render(display)
 
         text.show_text('Press ESC to go back',2,240,1,9999,font,display)
 
@@ -244,12 +220,11 @@ def highscores():
         fps.tick(60)
 
 def settings():
-    bg = menu_background()
     menu_options = ['Display Settings','Volume','Back']
     menu_choice = 0
     in_settings = True
     while in_settings:
-        bg.render(display)
+        bg_render(display)
 
         n = 0
         for option in menu_options:
@@ -287,12 +262,11 @@ def settings():
 
 def display_config():
     global WIDTH,HEIGHT,screen
-    bg = menu_background()
     menu_options = ['Windowed','Fullscreen','Back']
     menu_choice = 0
     in_config = True
     while in_config:
-        bg.render(display)
+        bg_render(display)
 
         n = 0
         for option in menu_options:
@@ -329,12 +303,11 @@ def display_config():
         fps.tick(60)
 
 def volume():
-    bg = menu_background()
     menu_options = ['100/','75/','50/','25/','0/','Back']
     menu_choice = 0
     in_volume = True
     while in_volume:
-        bg.render(display)
+        bg_render(display)
 
         n = 0
         for option in menu_options:
@@ -377,10 +350,9 @@ def volume():
         fps.tick(60)
 
 def credits():
-    bg = menu_background()
     in_credits = True
     while in_credits:
-        bg.render(display)
+        bg_render(display)
 
         text.show_text('Press ESC to go back',2,240,1,9999,font,display)
         credits_array = ['Mahi Rahman','Son Tran','Daniel Nguyen','Tejas Amrale','Peter Sorial','Spandan Kolapkar']
