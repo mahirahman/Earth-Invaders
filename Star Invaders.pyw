@@ -208,10 +208,6 @@ def highscores():
                 pygame.quit()
                 sys.exit()
             if event.type == KEYDOWN:
-                if event.key == K_w:
-                    print("Scroll UP")
-                if event.key == K_s:
-                    print("Scroll Down")
                 if event.key == K_ESCAPE:
                     in_highscores = False
 
