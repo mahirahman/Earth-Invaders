@@ -429,10 +429,11 @@ class Player(pygame.sprite.Sprite):
             pass
 
     def jump(self):
-        hits = pygame.sprite.spritecollide(self, self.game.walls, False)
-        if hits:
-            self.game.jump_1.play()
-            self.vel.y = -10
+        if self.alive:
+            hits = pygame.sprite.spritecollide(self, self.game.walls, False)
+            if hits:
+                self.game.jump_1.play()
+                self.vel.y = -10
 
     def death(self):
         if not self.alive:
@@ -788,10 +789,11 @@ class Player2(pygame.sprite.Sprite):
             self.health = PLAYER_HEALTH
 
     def jump(self):
-        hits = pygame.sprite.spritecollide(self, self.game.walls, False)
-        if hits:
-            self.game.jump_2.play()
-            self.vel.y = -10
+        if self.alive:
+            hits = pygame.sprite.spritecollide(self, self.game.walls, False)
+            if hits:
+                self.game.jump_2.play()
+                self.vel.y = -10
 
     def death(self):
         if not self.alive:
