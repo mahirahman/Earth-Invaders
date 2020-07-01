@@ -4,7 +4,7 @@ Side Scrolling Shooter Game
 
 [![Made with Python](http://ForTheBadge.com/images/badges/made-with-python.svg)](https://www.python.org/)
 
-![Image](https://i.imgur.com/lboHLHD.png)
+![Image](assets/images/git_banner.png)
 
 
 ## Getting Started
