@@ -1,6 +1,6 @@
-# Earth Invaders ✨
+# Earth Invaders 🌍
 
-Side Scrolling Shooter Game
+Side Scrolling Shooter Game ✨
 
 [![Made with Python](http://ForTheBadge.com/images/badges/made-with-python.svg)](https://www.python.org/)
 
