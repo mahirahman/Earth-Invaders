@@ -327,8 +327,12 @@ class Game:
 
     def __init__(self):
         self.font_name = pygame.font.match_font('8bit')
+        pygame.font.init()
+        self.font = pygame.font.Font('assets/8bit.ttf', 60)
+        self.opx = 2
+        self.osurf = 0
+        self.tsurf = 0
         self.load_data()
-
 
     #Loads Sounds and Text Font and Bullet Sprites
     def load_data(self):
@@ -373,7 +377,7 @@ class Game:
 
     #HUD For Player
     def draw_player_health(self, x, y, percent, playerid):
-            
+
         if percent < 0:
             percent = 0
 
@@ -838,21 +842,64 @@ class Game:
 
         if self.paused:
             self.display = pygame.Surface((self.map.width, self.map.height))
-            self.draw_text("Player 1: Use WASD to move and Space to shoot", self.pixel_font,15, (255, 255, 255), WIDTH/2, HEIGHT/2-90, align="center")
-            self.draw_text("Player 2: Use Arrow keys to move and Right Enter to shoot", self.pixel_font,15, (255, 255, 255), WIDTH/2, HEIGHT/2-70, align="center")
-            self.draw_text("PAUSE", self.pixel_font,65, (255, 255, 255), WIDTH/2, HEIGHT/2, align="center")
-            self.draw_text("Press P to unpause", self.pixel_font,15, (255, 255, 255), WIDTH/2, HEIGHT/2+25, align="center")
-            self.draw_text("Press ESC to go back to main menu", self.pixel_font,15, (255, 255, 255), WIDTH/2, HEIGHT/2+90, align="center")
+            self.draw_pause_text("Player 1: Use WASD to move and Space to shoot", self.pixel_font,15, (255, 255, 255), WIDTH/2, HEIGHT/2-90, align="center")
+            self.draw_pause_text("Player 2: Use Arrow keys to move and Right Enter to shoot", self.pixel_font,15, (255, 255, 255), WIDTH/2, HEIGHT/2-70, align="center")
+            self.draw_pause_text("PAUSE", self.pixel_font,65, (255, 255, 255), WIDTH/2, HEIGHT/2, align="center")
+            self.draw_pause_text("Press P to unpause", self.pixel_font,15, (255, 255, 255), WIDTH/2, HEIGHT/2+25, align="center")
+            self.draw_pause_text("Press ESC to go back to main menu", self.pixel_font,15, (255, 255, 255), WIDTH/2, HEIGHT/2+90, align="center")
+
 
         pygame.display.flip()
+
+    def _circlepoints(self,r):
+        r = int(round(r))
+        x, y, e = r, 0, 1 - r
+        points = []
+        while x >= y:
+            points.append((x, y))
+            y += 1
+            if e < 0:
+                e += 2 * y - 1
+            else:
+                x -= 1
+                e += 2 * (y - x) - 1
+        points += [(y, x) for x, y in points if x > y]
+        points += [(-x, y) for x, y in points if x]
+        points += [(x, -y) for x, y in points if y]
+        points.sort()
+        return points
+
+    def getsurf(self,pause_text,color):
+        return self.font.render(pause_text, True, color).convert_alpha()
 
     def draw_text(self, text, font_name, size, color, x, y, align="center"):
         font = pygame.font.Font(font_name, size)
         text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect()
+
         if align == "center":
             text_rect.center = (x, y)
+
         screen.blit(text_surface, text_rect)
+
+    def draw_pause_text(self, text, font_name, size, color, x, y, align="center"):
+        font = pygame.font.Font(font_name, size)
+
+        self.osurf = font.render(text, True, (0, 0, 0, 0))
+        self.tsurf = font.render(text, True, (255, 255, 255, 0))
+        self.osurf_rect = self.osurf.get_rect()
+        self.tsurf_rect = self.tsurf.get_rect()
+        if align == "center":
+            self.osurf_rect.center = (x, y)
+            self.tsurf_rect.center = (x, y)
+
+        for offset, blendmax in [(0, False), (300, True)]:
+            for dx, dy in self._circlepoints(self.opx):
+                if blendmax:
+                    screen.blit(self.osurf, (dx + x, dy + y), None, pygame.BLEND_RGBA_MAX)
+                else:
+                    screen.blit(self.osurf, (dx + x, dy + y))
+            screen.blit(self.tsurf, (x, y))
 
     #Key presses
     def events(self):
