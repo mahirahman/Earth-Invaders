@@ -1,6 +1,10 @@
 import pygame
 import pytmx
-from assets.modules.variables import *
+WIDTH = 512
+HEIGHT = 400
+pygame.init()
+#WIDTH = pygame.display.Info().current_w
+#HEIGHT = pygame.display.Info().current_h
 
 def collide_hit_rect(one, two):
     return one.hit_rect.colliderect(two.rect)
@@ -45,6 +49,7 @@ class Camera:
 
         x = min(0, x)
         y = min(0, y)
+
         x = max(-(self.width - WIDTH), x)
         y = max(-(self.height - HEIGHT), y)
         self.camera = pygame.Rect(x, y, self.width, self.height)

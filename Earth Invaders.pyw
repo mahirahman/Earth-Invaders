@@ -1,10 +1,6 @@
-# Side Scrolling Shooter Game
-# Mahi Rahman, Son Tran, Daniel Nguyen, Tejas Amrale, Peter Sorial
-
 import pygame, sys, random, time, os, math
 from pygame.locals import *
 import assets.modules.text as text
-from assets.modules.variables import *
 from assets.modules.sprites import *
 from assets.modules.tilemap import *
 import assets.modules.pygame_textinput as pygame_textinput
@@ -12,12 +8,10 @@ import assets.modules.pygame_textinput as pygame_textinput
 pygame.init()
 fps = pygame.time.Clock()
 stars = []
-pygame.display.set_caption('Star Invaders')
+pygame.display.set_caption('Earth Invaders')
 pygame.display.set_icon(pygame.image.load("assets/favicon.ico"))
 pygame.mixer.music.set_volume(0.6)
 pygame.mouse.set_visible(0)
-
-global screen
 screen = pygame.display.set_mode((WIDTH, HEIGHT),pygame.FULLSCREEN)
 display = pygame.Surface((400,250))
 
@@ -62,7 +56,7 @@ def menu():
 
     while in_menu:
         bg_render(display)
-        display.blit(logo,(63,46))
+        display.blit(logo,(65,46))
 
         text.show_text('Menu Controls: Arrow Keys + Space',2,240,1,9999,font,display)
 
@@ -93,7 +87,17 @@ def menu():
                 if event.key == K_SPACE:
                     choice = menu_options[menu_choice]
                     if choice == 'Play':
-                        play()
+                        game = Game()
+                        while True:
+                            pygame.mouse.set_visible(False)
+                            pygame.mixer.music.load('assets/audio/level1.wav')
+                            pygame.mixer.music.play(-1)
+                            game.new()
+                            game.run()
+                            if game.win:
+                                game.you_win()
+                            else:
+                                game.game_over()
                     if choice == 'Controls':
                         controls()
                     if choice == 'Highscores':
@@ -110,64 +114,13 @@ def menu():
         pygame.display.flip()
         fps.tick(60)
 
-def play():
-    menu_options = ['Level 1','Level 2','Back']
-    menu_choice = 0
-    in_play = True
-    while in_play:
-        bg_render(display)
-
-        n = 0
-        for option in menu_options:
-            if menu_choice == n:
-                text.show_text('> ' + option,200-int(get_text_width(option,1)/2)-5,100+n*20,1,9999,font_select,display)
-            else:
-                text.show_text(option,200-int(get_text_width(option,1)/2),100+n*20,1,9999,font,display)
-            n += 1
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == KEYDOWN:
-                if event.key == K_UP:
-                    menu_choice -= 1
-                    if menu_choice < 0:
-                        menu_choice = len(menu_options)-1
-                if event.key == K_DOWN:
-                    menu_choice += 1
-                    if menu_choice >= len(menu_options):
-                        menu_choice = 0
-                if event.key == K_SPACE:
-                    choice = menu_options[menu_choice]
-                    if choice == 'Level 1':
-                        game = Game()
-                        while True:
-                            pygame.mouse.set_visible(False)
-                            pygame.mixer.music.load('assets/audio/level1.wav')
-                            pygame.mixer.music.play(-1)
-                            game.new()
-                            game.run()
-                            if game.win:
-                                game.you_win()
-                            else:
-                                game.game_over()
-                    if choice == 'Level 2':
-                        print("Level")
-                    if choice == 'Back':
-                        in_play = False
-                if event.key == K_ESCAPE:
-                    in_play = False
-        screen.blit(pygame.transform.scale(display,(WIDTH,HEIGHT)),(0,0))
-        pygame.display.flip()
-        fps.tick(60)
-
 def controls():
     in_controls = True
     while in_controls:
         bg_render(display)
 
         text.show_text('Press ESC to go back',2,240,1,9999,font,display)
-        text_array = ['Use WASD and Space for Player 1','Use Arrow keys and Right Enter for Player 2','For pausing press P']
+        text_array = ['Use WASD and Space for Player 1','Use Arrow keys and Right Enter for Player 2','Press P to Pause']
 
         n = 0
         for list in text_array:
@@ -370,31 +323,12 @@ def credits():
         pygame.display.flip()
         fps.tick(60)
 
-#HUD For Player
-def draw_player_health(surf, x, y, pct):
-    if pct < 0:
-        pct = 0
-    BAR_LENGTH = 150
-    BAR_HEIGHT = 20
-    fill = pct * BAR_LENGTH
-    outline_rect = pygame.Rect(x, y, BAR_LENGTH, BAR_HEIGHT)
-    fill_rect = pygame.Rect(x, y, fill, BAR_HEIGHT)
-    if pct > 0.6:
-        col = GREEN
-    elif pct > 0.3:
-        col = YELLOW
-    else:
-        col = RED
-    pygame.draw.rect(surf, col, fill_rect)
-    pygame.draw.rect(surf, WHITE, outline_rect, 2)
-
 class Game:
 
     def __init__(self):
-        self.particles = []
-        self.timer = 0
         self.font_name = pygame.font.match_font('8bit')
         self.load_data()
+
 
     #Loads Sounds and Text Font and Bullet Sprites
     def load_data(self):
@@ -415,6 +349,82 @@ class Game:
         self.player_hurt = pygame.mixer.Sound("assets/audio/player_hurt.wav")
         self.shoot = pygame.mixer.Sound("assets/audio/shoot.wav")
 
+        self.healthbar_0 = pygame.image.load('assets/sprites/health/0.png')
+        self.healthbar_1 = pygame.image.load('assets/sprites/health/1.png')
+        self.healthbar_2 = pygame.image.load('assets/sprites/health/2.png')
+        self.healthbar_3 = pygame.image.load('assets/sprites/health/3.png')
+        self.healthbar_4 = pygame.image.load('assets/sprites/health/4.png')
+        self.healthbar_5 = pygame.image.load('assets/sprites/health/5.png')
+        self.healthbar_6 = pygame.image.load('assets/sprites/health/6.png')
+        self.healthbar_7 = pygame.image.load('assets/sprites/health/7.png')
+        self.healthbar_8 = pygame.image.load('assets/sprites/health/8.png')
+        self.healthbar_9 = pygame.image.load('assets/sprites/health/9.png')
+        self.healthbar_10 = pygame.image.load('assets/sprites/health/10.png')
+        self.healthbar_11 = pygame.image.load('assets/sprites/health/11.png')
+        self.healthbar_12 = pygame.image.load('assets/sprites/health/12.png')
+        self.healthbar_13 = pygame.image.load('assets/sprites/health/13.png')
+        self.healthbar_14 = pygame.image.load('assets/sprites/health/14.png')
+        self.healthbar_15 = pygame.image.load('assets/sprites/health/15.png')
+        self.healthbar_16 = pygame.image.load('assets/sprites/health/16.png')
+        self.healthbar_17 = pygame.image.load('assets/sprites/health/17.png')
+        self.healthbar_18 = pygame.image.load('assets/sprites/health/18.png')
+        self.healthbar_19 = pygame.image.load('assets/sprites/health/19.png')
+        self.healthbar_20 = pygame.image.load('assets/sprites/health/20.png')
+
+    #HUD For Player
+    def draw_player_health(self, x, y, percent, playerid):
+            
+        if percent < 0:
+            percent = 0
+
+        if percent > 0.95:
+            health_icon = self.healthbar_20
+        elif percent > 0.9:
+            health_icon = self.healthbar_19
+        elif percent > 0.85:
+            health_icon = self.healthbar_18
+        elif percent > 0.8:
+            health_icon = self.healthbar_17
+        elif percent > 0.75:
+            health_icon = self.healthbar_16
+        elif percent > 0.7:
+            health_icon = self.healthbar_15
+        elif percent > 0.65:
+            health_icon = self.healthbar_14
+        elif percent > 0.6:
+            health_icon = self.healthbar_13
+        elif percent > 0.55:
+            health_icon = self.healthbar_12
+        elif percent > 0.5:
+            health_icon = self.healthbar_11
+        elif percent > 0.45:
+            health_icon = self.healthbar_10
+        elif percent > 0.4:
+            health_icon = self.healthbar_9
+        elif percent > 0.35:
+            health_icon = self.healthbar_8
+        elif percent > 0.3:
+            health_icon = self.healthbar_7
+        elif percent > 0.25:
+            health_icon = self.healthbar_6
+        elif percent > 0.2:
+            health_icon = self.healthbar_5
+        elif percent > 0.15:
+            health_icon = self.healthbar_4
+        elif percent > 0.1:
+            health_icon = self.healthbar_3
+        elif percent > 0.05:
+            health_icon = self.healthbar_2
+        elif percent > 0:
+            health_icon = self.healthbar_1
+        else:
+            health_icon = self.healthbar_0
+
+        health_scaled = pygame.transform.scale(health_icon, (170, 44))
+        if playerid == 2:
+            health_scaled = pygame.transform.flip(health_scaled, True, False)
+        screen.blit(health_scaled,(x, y))
+
     #Initialize variables and sets up tilemap
     def new(self):
         self.score = 0
@@ -431,7 +441,7 @@ class Game:
         self.mob_big = pygame.sprite.Group()
         self.items = pygame.sprite.Group()
         self.spike = pygame.sprite.Group()
-        self.map = TiledMap('assets/levels/test/lvl_1.tmx')
+        self.map = TiledMap('assets/levels/level1.tmx')
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
         self.fall_death = pygame.sprite.Group()
@@ -439,7 +449,7 @@ class Game:
         self.bullets = pygame.sprite.Group()
         self.bullets2 = pygame.sprite.Group()
         for tile_object in self.map.tmxdata.objects:    #FOR loop to render all objects and bitmap graphics in the tiled map (TMX)
-            obj_center = vec(tile_object.x + tile_object.width / 2, tile_object.y + tile_object.height / 2)
+            obj_center = pygame.math.Vector2(tile_object.x + tile_object.width / 2, tile_object.y + tile_object.height / 2)
             if tile_object.name == 'player':
                 self.player = Player(self, tile_object.x, tile_object.y)
             if tile_object.name == 'player2':
@@ -467,7 +477,6 @@ class Game:
             if tile_object.name == 'win_area':
                 Win_area(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
         self.camera = Camera(self.map.width, self.map.height)
-        self.draw_debug = False
         self.paused = False
 
     #Main Game Loop
@@ -489,7 +498,6 @@ class Game:
     def update(self):
         if self.win or not self.playing:
             textinput.update(events)
-            # Blit its surface onto the screen
             screen.blit(textinput.get_surface(), (10, 10))
             pygame.display.flip()
             fps.tick(60)
@@ -502,7 +510,7 @@ class Game:
         elif not self.player.alive and self.player2.alive:
             self.camera.update(self.player2)
 
-        if self.player.collision: #if player 1 collision is enabled
+        if self.player.collision:
             hits = pygame.sprite.spritecollide(self.player, self.items, False, collide_hit_rect)
             for hit in hits:
                 if hit.type == 'health' and self.player.health < PLAYER_HEALTH:
@@ -526,10 +534,10 @@ class Game:
                     self.player.vel.y -= 3
                 elif self.player.jumping and self.player.vel.x > 0:
                     self.player.pos.x -= 10
-                    self.player.vel = vec(-5, -10)
+                    self.player.vel = pygame.math.Vector2(-5, -10)
                 elif self.player.jumping and self.player.vel.x < 0:
                     self.player.pos.x += 10
-                    self.player.vel = vec(5, -10)
+                    self.player.vel = pygame.math.Vector2(5, -10)
 
                 if self.player.vel.y < -5:
                     self.player.vel.y = -5
@@ -544,7 +552,7 @@ class Game:
             for hit in hits:
                 self.player_hurt.play()
                 self.score -= 5
-                self.player.health -= MOB_DAMAGE
+                self.player.health -= 10
                 if self.player.health <= 0:
                     self.player.alive = False
                 if self.player.alive:
@@ -562,22 +570,11 @@ class Game:
                     self.player.hit()
                 self.player.knockback(hit)
 
-            hits = pygame.sprite.spritecollide(self.player, self.mob_bullets, False, collide_hit_rect)
-            for hit in hits:
-                hit.kill()
-                self.player_hurt.play()
-                self.score -= 1
-                self.player.health -= 5
-                if self.player.health <= 0:
-                    self.player.alive = False
-                if self.player.alive:
-                    self.player.hit()
-
             hits = pygame.sprite.spritecollide(self.player, self.mob_flying, False, collide_hit_rect)
             for hit in hits:
                 self.player_hurt.play()
                 self.score -= 5
-                self.player.health -= 5
+                self.player.health -= 10
                 if self.player.health <= 0:
                     self.player.alive = False
                 self.player.hit()
@@ -587,7 +584,7 @@ class Game:
             for hit in hits:
                 self.player_hurt.play()
                 self.score -= 5
-                self.player.health -= 5
+                self.player.health -= 10
                 if self.player.health <= 0:
                     self.player.alive = False
                 if hit.charging:
@@ -596,8 +593,19 @@ class Game:
                     self.player.knockback(hit)
                 self.player.hit()
 
+            hits = pygame.sprite.spritecollide(self.player, self.mob_bullets, False, collide_hit_rect)
+            for hit in hits:
+                hit.kill()
+                self.player_hurt.play()
+                self.score -= 1
+                self.player.health -= 10
+                if self.player.health <= 0:
+                    self.player.alive = False
+                if self.player.alive:
+                    self.player.hit()
 
-        if self.player2.collision:  #if player 2 collision is enabled
+
+        if self.player2.collision:
             hits = pygame.sprite.spritecollide(self.player2, self.items, False, collide_hit_rect)
             for hit in hits:
                 if hit.type == 'health' and self.player2.health < PLAYER_HEALTH:
@@ -621,10 +629,10 @@ class Game:
                     self.player2.vel.y -= 3
                 elif self.player2.jumping and self.player2.vel.x > 0:
                     self.player2.pos.x -= 10
-                    self.player2.vel = vec(-5, -10)
+                    self.player2.vel = pygame.math.Vector2(-5, -10)
                 elif self.player2.jumping and self.player2.vel.x < 0:
                     self.player2.pos.x += 10
-                    self.player2.vel = vec(5, -10)
+                    self.player2.vel = pygame.math.Vector2(5, -10)
 
                 if self.player2.vel.y < -5:
                     self.player2.vel.y = -5
@@ -639,7 +647,7 @@ class Game:
             for hit in hits:
                 self.player_hurt.play()
                 self.score2 -= 5
-                self.player2.health -= MOB_DAMAGE
+                self.player2.health -= 10
                 if self.player2.health <= 0:
                     self.player2.alive = False
                 if self.player2.alive:
@@ -657,35 +665,22 @@ class Game:
                     self.player2.hit()
                 self.player2.knockback(hit)
 
-
             hits = pygame.sprite.spritecollide(self.player2, self.mob_flying, False, collide_hit_rect)
             for hit in hits:
                 self.player_hurt.play()
                 self.score2 -= 5
-                self.player2.health -= 5
+                self.player2.health -= 10
                 if self.player2.health <= 0:
                     self.player2.alive = False
                 if self.player2.alive:
                     self.player2.hit()
                 self.player2.knockback(hit)
 
-
-            hits = pygame.sprite.spritecollide(self.player2, self.mob_bullets, False, collide_hit_rect)
-            for hit in hits:
-                hit.kill()
-                self.player_hurt.play()
-                self.score2 -= 1
-                self.player2.health -= 5
-                if self.player2.health <= 0:
-                    self.player2.alive = False
-                if self.player2.alive:
-                    self.player2.hit()
-
             hits = pygame.sprite.spritecollide(self.player2, self.mob_charge, False, collide_hit_rect)
             for hit in hits:
                 self.player_hurt.play()
                 self.score2 -= 5
-                self.player2.health -= 5
+                self.player2.health -= 10
                 if self.player2.health <= 0:
                     self.player2.alive = False
                 if hit.charging:
@@ -693,15 +688,24 @@ class Game:
                 else:
                     self.player2.knockback(hit)
                 self.player2.hit()
-        else:
-            pass
+
+            hits = pygame.sprite.spritecollide(self.player2, self.mob_bullets, False, collide_hit_rect)
+            for hit in hits:
+                hit.kill()
+                self.player_hurt.play()
+                self.score2 -= 1
+                self.player2.health -= 10
+                if self.player2.health <= 0:
+                    self.player2.alive = False
+                if self.player2.alive:
+                    self.player2.hit()
 
         #Bullet Collisions to Mobs
         hits = pygame.sprite.groupcollide(self.mob_small, self.bullets2, False, True)
         for hit in hits:
             self.enemy_hurt.play()
             self.score2 += 1
-            hit.health -= BULLET_DAMAGE
+            hit.health -= 10
             if hit.health <= 0:
                 hit.kill()
                 self.score2 += 10
@@ -716,7 +720,7 @@ class Game:
         for hit in hits:
             self.enemy_hurt.play()
             self.score += 1
-            hit.health -= BULLET_DAMAGE
+            hit.health -= 10
             if hit.health <= 0:
                 hit.kill()
                 self.score += 10
@@ -731,7 +735,7 @@ class Game:
         for hit in hits:
             self.enemy_hurt.play()
             self.score += 2
-            hit.health -= BULLET_DAMAGE
+            hit.health -= 10
             if hit.health <= 0:
                 hit.kill()
                 self.score += 15
@@ -740,7 +744,7 @@ class Game:
         for hit in hits:
             self.enemy_hurt.play()
             self.score2 += 2
-            hit.health -= BULLET_DAMAGE
+            hit.health -= 10
             if hit.health <= 0:
                 hit.kill()
                 self.score2 += 15
@@ -749,7 +753,7 @@ class Game:
         for hit in hits:
             self.enemy_hurt.play()
             self.score2 += 3
-            hit.health -= BULLET_DAMAGE
+            hit.health -= 10
             if hit.health <= 0:
                 hit.kill()
                 self.score2 += 30
@@ -758,7 +762,7 @@ class Game:
         for hit in hits:
             self.enemy_hurt.play()
             self.score += 3
-            hit.health -= BULLET_DAMAGE
+            hit.health -= 10
             if hit.health <= 0:
                 hit.kill()
                 self.score += 30
@@ -767,7 +771,7 @@ class Game:
         for hit in hits:
             self.enemy_hurt.play()
             self.score += 5
-            hit.health -= BULLET_DAMAGE
+            hit.health -= 10
             if hit.health <= 0:
                 hit.kill()
                 self.score += 40
@@ -776,7 +780,7 @@ class Game:
         for hit in hits:
             self.enemy_hurt.play()
             self.score2 += 5
-            hit.health -= BULLET_DAMAGE
+            hit.health -= 10
             if hit.health <= 0:
                 hit.kill()
                 self.score2 += 40
@@ -818,36 +822,29 @@ class Game:
         screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))
         for sprite in self.all_sprites:
             screen.blit(sprite.image, self.camera.apply(sprite))
-            if self.draw_debug:
-                pygame.draw.rect(screen, RED, self.camera.apply_rect(sprite.hit_rect), 1)
-                pygame.draw.rect(screen, GREEN, self.camera.apply_rect(sprite.rect), 1)
-        if self.draw_debug:
-            for wall in self.walls:
-                pygame.draw.rect(screen, RED, self.camera.apply_rect(wall.rect), 1)
-            for item in self.items:
-                pygame.draw.rect(screen, RED, self.camera.apply_rect(item.rect), 1)
-            for spike in self.spike:
-                pygame.draw.rect(screen, RED, self.camera.apply_rect(spike.rect), 1)
-            for item in self.bullets:
-                pygame.draw.rect(screen, RED, self.camera.apply_rect(item.rect), 1)
 
         #HUD
-        draw_player_health(screen, 10, 10, self.player.health / PLAYER_HEALTH)
-        draw_player_health(screen, 350, 10, self.player2.health / PLAYER_HEALTH)
+        self.draw_player_health(5, 5, self.player.health / PLAYER_HEALTH, 1)
+        self.draw_player_health(337, 5, self.player2.health / PLAYER_HEALTH, 2)
 
         #Display player 1's score
-        self.draw_text("SCORE:" + str(self.score), self.pixel_font,15, WHITE, WIDTH/6.5, 37, align="center")
+        self.draw_text("SCORE:" + str(self.score), self.pixel_font,15, (255, 255, 255), 100, 41, align="center")
 
-        #Displaye player 2's score
-        self.draw_text("SCORE:" + str(self.score2), self.pixel_font,15, WHITE, WIDTH/1.2, 37, align="center")
+        #Display player 2's score
+        self.draw_text("SCORE:" + str(self.score2), self.pixel_font,15, (255, 255, 255), 410, 41, align="center")
 
         #Enemy counter
-        self.draw_text('ALIENS: {}'.format(len(self.mob_small) + len(self.mob_big) + len(self.mob_flying)), self.pixel_font, 15, WHITE, WIDTH/2, 15, align="center")
-        pygame.display.flip()
+        self.draw_text('ALIENS: {}'.format(len(self.mob_small) + len(self.mob_big) + len(self.mob_flying) + len(self.mob_charge)), self.pixel_font, 15, (255, 255, 255), WIDTH/2, 15, align="center")
 
         if self.paused:
             self.display = pygame.Surface((self.map.width, self.map.height))
-            self.draw_text("PAUSE", self.pixel_font,65, WHITE, WIDTH/2, HEIGHT/2, align="center")
+            self.draw_text("Player 1: Use WASD to move and Space to shoot", self.pixel_font,15, (255, 255, 255), WIDTH/2, HEIGHT/2-90, align="center")
+            self.draw_text("Player 2: Use Arrow keys to move and Right Enter to shoot", self.pixel_font,15, (255, 255, 255), WIDTH/2, HEIGHT/2-70, align="center")
+            self.draw_text("PAUSE", self.pixel_font,65, (255, 255, 255), WIDTH/2, HEIGHT/2, align="center")
+            self.draw_text("Press P to unpause", self.pixel_font,15, (255, 255, 255), WIDTH/2, HEIGHT/2+25, align="center")
+            self.draw_text("Press ESC to go back to main menu", self.pixel_font,15, (255, 255, 255), WIDTH/2, HEIGHT/2+90, align="center")
+
+        pygame.display.flip()
 
     def draw_text(self, text, font_name, size, color, x, y, align="center"):
         font = pygame.font.Font(font_name, size)
@@ -865,8 +862,6 @@ class Game:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     menu()
-                if event.key == pygame.K_j:
-                    self.draw_debug = not self.draw_debug
                 if event.key == pygame.K_UP:
                     self.player2.jump()
                 if event.key == pygame.K_w:
@@ -882,7 +877,7 @@ class Game:
             while enter1:
                 screen.fill((60,179,113))
                 events = pygame.event.get()
-                self.draw_text("enter player 1 name", self.pixel_font, 35, WHITE, int(WIDTH/2), int(HEIGHT/2)-50, align="center")
+                self.draw_text("enter player 1 name", self.pixel_font, 35, (255, 255, 255), int(WIDTH/2), int(HEIGHT/2)-50, align="center")
                 screen.blit(player1name.get_surface(), (int(WIDTH/2)-35, int(HEIGHT/2)))
 
                 if player1name.update(events):
@@ -901,7 +896,7 @@ class Game:
             while enter2:
                 screen.fill((60,179,113))
                 events = pygame.event.get()
-                self.draw_text("enter player 2 name", self.pixel_font, 35, WHITE, int(WIDTH/2), int(HEIGHT/2)-50, align="center")
+                self.draw_text("enter player 2 name", self.pixel_font, 35, (255, 255, 255), int(WIDTH/2), int(HEIGHT/2)-50, align="center")
                 screen.blit(player2name.get_surface(), (int(WIDTH/2)-35, int(HEIGHT/2)))
 
                 if player2name.update(events):
@@ -932,15 +927,15 @@ class Game:
                 f.write(str(NAME) + ' ' + str(SCORE) + '\n')
                 f.close()
 
-        self.draw_text("You Win!", self.pixel_font, 80, YELLOW, WIDTH / 2, HEIGHT / 2, align="center")
-        self.draw_text("press ENTER to restart", self.pixel_font, 30, WHITE,WIDTH / 2, HEIGHT * 3 / 4.5, align="center")
-        self.draw_text("or ESCAPE to go to main menu", self.pixel_font, 30, WHITE,WIDTH / 2, HEIGHT * 3 / 4, align="center")
+        self.draw_text("You Win!", self.pixel_font, 80, (255, 255, 0), WIDTH / 2, HEIGHT / 2, align="center")
+        self.draw_text("press ENTER to restart", self.pixel_font, 30, (255, 255, 255),WIDTH / 2, HEIGHT * 3 / 4.5, align="center")
+        self.draw_text("or ESCAPE to go to main menu", self.pixel_font, 30, (255, 255, 255),WIDTH / 2, HEIGHT * 3 / 4, align="center")
 
-        self.draw_text(player1name.get_text(), self.pixel_font,25, WHITE, WIDTH/3, 40, align="center")
-        self.draw_text(str(self.score), self.pixel_font,25, WHITE, WIDTH/3, 60, align="center")
+        self.draw_text(player1name.get_text(), self.pixel_font,25, (255, 255, 255), WIDTH/3, 40, align="center")
+        self.draw_text(str(self.score), self.pixel_font,25, (255, 255, 255), WIDTH/3, 60, align="center")
 
-        self.draw_text(player2name.get_text(), self.pixel_font,25, WHITE, WIDTH/1.5, 40, align="center")
-        self.draw_text(str(self.score2), self.pixel_font,25, WHITE, WIDTH/1.5, 60, align="center")
+        self.draw_text(player2name.get_text(), self.pixel_font,25, (255, 255, 255), WIDTH/1.5, 40, align="center")
+        self.draw_text(str(self.score2), self.pixel_font,25, (255, 255, 255), WIDTH/1.5, 60, align="center")
 
         pygame.display.flip()
         self.wait_for_key()
@@ -953,7 +948,7 @@ class Game:
             while enter1:
                 screen.fill((110, 0, 0))
                 events = pygame.event.get()
-                self.draw_text("enter player 1 name", self.pixel_font, 35, WHITE, int(WIDTH/2), int(HEIGHT/2)-50, align="center")
+                self.draw_text("enter player 1 name", self.pixel_font, 35, (255, 255, 255), int(WIDTH/2), int(HEIGHT/2)-50, align="center")
                 screen.blit(player1name.get_surface(), (int(WIDTH/2)-35, int(HEIGHT/2)))
 
                 if player1name.update(events):
@@ -972,7 +967,7 @@ class Game:
             while enter2:
                 screen.fill((110, 0, 0))
                 events = pygame.event.get()
-                self.draw_text("enter player 2 name", self.pixel_font, 35, WHITE, int(WIDTH/2), int(HEIGHT/2)-50, align="center")
+                self.draw_text("enter player 2 name", self.pixel_font, 35, (255, 255, 255), int(WIDTH/2), int(HEIGHT/2)-50, align="center")
                 screen.blit(player2name.get_surface(), (int(WIDTH/2)-35, int(HEIGHT/2)))
 
                 if player2name.update(events):
@@ -1002,15 +997,15 @@ class Game:
                 f.write(str(NAME) + ' ' + str(SCORE) + '\n')
                 f.close()
 
-        self.draw_text("GAME OVER!", self.pixel_font, 80, RED,WIDTH / 2, HEIGHT / 2, align="center")
-        self.draw_text("press ENTER to restart", self.pixel_font, 30, WHITE,WIDTH / 2, HEIGHT * 3 / 4.5, align="center")
-        self.draw_text("or ESCAPE to go to main menu", self.pixel_font, 30, WHITE,WIDTH / 2, HEIGHT * 3 / 4, align="center")
+        self.draw_text("GAME OVER!", self.pixel_font, 80, (255, 0, 0),WIDTH / 2, HEIGHT / 2, align="center")
+        self.draw_text("press ENTER to restart", self.pixel_font, 30, (255, 255, 255),WIDTH / 2, HEIGHT * 3 / 4.5, align="center")
+        self.draw_text("or ESCAPE to go to main menu", self.pixel_font, 30, (255, 255, 255),WIDTH / 2, HEIGHT * 3 / 4, align="center")
 
-        self.draw_text(player1name.get_text(), self.pixel_font,25, WHITE, WIDTH/3, 40, align="center")
-        self.draw_text(str(self.score), self.pixel_font,25, WHITE, WIDTH/3, 60, align="center")
+        self.draw_text(player1name.get_text(), self.pixel_font,25, (255, 255, 255), WIDTH/3, 40, align="center")
+        self.draw_text(str(self.score), self.pixel_font,25, (255, 255, 255), WIDTH/3, 60, align="center")
 
-        self.draw_text(player2name.get_text(), self.pixel_font,25, WHITE, WIDTH/1.5, 40, align="center")
-        self.draw_text(str(self.score2), self.pixel_font,25, WHITE, WIDTH/1.5, 60, align="center")
+        self.draw_text(player2name.get_text(), self.pixel_font,25, (255, 255, 255), WIDTH/1.5, 40, align="center")
+        self.draw_text(str(self.score2), self.pixel_font,25, (255, 255, 255), WIDTH/1.5, 60, align="center")
 
         pygame.display.flip()
         self.wait_for_key()
