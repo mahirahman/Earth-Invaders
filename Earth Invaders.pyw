@@ -357,8 +357,11 @@ class Game:
     #HUD For Player
     def draw_player_health(self, x, y, percent, playerid):
 
+<<<<<<< Updated upstream
         #health_icon = health[int(100  * percent / 5)]
 
+=======
+>>>>>>> Stashed changes
         if percent < 0:
             percent = 0
 
@@ -697,7 +700,7 @@ class Game:
                 chance = random.randint(0,9)
                 if chance == 0:
                     self.morph.play()
-                    Mob_Big(self, hit.pos.x, hit.pos.y, hit.facing)
+                    Mob_Big(self, hit.pos.x, hit.pos.y, hit.dir)
                 else:
                     pass
 
@@ -712,7 +715,7 @@ class Game:
                 chance = random.randint(0,9)
                 if chance == 0:
                     self.morph.play()
-                    Mob_Big(self, hit.pos.x, hit.pos.y, hit.facing)
+                    Mob_Big(self, hit.pos.x, hit.pos.y, hit.dir)
                 else:
                     pass
 

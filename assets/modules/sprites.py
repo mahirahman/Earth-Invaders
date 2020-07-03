@@ -27,11 +27,11 @@ def collide_with_walls(sprite, group, dir):
             sprite.hit_rect.centery = sprite.pos.y
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, game, pos, dir, facing_R):
+    def __init__(self, game, pos, dir):
         self.groups = game.all_sprites, game.bullets
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        if facing_R:
+        if dir == 1:
             self.image = game.bullet_img_R
         else:
             self.image = game.bullet_img_L
@@ -40,7 +40,7 @@ class Bullet(pygame.sprite.Sprite):
         self.hit_rect.center = self.rect.center
         self.pos = pygame.math.Vector2(pos)
         self.rect.center = pos
-        self.vel = dir * 7
+        self.vel = pygame.math.Vector2(dir * 7, 0)
         self.spawn_time = pygame.time.get_ticks()
 
     def update(self):
@@ -52,11 +52,11 @@ class Bullet(pygame.sprite.Sprite):
             self.kill()
 
 class Bullet2(pygame.sprite.Sprite):
-    def __init__(self, game, pos, dir, facing_R):
+    def __init__(self, game, pos, dir):
         self.groups = game.all_sprites, game.bullets2
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        if facing_R:
+        if dir == 1:
             self.image = game.bullet_img_R
         else:
             self.image = game.bullet_img_L
@@ -65,7 +65,7 @@ class Bullet2(pygame.sprite.Sprite):
         self.hit_rect.center = self.rect.center
         self.pos = pygame.math.Vector2(pos)
         self.rect.center = pos
-        self.vel = dir * 7
+        self.vel = pygame.math.Vector2(dir * 7, 0)
         self.spawn_time = pygame.time.get_ticks()
 
     def update(self):
@@ -120,7 +120,7 @@ class Player(pygame.sprite.Sprite):
         self.acc = pygame.math.Vector2(0, 0)
         self.running = False
         self.jumping = False
-        self.facing_R = True
+        self.dir = 1
         self.last_shot = 0
         self.damaged = False
         self.shooting = False
@@ -130,84 +130,56 @@ class Player(pygame.sprite.Sprite):
 
     def load_images(self):
         self.standing_frame_R = []
-
-        i = 1
-        while i <= 4:
-            frame = pygame.image.load('assets/sprites/player/1/idle/R_idle_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (64, 64))
-            i = i + 1
-            self.standing_frame_R.append(frame)
-
         self.standing_frame_L = []
-
-        i = 1
-        while i <= 4:
-            frame = pygame.image.load('assets/sprites/player/1/idle/L_idle_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (64, 64))
-            i = i + 1
-            self.standing_frame_L.append(frame)
-
-
         self.run_frame_R = []
-
-        i = 1
-        while i <= 14:
-            frame = pygame.image.load('assets/sprites/player/1/run/R_run_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (64, 64))
-            i = i + 1
-            self.run_frame_R.append(frame)
-
         self.run_frame_L = []
+        self.shoot_frame_R = []
+        self.shoot_frame_L = []
+        self.death_frame_L = []
+        self.death_frame_R = []
+        self.jump_frame_L = []
+        self.jump_frame_R = []
+
+        i = 1
+        while i <= 4:
+            frame_R_IDLE = pygame.image.load('assets/sprites/player/1/idle/R_idle_' + str(i) + '.png').convert_alpha()
+            frame_L_IDLE = pygame.image.load('assets/sprites/player/1/idle/L_idle_' + str(i) + '.png').convert_alpha()
+            frame_R_SHOOT = pygame.image.load('assets/sprites/player/1/shoot/R_shoot_' + str(i) + '.png').convert_alpha()
+            frame_L_SHOOT = pygame.image.load('assets/sprites/player/1/shoot/L_shoot_' + str(i) + '.png').convert_alpha()
+            frame_R_IDLE = pygame.transform.scale(frame_R_IDLE, (64, 64))
+            frame_L_IDLE = pygame.transform.scale(frame_L_IDLE, (64, 64))
+            frame_L_SHOOT = pygame.transform.scale(frame_L_SHOOT, (64, 64))
+            frame_R_SHOOT = pygame.transform.scale(frame_R_SHOOT, (64, 64))
+            i = i + 1
+            self.standing_frame_R.append(frame_R_IDLE)
+            self.standing_frame_L.append(frame_L_IDLE)
+            self.shoot_frame_R.append(frame_R_SHOOT)
+            self.shoot_frame_L.append(frame_L_SHOOT)
+
+        i = 1
+        while i <= 8:
+            frame_L_DEATH = pygame.image.load('assets/sprites/player/1/death/L_death_' + str(i) + '.png').convert_alpha()
+            frame_R_DEATH = pygame.image.load('assets/sprites/player/1/death/R_death_' + str(i) + '.png').convert_alpha()
+            frame_L_DEATH = pygame.transform.scale(frame_L_DEATH, (64, 64))
+            frame_R_DEATH = pygame.transform.scale(frame_R_DEATH, (64, 64))
+            i = i + 1
+            self.death_frame_L.append(frame_L_DEATH)
+            self.death_frame_R.append(frame_R_DEATH)
 
         i = 1
         while i <= 14:
-            frame = pygame.image.load('assets/sprites/player/1/run/L_run_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (64, 64))
+            frame_R_RUN = pygame.image.load('assets/sprites/player/1/run/R_run_' + str(i) + '.png').convert_alpha()
+            frame_L_RUN = pygame.image.load('assets/sprites/player/1/run/L_run_' + str(i) + '.png').convert_alpha()
+            frame_R_RUN = pygame.transform.scale(frame_R_RUN, (64, 64))
+            frame_L_RUN = pygame.transform.scale(frame_L_RUN, (64, 64))
             i = i + 1
-            self.run_frame_L.append(frame)
+            self.run_frame_R.append(frame_R_RUN)
+            self.run_frame_L.append(frame_L_RUN)
 
-        self.shoot_frame_R = []
-
-        i = 1
-        while i <= 4:
-            frame = pygame.image.load('assets/sprites/player/1/shoot/R_shoot_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (64, 64))
-            i = i + 1
-            self.shoot_frame_R.append(frame)
-
-        self.shoot_frame_L = []
-
-        i = 1
-        while i <= 4:
-            frame = pygame.image.load('assets/sprites/player/1/shoot/L_shoot_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (64, 64))
-            i = i + 1
-            self.shoot_frame_L.append(frame)
-
-        self.death_frame_L = []
-
-        i = 1
-        while i <= 8:
-            frame = pygame.image.load('assets/sprites/player/1/death/L_death_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (64, 64))
-            i = i + 1
-            self.death_frame_L.append(frame)
-
-        self.death_frame_R = []
-
-        i = 1
-        while i <= 8:
-            frame = pygame.image.load('assets/sprites/player/1/death/R_death_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (64, 64))
-            i = i + 1
-            self.death_frame_R.append(frame)
-
-        self.jump_frame_L = []
         frame = pygame.image.load('assets/sprites/player/1/jump/L_jump.png').convert_alpha()
         frame = pygame.transform.scale(frame, (64, 64))
         self.jump_frame_L.append(frame)
 
-        self.jump_frame_R = []
         frame = pygame.image.load('assets/sprites/player/1/jump/R_jump.png').convert_alpha()
         frame = pygame.transform.scale(frame, (64, 64))
         self.jump_frame_R.append(frame)
@@ -217,42 +189,21 @@ class Player(pygame.sprite.Sprite):
             keys = pygame.key.get_pressed()
             if keys[pygame.K_d]:
                 self.acc.x = 0.5
-                self.facing_R = True
+                self.dir = 1
             if keys[pygame.K_a]:
                 self.acc.x = -0.5
-                self.facing_R = False
+                self.dir = -1
             if keys[pygame.K_SPACE]:
                 now = pygame.time.get_ticks()
-                if self.running and self.shooting:
-                    if now - self.last_shot > 150:
-                        self.last_shot = now
-                        if self.facing_R:
-                            pos = self.pos + pygame.math.Vector2(32, 5)
-                            dir = pygame.math.Vector2(1,0)
-                            Bullet(self.game, pos, dir, self.facing_R)
-                            self.game.shoot.play()
-                            self.shooting = True
-                        else:
-                            pos = self.pos + pygame.math.Vector2(-32, 5)
-                            dir = pygame.math.Vector2(-1,0)
-                            Bullet(self.game, pos, dir, self.facing_R)
-                            self.game.shoot.play()
-                            self.shooting = True
-                else:
-                    if now - self.last_shot > 150:
-                        self.last_shot = now
-                        if self.facing_R:
-                            pos = self.pos + pygame.math.Vector2(32, -10)
-                            dir = pygame.math.Vector2(1, 0)
-                            Bullet(self.game, pos, dir, self.facing_R)
-                            self.game.shoot.play()
-                            self.shooting = True
-                        else:
-                            pos = self.pos + pygame.math.Vector2(-32, -10)
-                            dir = pygame.math.Vector2(-1, 0)
-                            Bullet(self.game, pos, dir, self.facing_R)
-                            self.game.shoot.play()
-                            self.shooting = True
+                if now - self.last_shot > 150:
+                    self.last_shot = now
+                    if self.running:
+                        pos = self.pos + pygame.math.Vector2(32 * self.dir, 5)
+                    else:
+                        pos = self.pos + pygame.math.Vector2(32 * self.dir, -10)
+                    Bullet(self.game, pos, self.dir)
+                    self.game.shoot.play()
+                    self.shooting = True
         else:
             pass
 
@@ -262,7 +213,7 @@ class Player(pygame.sprite.Sprite):
 
     def knockback(self, hit):
         if self.jumping:
-            if self.facing_R:
+            if self.dir == 1:
                 self.vel += pygame.math.Vector2(-8, -5)
             else:
                 self.vel += pygame.math.Vector2(8, -5)
@@ -270,55 +221,55 @@ class Player(pygame.sprite.Sprite):
             if self.vel.y < -5:
                 self.vel.y = -5
 
-        elif hit.facing and self.facing_R: #hit.facing = left, not hit.facing = right, facing_R = right, not facing_R = left
+        elif hit.dir == -1 and self.dir == 1: #dir == 1,-1 is right,left
             self.pos += pygame.math.Vector2(-30, 0)
             self.vel += pygame.math.Vector2(-8, -5)
-        elif hit.facing and not self.facing_R and not self.running:
+        elif hit.dir == -1 and self.dir == -1 and not self.running:
             self.pos += pygame.math.Vector2(-30, 0)
             self.vel += pygame.math.Vector2(-8, -5)
-        elif not hit.facing and self.facing_R and self.running:
+        elif hit.dir == 1 and self.dir == 1 and self.running:
             self.pos += pygame.math.Vector2(-30, 0)
             self.vel += pygame.math.Vector2(-8, -5)
-        elif hit.facing and not self.facing_R and self.running:
+        elif hit.dir == -1 and self.dir == -1 and self.running:
             self.pos += pygame.math.Vector2(30, 0)
             self.vel += pygame.math.Vector2(8, -5)
-        elif not hit.facing and self.facing_R and not self.running:
+        elif hit.dir == 1 and self.dir == 1 and not self.running:
             self.pos += pygame.math.Vector2(30, 0)
             self.vel += pygame.math.Vector2(8, -5)
-        elif not hit.facing and not self.facing_R:
+        elif hit.dir == 1 and self.dir == -1:
             self.pos += pygame.math.Vector2(30, 0)
             self.vel += pygame.math.Vector2(8, -5)
 
     def knockback_charge(self, hit):
         if self.jumping:
-            if self.facing_R and hit.facing:
+            if self.dir == 1 and hit.dir == -1:
                 self.vel += pygame.math.Vector2(-8, -5)
-            elif self.facing_R and not hit.facing:
+            elif self.dir == 1 and hit.dir == 1:
                 self.vel += pygame.math.Vector2(-8, -5)
-            elif not self.facing_R and not hit.facing:
+            elif self.dir == -1 and hit.dir == 1:
                 self.vel += pygame.math.Vector2(8, -5)
-            elif not self.facing_R and hit.facing:
+            elif self.dir == -1 and hit.dir == -1:
                 self.vel += pygame.math.Vector2(8, -5)
 
             if self.vel.y < -5:
                 self.vel.y = -5
 
-        elif hit.facing and self.facing_R: #hit.facing = left, not hit.facing = right, facing_R = right, not facing_R = left
+        elif hit.dir == -1 and self.dir == 1: #dir == 1,-1 is right,left
             self.pos += pygame.math.Vector2(-30, -2)
             self.vel += pygame.math.Vector2(-13, -7)
-        elif hit.facing and not self.facing_R and not self.running:
+        elif hit.dir == -1 and self.dir == -1 and not self.running:
             self.pos += pygame.math.Vector2(-30, -2)
             self.vel += pygame.math.Vector2(-13, -7)
-        elif hit.facing and not self.facing_R and self.running:
+        elif hit.dir == -1 and self.dir == -1 and self.running:
             self.pos += pygame.math.Vector2(30, -2)
             self.vel += pygame.math.Vector2(13, -7)
-        elif not hit.facing and self.facing_R and self.running:
+        elif hit.dir == 1 and self.dir == 1 and self.running:
             self.pos += pygame.math.Vector2(-30, -2)
             self.vel += pygame.math.Vector2(-13, -7)
-        elif not hit.facing and self.facing_R and not self.running:
+        elif hit.dir == 1 and self.dir == 1 and not self.running:
             self.pos += pygame.math.Vector2(30, -2)
             self.vel += pygame.math.Vector2(13, -7)
-        elif not hit.facing and not self.facing_R:
+        elif hit.dir == 1 and self.dir == -1:
             self.pos += pygame.math.Vector2(30, -2)
             self.vel += pygame.math.Vector2(13, -7)
 
@@ -368,60 +319,47 @@ class Player(pygame.sprite.Sprite):
             self.jumping = False
 
         if self.alive:
-            if self.facing_R:
-                if not self.running and not self.shooting:
-                    if now - self.last_update > 350:
-                        self.last_update = now
+            if not self.running and not self.shooting:
+                if now - self.last_update > 350:
+                    self.last_update = now
+                    if self.dir == 1:
                         self.current_frame = (self.current_frame + 1) % len(self.standing_frame_R)
                         self.image = self.standing_frame_R[self.current_frame]
-                        self.rect = self.image.get_rect()
-                elif self.running:
-                    if now - self.last_update > 200:
-                        self.last_update = now
-                        self.current_frame = (self.current_frame + 1) % len(self.run_frame_R)
-                        self.image = self.run_frame_R[self.current_frame]
-                        self.rect = self.image.get_rect()
-                elif self.shooting:
-                    if now - self.last_update > 150:
-                        self.last_update = now
-                        self.current_frame = (self.current_frame + 1) % len(self.shoot_frame_R)
-                        self.image = self.shoot_frame_R[self.current_frame]
-                        self.rect = self.image.get_rect()
-                    self.shooting = False
-
-            else:
-                if not self.running and not self.shooting:
-                    if now - self.last_update > 350:
-                        self.last_update = now
+                    else:
                         self.current_frame = (self.current_frame + 1) % len(self.standing_frame_L)
                         self.image = self.standing_frame_L[self.current_frame]
-                        self.rect = self.image.get_rect()
-                elif self.running:
-                    if now - self.last_update > 200:
-                        self.last_update = now
+                    self.rect = self.image.get_rect()
+            elif self.running:
+                if now - self.last_update > 200:
+                    self.last_update = now
+                    if self.dir == 1:
+                        self.current_frame = (self.current_frame + 1) % len(self.run_frame_R)
+                        self.image = self.run_frame_R[self.current_frame]
+                    else:
                         self.current_frame = (self.current_frame + 1) % len(self.run_frame_L)
                         self.image = self.run_frame_L[self.current_frame]
-                elif self.shooting:
-                    if now - self.last_update > 150:
-                        self.last_update = now
+                    self.rect = self.image.get_rect()
+            elif self.shooting:
+                if now - self.last_update > 150:
+                    self.last_update = now
+                    if self.dir == 1:
+                        self.current_frame = (self.current_frame + 1) % len(self.shoot_frame_R)
+                        self.image = self.shoot_frame_R[self.current_frame]
+                    else:
                         self.current_frame = (self.current_frame + 1) % len(self.shoot_frame_L)
                         self.image = self.shoot_frame_L[self.current_frame]
-                        self.rect = self.image.get_rect()
-                    self.shooting = False
+                    self.rect = self.image.get_rect()
+                self.shooting = False
 
             if self.jumping:
-                if self.facing_R:
-                    if now - self.last_update > 150:
-                        self.last_update = now
+                if now - self.last_update > 150:
+                    self.last_update = now
+                    if self.dir == 1:
                         self.current_frame = (self.current_frame + 1) % len(self.jump_frame_R)
                         self.image = self.jump_frame_R[self.current_frame]
-                else:
-                    if now - self.last_update > 150:
-                        self.last_update = now
+                    else:
                         self.current_frame = (self.current_frame + 1) % len(self.jump_frame_L)
                         self.image = self.jump_frame_L[self.current_frame]
-        else:
-            pass
 
     def jump(self):
         if self.alive:
@@ -435,26 +373,21 @@ class Player(pygame.sprite.Sprite):
             self.control = False
             self.collision = False
             now = pygame.time.get_ticks()
-            if self.facing_R:
-                if now - self.death_time > 150:
-                    self.death_time = now
+            if now - self.death_time > 150:
+                self.death_time = now
+                if self.dir == 1:
                     self.death_anim = (self.death_anim + 1) % len(self.death_frame_R)
                     self.image = self.death_frame_R[self.death_anim]
-                    self.rect = self.image.get_rect()
-
-            elif not self.facing_R:
-                if now - self.death_time > 150:
-                    self.death_time = now
+                else:
                     self.death_anim = (self.death_anim + 1) % len(self.death_frame_L)
                     self.image = self.death_frame_L[self.death_anim]
-                    self.rect = self.image.get_rect()
+                self.rect = self.image.get_rect()
 
             if self.death_anim >= 7:
                 self.hit_rect = pygame.Rect(0, 0, 0, 0)
                 self.shooting = False
                 self.game.playersalive += 1
                 self.kill()
-
 
 class Player2(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
@@ -472,13 +405,12 @@ class Player2(pygame.sprite.Sprite):
         self.hit_rect.center = self.rect.center
         self.vel = pygame.math.Vector2(0, 0)
         self.pos = pygame.math.Vector2(x, y)
-        self.rot = 0
         self.last_shot = 0
         self.health = PLAYER_HEALTH
         self.acc = pygame.math.Vector2(0, 0)
+        self.dir = 1
         self.running = False
         self.jumping = False
-        self.facing_R = True
         self.shooting = False
         self.damaged = False
         self.alive = True
@@ -487,84 +419,56 @@ class Player2(pygame.sprite.Sprite):
 
     def load_images(self):
         self.standing_frame_R = []
-
-        i = 1
-        while i <= 4:
-            frame = pygame.image.load('assets/sprites/player/2/idle/R_idle_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (64, 64))
-            i = i + 1
-            self.standing_frame_R.append(frame)
-
         self.standing_frame_L = []
-
-        i = 1
-        while i <= 4:
-            frame = pygame.image.load('assets/sprites/player/2/idle/L_idle_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (64, 64))
-            i = i + 1
-            self.standing_frame_L.append(frame)
-
-
         self.run_frame_R = []
-
-        i = 1
-        while i <= 14:
-            frame = pygame.image.load('assets/sprites/player/2/run/R_run_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (64, 64))
-            i = i + 1
-            self.run_frame_R.append(frame)
-
         self.run_frame_L = []
+        self.shoot_frame_R = []
+        self.shoot_frame_L = []
+        self.death_frame_L = []
+        self.death_frame_R = []
+        self.jump_frame_L = []
+        self.jump_frame_R = []
+
+        i = 1
+        while i <= 4:
+            frame_R_IDLE = pygame.image.load('assets/sprites/player/2/idle/R_idle_' + str(i) + '.png').convert_alpha()
+            frame_L_IDLE = pygame.image.load('assets/sprites/player/2/idle/L_idle_' + str(i) + '.png').convert_alpha()
+            frame_R_SHOOT = pygame.image.load('assets/sprites/player/2/shoot/R_shoot_' + str(i) + '.png').convert_alpha()
+            frame_L_SHOOT = pygame.image.load('assets/sprites/player/2/shoot/L_shoot_' + str(i) + '.png').convert_alpha()
+            frame_R_IDLE = pygame.transform.scale(frame_R_IDLE, (64, 64))
+            frame_L_IDLE = pygame.transform.scale(frame_L_IDLE, (64, 64))
+            frame_L_SHOOT = pygame.transform.scale(frame_L_SHOOT, (64, 64))
+            frame_R_SHOOT = pygame.transform.scale(frame_R_SHOOT, (64, 64))
+            i = i + 1
+            self.standing_frame_R.append(frame_R_IDLE)
+            self.standing_frame_L.append(frame_L_IDLE)
+            self.shoot_frame_R.append(frame_R_SHOOT)
+            self.shoot_frame_L.append(frame_L_SHOOT)
+
+        i = 1
+        while i <= 8:
+            frame_L_DEATH = pygame.image.load('assets/sprites/player/2/death/L_death_' + str(i) + '.png').convert_alpha()
+            frame_R_DEATH = pygame.image.load('assets/sprites/player/2/death/R_death_' + str(i) + '.png').convert_alpha()
+            frame_L_DEATH = pygame.transform.scale(frame_L_DEATH, (64, 64))
+            frame_R_DEATH = pygame.transform.scale(frame_R_DEATH, (64, 64))
+            i = i + 1
+            self.death_frame_L.append(frame_L_DEATH)
+            self.death_frame_R.append(frame_R_DEATH)
 
         i = 1
         while i <= 14:
-            frame = pygame.image.load('assets/sprites/player/2/run/L_run_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (64, 64))
+            frame_R_RUN = pygame.image.load('assets/sprites/player/2/run/R_run_' + str(i) + '.png').convert_alpha()
+            frame_L_RUN = pygame.image.load('assets/sprites/player/2/run/L_run_' + str(i) + '.png').convert_alpha()
+            frame_R_RUN = pygame.transform.scale(frame_R_RUN, (64, 64))
+            frame_L_RUN = pygame.transform.scale(frame_L_RUN, (64, 64))
             i = i + 1
-            self.run_frame_L.append(frame)
+            self.run_frame_R.append(frame_R_RUN)
+            self.run_frame_L.append(frame_L_RUN)
 
-        self.shoot_frame_R = []
-
-        i = 1
-        while i <= 4:
-            frame = pygame.image.load('assets/sprites/player/2/shoot/R_shoot_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (64, 64))
-            i = i + 1
-            self.shoot_frame_R.append(frame)
-
-        self.shoot_frame_L = []
-
-        i = 1
-        while i <= 4:
-            frame = pygame.image.load('assets/sprites/player/2/shoot/L_shoot_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (64, 64))
-            i = i + 1
-            self.shoot_frame_L.append(frame)
-
-        self.death_frame_L = []
-
-        i = 1
-        while i <= 8:
-            frame = pygame.image.load('assets/sprites/player/2/death/L_death_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (64, 64))
-            i = i + 1
-            self.death_frame_L.append(frame)
-
-        self.death_frame_R = []
-
-        i = 1
-        while i <= 8:
-            frame = pygame.image.load('assets/sprites/player/2/death/R_death_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (64, 64))
-            i = i + 1
-            self.death_frame_R.append(frame)
-
-        self.jump_frame_L = []
         frame = pygame.image.load('assets/sprites/player/2/jump/L_jump.png').convert_alpha()
         frame = pygame.transform.scale(frame, (64, 64))
         self.jump_frame_L.append(frame)
 
-        self.jump_frame_R = []
         frame = pygame.image.load('assets/sprites/player/2/jump/R_jump.png').convert_alpha()
         frame = pygame.transform.scale(frame, (64, 64))
         self.jump_frame_R.append(frame)
@@ -574,42 +478,21 @@ class Player2(pygame.sprite.Sprite):
             keys = pygame.key.get_pressed()
             if keys[pygame.K_RIGHT]:
                 self.acc.x = 0.5
-                self.facing_R = True
+                self.dir = 1
             if keys[pygame.K_LEFT]:
                 self.acc.x = -0.5
-                self.facing_R = False
+                self.dir = -1
             if keys[pygame.K_RETURN]:
                 now = pygame.time.get_ticks()
-                if self.running and self.shooting:
-                    if now - self.last_shot > 150:
-                        self.last_shot = now
-                        if self.facing_R:
-                            pos = self.pos + pygame.math.Vector2(32, 5)
-                            dir = pygame.math.Vector2(1,0)
-                            Bullet2(self.game, pos, dir, self.facing_R)
-                            self.game.shoot.play()
-                            self.shooting = True
-                        else:
-                            pos = self.pos + pygame.math.Vector2(-32, 5)
-                            dir = pygame.math.Vector2(-1,0)
-                            Bullet2(self.game, pos, dir, self.facing_R)
-                            self.game.shoot.play()
-                            self.shooting = True
-                else:
-                    if now - self.last_shot > 150:
-                        self.last_shot = now
-                        if self.facing_R:
-                            pos = self.pos + pygame.math.Vector2(32, -10)
-                            dir = pygame.math.Vector2(1, 0)
-                            Bullet2(self.game, pos, dir, self.facing_R)
-                            self.game.shoot.play()
-                            self.shooting = True
-                        else:
-                            pos = self.pos + pygame.math.Vector2(-32, -10)
-                            dir = pygame.math.Vector2(-1, 0)
-                            Bullet2(self.game, pos, dir, self.facing_R)
-                            self.game.shoot.play()
-                            self.shooting = True
+                if now - self.last_shot > 150:
+                    self.last_shot = now
+                    if self.running:
+                        pos = self.pos + pygame.math.Vector2(32 * self.dir, 5)
+                    else:
+                        pos = self.pos + pygame.math.Vector2(32 * self.dir, -10)
+                    Bullet2(self.game, pos, self.dir)
+                    self.game.shoot.play()
+                    self.shooting = True
 
     def hit(self):
         self.damaged = True
@@ -617,7 +500,7 @@ class Player2(pygame.sprite.Sprite):
 
     def knockback(self, hit):
         if self.jumping:
-            if self.facing_R:
+            if self.dir == 1:
                 self.vel += pygame.math.Vector2(-8, -5)
             else:
                 self.vel += pygame.math.Vector2(8, -5)
@@ -625,55 +508,55 @@ class Player2(pygame.sprite.Sprite):
             if self.vel.y < -5:
                 self.vel.y = -5
 
-        elif hit.facing and self.facing_R: #hit.facing = left, not hit.facing = right, facing_R = right, not facing_R = left
+        elif hit.dir == -1 and self.dir == 1: #dir == 1,-1 is right,left
             self.pos += pygame.math.Vector2(-30, 0)
             self.vel += pygame.math.Vector2(-8, -5)
-        elif hit.facing and not self.facing_R and not self.running:
+        elif hit.dir == -1 and self.dir == -1 and not self.running:
             self.pos += pygame.math.Vector2(-30, 0)
             self.vel += pygame.math.Vector2(-8, -5)
-        elif hit.facing and not self.facing_R and self.running:
+        elif hit.dir == 1 and self.dir == 1 and self.running:
+            self.pos += pygame.math.Vector2(-30, 0)
+            self.vel += pygame.math.Vector2(-8, -5)
+        elif hit.dir == -1 and self.dir == -1 and self.running:
             self.pos += pygame.math.Vector2(30, 0)
             self.vel += pygame.math.Vector2(8, -5)
-        elif not hit.facing and self.facing_R and self.running:
-            self.pos += pygame.math.Vector2(-30, 0)
-            self.vel += pygame.math.Vector2(-8, -5)
-        elif not hit.facing and self.facing_R and not self.running:
+        elif hit.dir == 1 and self.dir == 1 and not self.running:
             self.pos += pygame.math.Vector2(30, 0)
             self.vel += pygame.math.Vector2(8, -5)
-        elif not hit.facing and not self.facing_R:
+        elif hit.dir == 1 and self.dir == -1:
             self.pos += pygame.math.Vector2(30, 0)
             self.vel += pygame.math.Vector2(8, -5)
 
     def knockback_charge(self, hit):
         if self.jumping:
-            if self.facing_R and hit.facing:
+            if self.dir == 1 and hit.dir == -1:
                 self.vel += pygame.math.Vector2(-8, -5)
-            elif self.facing_R and not hit.facing:
+            elif self.dir == 1 and hit.dir == 1:
                 self.vel += pygame.math.Vector2(-8, -5)
-            elif not self.facing_R and not hit.facing:
+            elif self.dir == -1 and hit.dir == 1:
                 self.vel += pygame.math.Vector2(8, -5)
-            elif not self.facing_R and hit.facing:
+            elif self.dir == -1 and hit.dir == -1:
                 self.vel += pygame.math.Vector2(8, -5)
 
             if self.vel.y < -5:
                 self.vel.y = -5
 
-        elif hit.facing and self.facing_R: #hit.facing = left, not hit.facing = right, facing_R = right, not facing_R = left
+        elif hit.dir == -1 and self.dir == 1: #dir == 1,-1 is right,left
             self.pos += pygame.math.Vector2(-30, -2)
             self.vel += pygame.math.Vector2(-13, -7)
-        elif hit.facing and not self.facing_R and not self.running:
+        elif hit.dir == -1 and self.dir == -1 and not self.running:
             self.pos += pygame.math.Vector2(-30, -2)
             self.vel += pygame.math.Vector2(-13, -7)
-        elif hit.facing and not self.facing_R and self.running:
+        elif hit.dir == -1 and self.dir == -1 and self.running:
             self.pos += pygame.math.Vector2(30, -2)
             self.vel += pygame.math.Vector2(13, -7)
-        elif not hit.facing and self.facing_R and self.running:
+        elif hit.dir == 1 and self.dir == 1 and self.running:
             self.pos += pygame.math.Vector2(-30, -2)
             self.vel += pygame.math.Vector2(-13, -7)
-        elif not hit.facing and self.facing_R and not self.running:
+        elif hit.dir == 1 and self.dir == 1 and not self.running:
             self.pos += pygame.math.Vector2(30, -2)
             self.vel += pygame.math.Vector2(13, -7)
-        elif not hit.facing and not self.facing_R:
+        elif hit.dir == 1 and self.dir == -1:
             self.pos += pygame.math.Vector2(30, -2)
             self.vel += pygame.math.Vector2(13, -7)
 
@@ -719,60 +602,47 @@ class Player2(pygame.sprite.Sprite):
             self.jumping = False
 
         if self.alive:
-            if self.facing_R:
-                if not self.running and not self.shooting:
-                    if now - self.last_update > 350:
-                        self.last_update = now
+            if not self.running and not self.shooting:
+                if now - self.last_update > 350:
+                    self.last_update = now
+                    if self.dir == 1:
                         self.current_frame = (self.current_frame + 1) % len(self.standing_frame_R)
                         self.image = self.standing_frame_R[self.current_frame]
-                        self.rect = self.image.get_rect()
-                elif self.running:
-                    if now - self.last_update > 200:
-                        self.last_update = now
-                        self.current_frame = (self.current_frame + 1) % len(self.run_frame_R)
-                        self.image = self.run_frame_R[self.current_frame]
-                        self.rect = self.image.get_rect()
-                elif self.shooting:
-                    if now - self.last_update > 150:
-                        self.last_update = now
-                        self.current_frame = (self.current_frame + 1) % len(self.shoot_frame_R)
-                        self.image = self.shoot_frame_R[self.current_frame]
-                        self.rect = self.image.get_rect()
-                    self.shooting = False
-
-            else:
-                if not self.running and not self.shooting:
-                    if now - self.last_update > 350:
-                        self.last_update = now
+                    else:
                         self.current_frame = (self.current_frame + 1) % len(self.standing_frame_L)
                         self.image = self.standing_frame_L[self.current_frame]
-                        self.rect = self.image.get_rect()
-                elif self.running:
-                    if now - self.last_update > 200:
-                        self.last_update = now
+                    self.rect = self.image.get_rect()
+            elif self.running:
+                if now - self.last_update > 200:
+                    self.last_update = now
+                    if self.dir == 1:
+                        self.current_frame = (self.current_frame + 1) % len(self.run_frame_R)
+                        self.image = self.run_frame_R[self.current_frame]
+                    else:
                         self.current_frame = (self.current_frame + 1) % len(self.run_frame_L)
                         self.image = self.run_frame_L[self.current_frame]
-                elif self.shooting:
-                    if now - self.last_update > 150:
-                        self.last_update = now
+                    self.rect = self.image.get_rect()
+            elif self.shooting:
+                if now - self.last_update > 150:
+                    self.last_update = now
+                    if self.dir == 1:
+                        self.current_frame = (self.current_frame + 1) % len(self.shoot_frame_R)
+                        self.image = self.shoot_frame_R[self.current_frame]
+                    else:
                         self.current_frame = (self.current_frame + 1) % len(self.shoot_frame_L)
                         self.image = self.shoot_frame_L[self.current_frame]
-                        self.rect = self.image.get_rect()
-                    self.shooting = False
+                    self.rect = self.image.get_rect()
+                self.shooting = False
 
             if self.jumping:
-                if self.facing_R:
-                    if now - self.last_update > 150:
-                        self.last_update = now
+                if now - self.last_update > 150:
+                    self.last_update = now
+                    if self.dir == 1:
                         self.current_frame = (self.current_frame + 1) % len(self.jump_frame_R)
                         self.image = self.jump_frame_R[self.current_frame]
-                else:
-                    if now - self.last_update > 150:
-                        self.last_update = now
+                    else:
                         self.current_frame = (self.current_frame + 1) % len(self.jump_frame_L)
                         self.image = self.jump_frame_L[self.current_frame]
-        else:
-            pass
 
     def add_health(self, amount):
         self.health += amount
@@ -791,19 +661,15 @@ class Player2(pygame.sprite.Sprite):
             self.control = False
             self.collision = False
             now = pygame.time.get_ticks()
-            if self.facing_R:
-                if now - self.death_time > 150:
-                    self.death_time = now
+            if now - self.death_time > 150:
+                self.death_time = now
+                if self.dir == 1:
                     self.death_anim = (self.death_anim + 1) % len(self.death_frame_R)
                     self.image = self.death_frame_R[self.death_anim]
-                    self.rect = self.image.get_rect()
-
-            elif not self.facing_R:
-                if now - self.death_time > 150:
-                    self.death_time = now
+                else:
                     self.death_anim = (self.death_anim + 1) % len(self.death_frame_L)
                     self.image = self.death_frame_L[self.death_anim]
-                    self.rect = self.image.get_rect()
+                self.rect = self.image.get_rect()
 
             if self.death_anim >= 7:
                 self.hit_rect = pygame.Rect(0, 0, 0, 0)
@@ -828,46 +694,35 @@ class Mob_small(pygame.sprite.Sprite):
         self.vel = pygame.math.Vector2(0, 0)
         self.acc = pygame.math.Vector2(0, 0)
         self.rect.center = self.pos
-        self.rot = 0
         self.health = 100
-        self.target = game.player
-        self.target2 = game.player2
+        self.dir = -1
         self.alive = True
-        self.facing = False
 
     def load_images(self):
         self.walk_frame_R = []
-
-        i = 1
-        while i <= 4:
-            frame = pygame.image.load('assets/sprites/enemy/low/1/R_run_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (24, 36))
-            i = i + 1
-            self.walk_frame_R.append(frame)
-
         self.walk_frame_L = []
 
         i = 1
         while i <= 4:
-            frame = pygame.image.load('assets/sprites/enemy/low/1/L_run_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (24, 36))
+            frame_R = pygame.image.load('assets/sprites/enemy/low/1/R_run_' + str(i) + '.png').convert_alpha()
+            frame_R = pygame.transform.scale(frame_R, (24, 36))
+            frame_L = pygame.image.load('assets/sprites/enemy/low/1/L_run_' + str(i) + '.png').convert_alpha()
+            frame_L = pygame.transform.scale(frame_L, (24, 36))
             i = i + 1
-            self.walk_frame_L.append(frame)
+            self.walk_frame_R.append(frame_R)
+            self.walk_frame_L.append(frame_L)
 
     def animate(self):
         now = pygame.time.get_ticks()
-        if self.facing:
-            if now - self.last_update > 200:
-                self.last_update = now
+        if now - self.last_update > 200:
+            self.last_update = now
+            if self.dir == -1:
                 self.current_frame = (self.current_frame + 1) % len(self.walk_frame_L)
                 self.image = self.walk_frame_L[self.current_frame]
-                self.rect = self.image.get_rect()
-        else:
-            if now - self.last_update > 200:
-                self.last_update = now
+            else:
                 self.current_frame = (self.current_frame + 1) % len(self.walk_frame_R)
                 self.image = self.walk_frame_R[self.current_frame]
-                self.rect = self.image.get_rect()
+            self.rect = self.image.get_rect()
 
     def update(self):
         self.draw_health()
@@ -889,21 +744,12 @@ class Mob_small(pygame.sprite.Sprite):
         self.rect.center = self.pos
 
     def moving(self):
-        if not self.facing:
-            self.acc = pygame.math.Vector2(0.2, 0.5)
-            self.rect.centerx +=2
-            hits2 = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
-            self.rect.centerx -=2
-            if hits2:
-                self.facing = True
-
-        else:
-            self.acc = pygame.math.Vector2(-0.2, 0.5)
-            self.rect.centerx -= 2
-            hits = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
-            self.rect.centerx += 2
-            if hits:
-                self.facing = False
+        self.acc = pygame.math.Vector2(0.2 * self.dir, 0.5)
+        self.rect.centerx += 2 * self.dir
+        hits2 = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
+        self.rect.centerx -= 2 * self.dir
+        if hits2:
+            self.dir = self.dir * -1
 
     def draw_health(self):
         if self.health > 60:
@@ -935,46 +781,36 @@ class Mob_Big(pygame.sprite.Sprite):
         self.vel = pygame.math.Vector2(0, 0)
         self.acc = pygame.math.Vector2(0, 0)
         self.rect.center = self.pos
-        self.rot = 0
+        self.dir = 1
         self.health = 300
-        self.target = game.player
-        self.target2 = game.player2
         self.alive = True
-        self.facing = facing
 
     def load_images(self):
         self.walk_frame_R = []
-
-        i = 1
-        while i <= 4:
-            frame = pygame.image.load('assets/sprites/enemy/high/R_run_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (36, 48))
-            i = i + 1
-            self.walk_frame_R.append(frame)
-
         self.walk_frame_L = []
 
         i = 1
         while i <= 4:
-            frame = pygame.image.load('assets/sprites/enemy/high/L_run_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (36, 48))
+            frame_R = pygame.image.load('assets/sprites/enemy/high/R_run_' + str(i) + '.png').convert_alpha()
+            frame_R = pygame.transform.scale(frame_R, (36, 48))
+            frame_L = pygame.image.load('assets/sprites/enemy/high/L_run_' + str(i) + '.png').convert_alpha()
+            frame_L = pygame.transform.scale(frame_L, (36, 48))
             i = i + 1
-            self.walk_frame_L.append(frame)
+            self.walk_frame_R.append(frame_R)
+            self.walk_frame_L.append(frame_L)
 
     def animate(self):
         now = pygame.time.get_ticks()
-        if self.facing:
-            if now - self.last_update > 80:
-                self.last_update = now
+
+        if now - self.last_update > 80:
+            self.last_update = now
+            if self.dir == -1:
                 self.current_frame = (self.current_frame + 1) % len(self.walk_frame_L)
                 self.image = self.walk_frame_L[self.current_frame]
-                self.rect = self.image.get_rect()
-        else:
-            if now - self.last_update > 80:
-                self.last_update = now
+            else:
                 self.current_frame = (self.current_frame + 1) % len(self.walk_frame_R)
                 self.image = self.walk_frame_R[self.current_frame]
-                self.rect = self.image.get_rect()
+            self.rect = self.image.get_rect()
 
     def update(self):
         self.draw_health()
@@ -997,21 +833,12 @@ class Mob_Big(pygame.sprite.Sprite):
         self.rect.center = self.pos
 
     def moving(self):
-        if not self.facing:
-            self.acc = pygame.math.Vector2(0.4, 0.5)
-            self.rect.centerx += 5
-            hits2 = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
-            self.rect.centerx -= 5
-            if hits2:
-                self.facing = True
-
-        else:
-            self.acc = pygame.math.Vector2(-0.4, 0.5)
-            self.rect.centerx -= 5
-            hits = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
-            self.rect.centerx += 5
-            if hits:
-                self.facing = False
+        self.acc = pygame.math.Vector2(0.4 * self.dir, 0.5)
+        self.rect.centerx += 5 * self.dir
+        hits2 = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
+        self.rect.centerx -= 5 * self.dir
+        if hits2:
+            self.dir = self.dir * -1
 
     def draw_health(self):
         if self.health > 200:
@@ -1048,6 +875,7 @@ class Mob_flying(pygame.sprite.Sprite):
         self.target = game.player
         self.target2 = game.player2
         self.alive = True
+        self.dir = 1
         self.facing = False
         self.last_shot = 0
         self.wobble = 0
@@ -1055,107 +883,67 @@ class Mob_flying(pygame.sprite.Sprite):
 
     def load_images(self):
         self.walk_frame_R = []
-
-        i = 1
-        while i <= 4:
-            frame = pygame.image.load('assets/sprites/enemy/med/R_run_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (24, 36))
-            i = i + 1
-            self.walk_frame_R.append(frame)
-
         self.walk_frame_L = []
 
         i = 1
         while i <= 4:
-            frame = pygame.image.load('assets/sprites/enemy/med/L_run_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (24, 36))
+            frame_R = pygame.image.load('assets/sprites/enemy/med/R_run_' + str(i) + '.png').convert_alpha()
+            frame_R = pygame.transform.scale(frame_R, (24, 36))
+            frame_L = pygame.image.load('assets/sprites/enemy/med/L_run_' + str(i) + '.png').convert_alpha()
+            frame_L = pygame.transform.scale(frame_L, (24, 36))
             i = i + 1
-            self.walk_frame_L.append(frame)
+            self.walk_frame_R.append(frame_R)
+            self.walk_frame_L.append(frame_L)
 
     def animate(self):
         now = pygame.time.get_ticks()
-        if self.facing:
-            if now - self.last_update > 200:
-                self.last_update = now
+
+        if now - self.last_update > 200:
+            self.last_update = now
+            if self.dir == -1:
                 self.current_frame = (self.current_frame + 1) % len(self.walk_frame_L)
                 self.image = self.walk_frame_L[self.current_frame]
-                self.rect = self.image.get_rect()
-        else:
-            if now - self.last_update > 200:
-                self.last_update = now
+            else:
                 self.current_frame = (self.current_frame + 1) % len(self.walk_frame_R)
                 self.image = self.walk_frame_R[self.current_frame]
-                self.rect = self.image.get_rect()
+            self.rect = self.image.get_rect()
 
     def update(self):
         self.draw_health()
         self.animate()
         target_dist = self.target.pos - self.pos
         target_dist2 = self.target2.pos - self.pos
-        if self.target.alive and self.target2.alive:
-            if target_dist.length_squared() < 150**2 and target_dist2.length_squared() < 150**2:
+
+        if target_dist.length_squared() < 150**2 and target_dist2.length_squared() < 150**2:
+            if self.target.alive and self.target2.alive:
                 if target_dist.length_squared() < target_dist2.length_squared():
-                    self.chase_player1()
+                    self.chase_player("1")
                 elif target_dist2.length_squared() < target_dist.length_squared():
-                    self.chase_player2()
-                if self.vel.x > 0:
-                    self.facing = False
-                else:
-                    self.facing = True
+                    self.chase_player("2")
+            elif self.target.alive and not self.target2.alive:
+                self.chase_player("1")
+            elif not self.target.alive and self.target2.alive:
+                self.chase_player("2")
+            else:
+                pass
 
-            elif target_dist.length_squared() < 150**2:
-                self.chase_player1()
-                if self.vel.x > 0:
-                    self.facing = False
-                else:
-                    self.facing = True
-
-            elif target_dist2.length_squared() < 150**2:
-                self.chase_player2()
-                if self.vel.x > 0:
-                    self.facing = False
-                else:
-                    self.facing = True
-
-            elif target_dist.length_squared() > 150**2 and target_dist2.length_squared() > 150**2:
+        elif target_dist.length_squared() < 150**2 and target_dist2.length_squared() > 150**2:
+            if self.target.alive:
+                self.chase_player("1")
+            else:
                 self.moving()
-                self.acc.x += self.vel.x * -0.12
-                self.vel += self.acc
-                self.pos += self.vel + 0.5 * self.acc
-                self.pos += self.vel * self.game.dt
-                self.rect.center = self.pos
+                self.movement_equation()
 
-        elif self.target.alive and not self.target2.alive:
-            if target_dist.length_squared() < 150**2:
-                self.chase_player1()
-                if self.vel.x > 0:
-                    self.facing = False
-                else:
-                    self.facing = True
-
-            elif target_dist.length_squared() > 150**2:
+        elif target_dist2.length_squared() < 150**2 and target_dist.length_squared() > 150**2:
+            if self.target2.alive:
+                self.chase_player("2")
+            else:
                 self.moving()
-                self.acc.x += self.vel.x * -0.12
-                self.vel += self.acc
-                self.pos += self.vel + 0.5 * self.acc
-                self.pos += self.vel * self.game.dt
-                self.rect.center = self.pos
+                self.movement_equation()
 
-        elif not self.target.alive and self.target2.alive:
-            if target_dist2.length_squared() < 150**2:
-                self.chase_player2()
-                if self.vel.x > 0:
-                    self.facing = False
-                else:
-                    self.facing = True
-
-            elif target_dist2.length_squared() > 150**2:
-                self.moving()
-                self.acc.x += self.vel.x * -0.12
-                self.vel += self.acc
-                self.pos += self.vel + 0.5 * self.acc
-                self.pos += self.vel * self.game.dt
-                self.rect.center = self.pos
+        else:
+            self.moving()
+            self.movement_equation()
 
         self.hit_rect.centerx = self.pos.x
         collide_with_walls(self, self.game.invis_wall, 'x')
@@ -1163,18 +951,27 @@ class Mob_flying(pygame.sprite.Sprite):
         collide_with_walls(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
 
-    def chase_player1(self):
-        self.rot = (self.game.player.pos - self.pos).angle_to(pygame.math.Vector2(1, 0))
+    def movement_equation(self):
+        self.acc.x += self.vel.x * -0.12
+        self.vel += self.acc
+        self.pos += self.vel + 0.5 * self.acc
+        self.pos += self.vel * self.game.dt
         self.rect.center = self.pos
-        self.acc = pygame.math.Vector2(50, 0).rotate(-self.rot)
-        self.acc += self.vel * -1
-        self.vel += self.acc * self.game.dt
-        self.pos += self.vel * self.game.dt + 0.5 * self.acc * self.game.dt ** 2
-        self.shoot()
-        self.fix = False
 
-    def chase_player2(self):
-        self.rot = (self.game.player2.pos - self.pos).angle_to(pygame.math.Vector2(1, 0))
+    def chase_player(self, player_num):
+        if player_num == "1":
+            self.rot = (self.game.player.pos - self.pos).angle_to(pygame.math.Vector2(1, 0))
+            if self.game.player.pos.x - self.pos.x < 0:
+                self.dir = -1
+            else:
+                self.dir = 1
+        else:
+            self.rot = (self.game.player2.pos - self.pos).angle_to(pygame.math.Vector2(1, 0))
+            if self.game.player2.pos.x - self.pos.x < 0:
+                self.dir = -1
+            else:
+                self.dir = 1
+
         self.rect.center = self.pos
         self.acc = pygame.math.Vector2(50, 0).rotate(-self.rot)
         self.acc += self.vel * -1
@@ -1193,35 +990,20 @@ class Mob_flying(pygame.sprite.Sprite):
             self.vel.y = 0.2
         now = pygame.time.get_ticks()
 
-        if not self.facing:
-            if now - self.wobble > 750 and self.vel.y == -0.2:
-                self.wobble = now
-                self.vel.y = 0.2
-            elif now - self.wobble > 750 and self.vel.y == 0.2:
-                self.wobble = now
-                self.vel.y = -0.2
+        if now - self.wobble > 750 and self.vel.y == -0.2:
+            self.wobble = now
+            self.vel.y = 0.2
+        elif now - self.wobble > 750 and self.vel.y == 0.2:
+            self.wobble = now
+            self.vel.y = -0.2
 
-            self.acc = pygame.math.Vector2(0.15, 0)
-            self.rect.centerx +=2
-            hits2 = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
-            self.rect.centerx -=2
-            if hits2:
-                self.facing = True
+        self.acc = pygame.math.Vector2(0.15 * self.dir, 0)
 
-        else:
-            if now - self.wobble > 750 and self.vel.y == -0.2:
-                self.wobble = now
-                self.vel.y = 0.2
-            elif now - self.wobble > 750 and self.vel.y == 0.2:
-                self.wobble = now
-                self.vel.y = -0.2
-
-            self.acc = pygame.math.Vector2(-0.15, 0)
-            self.rect.centerx -= 2
-            hits = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
-            self.rect.centerx += 2
-            if hits:
-                self.facing = False
+        self.rect.centerx += 2 * self.dir
+        hits2 = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
+        self.rect.centerx -= 2 * self.dir
+        if hits2:
+            self.dir = self.dir * -1
 
     def draw_health(self):
         if self.health > 120:
@@ -1240,19 +1022,18 @@ class Mob_flying(pygame.sprite.Sprite):
         now = pygame.time.get_ticks()
         if now - self.last_shot > 2500:
             self.last_shot = now
-            pos = self.pos
             angle = 180
             dir = pygame.math.Vector2(-1, 0)
-            Mob_Bullet(self.game, pos, dir, angle)
+            Mob_Bullet(self.game, self.pos, dir, angle)
             angle = 0
             dir = pygame.math.Vector2(1, 0)
-            Mob_Bullet(self.game, pos, dir, angle)
+            Mob_Bullet(self.game, self.pos, dir, angle)
             angle = 90
             dir = pygame.math.Vector2(0, -1)
-            Mob_Bullet(self.game, pos, dir, angle)
+            Mob_Bullet(self.game, self.pos, dir, angle)
             angle = 270
             dir = pygame.math.Vector2(0, 1)
-            Mob_Bullet(self.game, pos, dir, angle)
+            Mob_Bullet(self.game, self.pos, dir, angle)
 
 class Mob_charge(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
@@ -1271,39 +1052,31 @@ class Mob_charge(pygame.sprite.Sprite):
         self.vel = pygame.math.Vector2(0, 0)
         self.acc = pygame.math.Vector2(0, 0)
         self.rect.center = self.pos
-        self.rot = 0
         self.health = 100
         self.target = game.player
         self.target2 = game.player2
+        self.dir = 1
         self.alive = True
         self.facing = False
-        self.lock_in = False
-        self.charge_dir = 'left'
         self.charging = False
         self.chargesequence = False
         self.detected = False
         self.charge_time = 0
         self.round = 1
-        self.turn = False
 
     def load_images(self):
         self.walk_frame_R = []
-
-        i = 1
-        while i <= 4:
-            frame = pygame.image.load('assets/sprites/enemy/low/2/R_run_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (24, 36))
-            i = i + 1
-            self.walk_frame_R.append(frame)
-
         self.walk_frame_L = []
 
         i = 1
         while i <= 4:
-            frame = pygame.image.load('assets/sprites/enemy/low/2/L_run_' + str(i) + '.png').convert_alpha()
-            frame = pygame.transform.scale(frame, (24, 36))
+            frame_R = pygame.image.load('assets/sprites/enemy/low/2/R_run_' + str(i) + '.png').convert_alpha()
+            frame_R = pygame.transform.scale(frame_R, (24, 36))
+            frame_L = pygame.image.load('assets/sprites/enemy/low/2/L_run_' + str(i) + '.png').convert_alpha()
+            frame_L = pygame.transform.scale(frame_L, (24, 36))
             i = i + 1
-            self.walk_frame_L.append(frame)
+            self.walk_frame_L.append(frame_L)
+            self.walk_frame_R.append(frame_R)
 
     def animate(self):
         now = pygame.time.get_ticks()
@@ -1312,79 +1085,53 @@ class Mob_charge(pygame.sprite.Sprite):
         else:
             anim_speed = 200
 
-        if self.facing:
-            if now - self.last_update > anim_speed:
-                self.last_update = now
+
+        if now - self.last_update > anim_speed:
+            self.last_update = now
+            if self.dir == -1:
                 self.current_frame = (self.current_frame + 1) % len(self.walk_frame_L)
                 self.image = self.walk_frame_L[self.current_frame]
-                self.rect = self.image.get_rect()
-        else:
-            if now - self.last_update > anim_speed:
-                self.last_update = now
+            else:
                 self.current_frame = (self.current_frame + 1) % len(self.walk_frame_R)
                 self.image = self.walk_frame_R[self.current_frame]
-                self.rect = self.image.get_rect()
+            self.rect = self.image.get_rect()
 
     def update(self):
         self.draw_health()
         target_dist = self.target.pos - self.pos
         target2_dist = self.target2.pos - self.pos
+
+        if not self.charging and not self.detected and not self.chargesequence:
+            self.animate()
+            self.movement_equation()
+            self.moving()
+
         if target_dist.length_squared() < 150**2 and not self.charging and not self.detected and not self.chargesequence:
             self.detected = True
 
         elif target2_dist.length_squared() < 150**2 and not self.charging and not self.detected and not self.chargesequence:
             self.detected = True
 
-        elif not self.charging and not self.detected and not self.chargesequence:
-            self.animate()
-            self.movement_equation()
-            self.moving()
-
         if self.detected and not self.charging and not self.chargesequence:
-            self.rot = (self.game.player.pos - self.pos).angle_to(pygame.math.Vector2(1, 0))
-            self.lock_in = False
-            if not self.lock_in:
-                if self.rot < 90 and self.facing:
-                    self.facing = False
-                    self.step = 0
-                    self.charge_counter = 0
-                    self.lock_in = True
-                    self.turn = True
-                elif self.rot < 90 and not self.facing:
-                    self.step = 0
-                    self.charge_counter = 0
-                    self.lock_in = True
-                    self.turn = False
-                elif self.rot > 90 and self.facing:
-                    self.step = 0
-                    self.charge_counter = 0
-                    self.lock_in = True
-                    self.turn = False
-                elif self.rot > 90 and not self.facing:
-                    self.facing = True
-                    self.step = 0
-                    self.charge_counter = 0
-                    self.lock_in = True
-                    self.turn = True
-                else:
-                    self.facing = True
-                    self.step = 0
-                    self.charge_counter = 0
-                    self.lock_in = True
-                    self.turn = True
+            self.step = 0
+            self.charge_counter = 0
+
+            if self.target.pos.x - self.pos.x <= 0:
+                self.dir = -1
+            else:
+                self.dir = 1
+
             self.chargesequence = True
 
         elif self.detected and not self.charging and self.chargesequence:
             time = pygame.time.get_ticks()
             self.animate()
-            if self.charge_counter != 2:
+            self.vel.x = 0
+            if self.charge_counter != 10:
+                self.movement_equation()
+                self.acc.x = 0
                 if time - self.step > 200:
-                    if self.turn:
-                        self.movement_equation()
-                        self.charge_motion()
-                    else:
-                        self.movement_equation_backward()
-                        self.charge_motion()
+                    self.charge_motion()
                     self.step = time
                     self.charge_counter += 1
             else:
@@ -1416,63 +1163,32 @@ class Mob_charge(pygame.sprite.Sprite):
         self.pos += self.vel * self.game.dt
         self.rect.center = self.pos
 
-    def movement_equation_backward(self):
-        self.acc.x -= self.vel.x * -0.12
-        self.vel -= self.acc
-        self.pos -= self.vel + 0.5 * self.acc
-        self.pos -= self.vel * self.game.dt
-        self.rect.center = self.pos
 
     def charge_motion(self):
-        if not self.facing:
-            self.acc = pygame.math.Vector2(-0.2, 0.5)
-            self.rect.centerx -=2
-            hits2 = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
-            self.rect.centerx +=2
-            if hits2:
-                self.acc = pygame.math.Vector2(0, 0.5)
-
-        else:
-            self.acc = pygame.math.Vector2(0.2, 0.5)
-            self.rect.centerx += 2
-            hits = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
-            self.rect.centerx -= 2
-            if hits:
-                self.acc = pygame.math.Vector2(0, 0.5)
+        self.acc = pygame.math.Vector2(-0.2 * self.dir, 0.5)
+        self.rect.centerx -=2 * self.dir
+        hits2 = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
+        self.rect.centerx +=2 * self.dir
+        if hits2:
+            self.acc = pygame.math.Vector2(0, 0.5)
 
     def moving(self):
-        if not self.facing:
-            self.acc = pygame.math.Vector2(0.2, 0.5)
-            self.rect.centerx +=2
-            hits2 = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
-            self.rect.centerx -=2
-            if hits2:
-                self.facing = True
+        self.acc = pygame.math.Vector2(0.2 * self.dir, 0.5)
+        self.rect.centerx += 2 * self.dir
+        hits = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
+        self.rect.centerx -= 2 * self.dir
+        if hits:
+            self.dir = self.dir * -1
 
-        else:
-            self.acc = pygame.math.Vector2(-0.2, 0.5)
-            self.rect.centerx -= 2
-            hits = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
-            self.rect.centerx += 2
-            if hits:
-                self.facing = False
 
     def chargeaccel(self):
-        if not self.facing:
-            self.acc = pygame.math.Vector2(0.5, 0.5)
-            self.rect.centerx +=2
-            hits2 = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
-            self.rect.centerx -=2
-            if hits2:
-                self.facing = True
+        self.acc = pygame.math.Vector2(0.5 * self.dir, 0.5)
+        self.rect.centerx +=2 * self.dir
+        hits2 = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
+        self.rect.centerx -=2 * self.dir
+        if hits2:
+            self.dir = self.dir * -1
 
-        else:
-            self.acc = pygame.math.Vector2(-0.5, 0.5)
-            self.rect.centerx -= 2
-            hits = pygame.sprite.spritecollide(self, self.game.invis_wall, False)
-            self.rect.centerx += 2
-            if hits:
-                self.facing = False
 
     def draw_health(self):
         if self.health > 60:
