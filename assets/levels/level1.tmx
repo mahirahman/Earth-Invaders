@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.1" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="450" height="35" tilewidth="16" tileheight="16" infinite="0" nextlayerid="64" nextobjectid="1358">
+<map version="1.2" tiledversion="1.3.1" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="450" height="35" tilewidth="16" tileheight="16" infinite="0" nextlayerid="64" nextobjectid="1369">
  <tileset firstgid="1" source="tileset_nature.tsx"/>
  <tileset firstgid="376" source="tileset_house.tsx"/>
  <tileset firstgid="1240" name="backdrop" tilewidth="16" tileheight="16" tilecount="15750" columns="450">
@@ -1045,10 +1045,12 @@
   <object id="1166" name="wall" x="6725" y="295" width="11" height="8"/>
   <object id="1167" name="wall" x="6849" y="275" width="351" height="11"/>
   <object id="1356" name="boundary" x="7199" y="0" width="1" height="275"/>
+  <object id="1367" name="invis_wall" x="6624" y="256" width="1" height="39"/>
+  <object id="1368" name="invis_wall" x="6735" y="256" width="1" height="39"/>
  </objectgroup>
  <objectgroup id="62" name="player">
-  <object id="1263" name="player2" x="16" y="432" width="16" height="32"/>
-  <object id="1355" name="player" x="48" y="431" width="16" height="32"/>
+  <object id="1364" name="player2" x="48" y="448" width="16" height="32"/>
+  <object id="1365" name="player" x="16" y="448" width="16" height="32"/>
  </objectgroup>
  <objectgroup id="63" name="enemy">
   <object id="1275" name="enemy" x="6912" y="256" width="16" height="16"/>
@@ -1110,6 +1112,7 @@
   <object id="1340" name="charge" x="3424" y="496" width="16" height="16"/>
   <object id="1342" name="enemy" x="912" y="480" width="16" height="16"/>
   <object id="1347" name="invis_wall" x="7200" y="23" height="252"/>
+  <object id="1366" name="charge" x="6672" y="256" width="16" height="16"/>
  </objectgroup>
  <objectgroup id="61" name="health">
   <object id="1185" name="health" x="3792" y="316" width="16" height="16"/>

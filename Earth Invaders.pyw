@@ -95,9 +95,9 @@ def menu():
                             game.new()
                             game.run()
                             if game.win:
-                                game.you_win()
+                                game.game_over(state = "Win")
                             else:
-                                game.game_over()
+                                game.game_over(state = "Lose")
                     if choice == 'Controls':
                         controls()
                     if choice == 'Highscores':
@@ -326,12 +326,6 @@ def credits():
 class Game:
 
     def __init__(self):
-        self.font_name = pygame.font.match_font('8bit')
-        pygame.font.init()
-        self.font = pygame.font.Font('assets/8bit.ttf', 60)
-        self.opx = 2
-        self.osurf = 0
-        self.tsurf = 0
         self.load_data()
 
     #Loads Sounds and Text Font and Bullet Sprites
@@ -832,26 +826,25 @@ class Game:
         self.draw_player_health(337, 5, self.player2.health / PLAYER_HEALTH, 2)
 
         #Display player 1's score
-        self.draw_text("SCORE:" + str(self.score), self.pixel_font,15, (255, 255, 255), 100, 41, align="center")
+        self.draw_text("SCORE: " + str(self.score), self.pixel_font,15, (255, 255, 255), 77, 38, opx = 1, align = "")
 
         #Display player 2's score
-        self.draw_text("SCORE:" + str(self.score2), self.pixel_font,15, (255, 255, 255), 410, 41, align="center")
+        self.draw_text("SCORE: " + str(self.score2), self.pixel_font,15, (255, 255, 255), 381, 38, opx = 1, align = "")
 
         #Enemy counter
-        self.draw_text('ALIENS: {}'.format(len(self.mob_small) + len(self.mob_big) + len(self.mob_flying) + len(self.mob_charge)), self.pixel_font, 15, (255, 255, 255), WIDTH/2, 15, align="center")
+        self.draw_text('ALIENS: {}'.format(len(self.mob_small) + len(self.mob_big) + len(self.mob_flying) + len(self.mob_charge)), self.pixel_font, 15, (255, 255, 255, 0), 223, 11, opx = 1, align = "")
 
         if self.paused:
             self.display = pygame.Surface((self.map.width, self.map.height))
-            self.draw_pause_text("Player 1: Use WASD to move and Space to shoot", self.pixel_font,15, (255, 255, 255), WIDTH/2, HEIGHT/2-90, align="center")
-            self.draw_pause_text("Player 2: Use Arrow keys to move and Right Enter to shoot", self.pixel_font,15, (255, 255, 255), WIDTH/2, HEIGHT/2-70, align="center")
-            self.draw_pause_text("PAUSE", self.pixel_font,65, (255, 255, 255), WIDTH/2, HEIGHT/2, align="center")
-            self.draw_pause_text("Press P to unpause", self.pixel_font,15, (255, 255, 255), WIDTH/2, HEIGHT/2+25, align="center")
-            self.draw_pause_text("Press ESC to go back to main menu", self.pixel_font,15, (255, 255, 255), WIDTH/2, HEIGHT/2+90, align="center")
-
+            self.draw_text("Player 1: Use WASD to move and Space to shoot", self.pixel_font,15, (255, 255, 255), 105, 110, opx = 1, align = "")
+            self.draw_text("Player 2: Use Arrow keys to move and Right Enter to shoot", self.pixel_font,15, (255, 255, 255), 67, 130, opx = 1, align = "")
+            self.draw_text("PAUSE", self.pixel_font,65, (255, 255, 255), 174, 180, opx = 3, align = "")
+            self.draw_text("Press P to unpause", self.pixel_font,15, (255, 255, 255), 193, 225, opx = 1, align = "")
+            self.draw_text("Press ESC to go back to main menu", self.pixel_font,15, (255, 255, 255), 145, 290, opx = 1, align = "")
 
         pygame.display.flip()
 
-    def _circlepoints(self,r):
+    def circlepoints(self,r):
         r = int(round(r))
         x, y, e = r, 0, 1 - r
         points = []
@@ -869,37 +862,27 @@ class Game:
         points.sort()
         return points
 
-    def getsurf(self,pause_text,color):
-        return self.font.render(pause_text, True, color).convert_alpha()
-
-    def draw_text(self, text, font_name, size, color, x, y, align="center"):
+    def draw_text(self, text, font_name, size, color, x, y, opx, align):
         font = pygame.font.Font(font_name, size)
-        text_surface = font.render(text, True, color)
-        text_rect = text_surface.get_rect()
 
         if align == "center":
+            text_surface = font.render(text, True, color)
+            text_rect = text_surface.get_rect()
             text_rect.center = (x, y)
+            screen.blit(text_surface, text_rect)
+        else:
+            self.osurf = font.render(text, True, (0,0,0,0))
+            self.tsurf = font.render(text, True, color)
+            self.osurf_rect = self.osurf.get_rect()
+            self.tsurf_rect = self.tsurf.get_rect()
 
-        screen.blit(text_surface, text_rect)
-
-    def draw_pause_text(self, text, font_name, size, color, x, y, align="center"):
-        font = pygame.font.Font(font_name, size)
-
-        self.osurf = font.render(text, True, (0, 0, 0, 0))
-        self.tsurf = font.render(text, True, (255, 255, 255, 0))
-        self.osurf_rect = self.osurf.get_rect()
-        self.tsurf_rect = self.tsurf.get_rect()
-        if align == "center":
-            self.osurf_rect.center = (x, y)
-            self.tsurf_rect.center = (x, y)
-
-        for offset, blendmax in [(0, False), (300, True)]:
-            for dx, dy in self._circlepoints(self.opx):
-                if blendmax:
-                    screen.blit(self.osurf, (dx + x, dy + y), None, pygame.BLEND_RGBA_MAX)
-                else:
-                    screen.blit(self.osurf, (dx + x, dy + y))
-            screen.blit(self.tsurf, (x, y))
+            for offset, blendmax in [(0, False), (300, True)]:
+                for dx, dy in self.circlepoints(opx):
+                    if blendmax:
+                        screen.blit(self.osurf, (dx + x, dy + y), None, pygame.BLEND_RGBA_MAX)
+                    else:
+                        screen.blit(self.osurf, (dx + x, dy + y))
+                screen.blit(self.tsurf, (x, y))
 
     #Key presses
     def events(self):
@@ -916,16 +899,29 @@ class Game:
                 if event.key == pygame.K_p:
                     self.paused = not self.paused
 
-    def you_win(self):
+    def game_over(self, state):
+        if state == "Win":
+            screencol = 60, 179, 113
+            screencol2 = 60, 179, 113
+            endtext = "You Win!"
+            endtextcol = 255, 255, 0
+            x = 129
+        else:
+            screencol = 110, 0, 0
+            screencol2 = 0, 0, 0
+            endtext = "GAME OVER!"
+            endtextcol = 255, 0, 0
+            x = 79
+
         enter = True
         while enter:
             player1name = pygame_textinput.TextInput(font_family = "assets/8bit.ttf", antialias = False)
             enter1 = True
             while enter1:
-                screen.fill((60,179,113))
+                screen.fill(screencol)
                 events = pygame.event.get()
-                self.draw_text("enter player 1 name", self.pixel_font, 35, (255, 255, 255), int(WIDTH/2), int(HEIGHT/2)-50, align="center")
-                screen.blit(player1name.get_surface(), (int(WIDTH/2)-35, int(HEIGHT/2)))
+                self.draw_text("enter player 1 name", self.pixel_font, 35, (255, 255, 255), 116, 150, opx = 2, align = "")
+                screen.blit(player1name.get_surface(), (221, 200))
 
                 if player1name.update(events):
                     pass
@@ -941,10 +937,10 @@ class Game:
             player2name = pygame_textinput.TextInput(font_family = "assets/8bit.ttf", antialias = False)
             enter2 = True
             while enter2:
-                screen.fill((60,179,113))
+                screen.fill(screencol)
                 events = pygame.event.get()
-                self.draw_text("enter player 2 name", self.pixel_font, 35, (255, 255, 255), int(WIDTH/2), int(HEIGHT/2)-50, align="center")
-                screen.blit(player2name.get_surface(), (int(WIDTH/2)-35, int(HEIGHT/2)))
+                self.draw_text("enter player 2 name", self.pixel_font, 35, (255, 255, 255), 116, 150, opx = 2, align = "")
+                screen.blit(player2name.get_surface(), (221, 200))
 
                 if player2name.update(events):
                     pass
@@ -956,10 +952,9 @@ class Game:
 
                 pygame.display.flip()
                 fps.tick(60)
-
             enter = False
 
-        screen.fill((60,179,113))
+        screen.fill(screencol2)
 
         if self.score > 0 and self.score2 > 0:
             highscore = {player1name.get_text(): self.score, player2name.get_text(): self.score2}
@@ -974,85 +969,15 @@ class Game:
                 f.write(str(NAME) + ' ' + str(SCORE) + '\n')
                 f.close()
 
-        self.draw_text("You Win!", self.pixel_font, 80, (255, 255, 0), WIDTH / 2, HEIGHT / 2, align="center")
-        self.draw_text("press ENTER to restart", self.pixel_font, 30, (255, 255, 255),WIDTH / 2, HEIGHT * 3 / 4.5, align="center")
-        self.draw_text("or ESCAPE to go to main menu", self.pixel_font, 30, (255, 255, 255),WIDTH / 2, HEIGHT * 3 / 4, align="center")
+        self.draw_text(endtext, self.pixel_font, 80, endtextcol, x, 200, opx = 2, align = "")
+        self.draw_text("press ENTER to restart", self.pixel_font, 30, (255, 255, 255), 112, 266, opx = 2, align = "")
+        self.draw_text("or ESCAPE to go to main menu", self.pixel_font, 30, (255, 255, 255), 78, 300, opx = 2, align = "")
 
-        self.draw_text(player1name.get_text(), self.pixel_font,25, (255, 255, 255), WIDTH/3, 40, align="center")
-        self.draw_text(str(self.score), self.pixel_font,25, (255, 255, 255), WIDTH/3, 60, align="center")
+        self.draw_text(player1name.get_text(), self.pixel_font,25, (255, 255, 255), WIDTH/3, 40, opx = 2, align="center")
+        self.draw_text(str(self.score), self.pixel_font,25, (255, 255, 255), WIDTH/3, 60, opx = 2, align="center")
 
-        self.draw_text(player2name.get_text(), self.pixel_font,25, (255, 255, 255), WIDTH/1.5, 40, align="center")
-        self.draw_text(str(self.score2), self.pixel_font,25, (255, 255, 255), WIDTH/1.5, 60, align="center")
-
-        pygame.display.flip()
-        self.wait_for_key()
-
-    def game_over(self):
-        enter = True
-        while enter:
-            player1name = pygame_textinput.TextInput(font_family = "assets/8bit.ttf", antialias = False)
-            enter1 = True
-            while enter1:
-                screen.fill((110, 0, 0))
-                events = pygame.event.get()
-                self.draw_text("enter player 1 name", self.pixel_font, 35, (255, 255, 255), int(WIDTH/2), int(HEIGHT/2)-50, align="center")
-                screen.blit(player1name.get_surface(), (int(WIDTH/2)-35, int(HEIGHT/2)))
-
-                if player1name.update(events):
-                    pass
-
-                for event in events:
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_RETURN:
-                            enter1 = False
-
-                pygame.display.flip()
-                fps.tick(60)
-
-            player2name = pygame_textinput.TextInput(font_family = "assets/8bit.ttf", antialias = False)
-            enter2 = True
-            while enter2:
-                screen.fill((110, 0, 0))
-                events = pygame.event.get()
-                self.draw_text("enter player 2 name", self.pixel_font, 35, (255, 255, 255), int(WIDTH/2), int(HEIGHT/2)-50, align="center")
-                screen.blit(player2name.get_surface(), (int(WIDTH/2)-35, int(HEIGHT/2)))
-
-                if player2name.update(events):
-                    pass
-
-                for event in events:
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_RETURN:
-                            enter2 = False
-
-                pygame.display.flip()
-                fps.tick(60)
-            enter = False
-
-        screen.fill((0, 0, 0))
-
-        if self.score > 0 and self.score2 > 0:
-            highscore = {player1name.get_text(): self.score, player2name.get_text(): self.score2}
-        if self.score > 0 and self.score2 == 0:
-            highscore = {player1name.get_text(): self.score}
-        if self.score == 0 and self.score2 > 0:
-            highscore = {player2name.get_text(): self.score2}
-
-        if self.score > 0  or self.score2 > 0:
-            for NAME, SCORE in highscore.items():
-                f = open("assets/highscores.txt", "a")
-                f.write(str(NAME) + ' ' + str(SCORE) + '\n')
-                f.close()
-
-        self.draw_text("GAME OVER!", self.pixel_font, 80, (255, 0, 0),WIDTH / 2, HEIGHT / 2, align="center")
-        self.draw_text("press ENTER to restart", self.pixel_font, 30, (255, 255, 255),WIDTH / 2, HEIGHT * 3 / 4.5, align="center")
-        self.draw_text("or ESCAPE to go to main menu", self.pixel_font, 30, (255, 255, 255),WIDTH / 2, HEIGHT * 3 / 4, align="center")
-
-        self.draw_text(player1name.get_text(), self.pixel_font,25, (255, 255, 255), WIDTH/3, 40, align="center")
-        self.draw_text(str(self.score), self.pixel_font,25, (255, 255, 255), WIDTH/3, 60, align="center")
-
-        self.draw_text(player2name.get_text(), self.pixel_font,25, (255, 255, 255), WIDTH/1.5, 40, align="center")
-        self.draw_text(str(self.score2), self.pixel_font,25, (255, 255, 255), WIDTH/1.5, 60, align="center")
+        self.draw_text(player2name.get_text(), self.pixel_font,25, (255, 255, 255), WIDTH/1.5, 40, opx = 2, align="center")
+        self.draw_text(str(self.score2), self.pixel_font,25, (255, 255, 255), WIDTH/1.5, 60, opx = 2, align="center")
 
         pygame.display.flip()
         self.wait_for_key()
