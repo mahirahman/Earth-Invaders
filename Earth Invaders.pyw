@@ -347,30 +347,17 @@ class Game:
         self.player_hurt = pygame.mixer.Sound("assets/audio/player_hurt.wav")
         self.shoot = pygame.mixer.Sound("assets/audio/shoot.wav")
 
-        self.healthbar_0 = pygame.image.load('assets/sprites/health/0.png')
-        self.healthbar_1 = pygame.image.load('assets/sprites/health/1.png')
-        self.healthbar_2 = pygame.image.load('assets/sprites/health/2.png')
-        self.healthbar_3 = pygame.image.load('assets/sprites/health/3.png')
-        self.healthbar_4 = pygame.image.load('assets/sprites/health/4.png')
-        self.healthbar_5 = pygame.image.load('assets/sprites/health/5.png')
-        self.healthbar_6 = pygame.image.load('assets/sprites/health/6.png')
-        self.healthbar_7 = pygame.image.load('assets/sprites/health/7.png')
-        self.healthbar_8 = pygame.image.load('assets/sprites/health/8.png')
-        self.healthbar_9 = pygame.image.load('assets/sprites/health/9.png')
-        self.healthbar_10 = pygame.image.load('assets/sprites/health/10.png')
-        self.healthbar_11 = pygame.image.load('assets/sprites/health/11.png')
-        self.healthbar_12 = pygame.image.load('assets/sprites/health/12.png')
-        self.healthbar_13 = pygame.image.load('assets/sprites/health/13.png')
-        self.healthbar_14 = pygame.image.load('assets/sprites/health/14.png')
-        self.healthbar_15 = pygame.image.load('assets/sprites/health/15.png')
-        self.healthbar_16 = pygame.image.load('assets/sprites/health/16.png')
-        self.healthbar_17 = pygame.image.load('assets/sprites/health/17.png')
-        self.healthbar_18 = pygame.image.load('assets/sprites/health/18.png')
-        self.healthbar_19 = pygame.image.load('assets/sprites/health/19.png')
-        self.healthbar_20 = pygame.image.load('assets/sprites/health/20.png')
+        for i in range(0,21):
+            self.__dict__['healthbar_%d' % i] = pygame.image.load('assets/sprites/health/'+ str(i) +'.png')
+
+##        health = []
+##        for i in range(0, 21):
+##            health[i] = health.append(pygame.image.load('assets/sprites/health/'+ str(i) +'.png'))
 
     #HUD For Player
     def draw_player_health(self, x, y, percent, playerid):
+
+        #health_icon = health[int(100  * percent / 5)]
 
         if percent < 0:
             percent = 0
