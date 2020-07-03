@@ -357,11 +357,8 @@ class Game:
     #HUD For Player
     def draw_player_health(self, x, y, percent, playerid):
 
-<<<<<<< Updated upstream
         #health_icon = health[int(100  * percent / 5)]
 
-=======
->>>>>>> Stashed changes
         if percent < 0:
             percent = 0
 
