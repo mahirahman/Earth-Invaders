@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.1" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="450" height="35" tilewidth="16" tileheight="16" infinite="0" nextlayerid="64" nextobjectid="1358">
+<map version="1.2" tiledversion="1.3.1" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="450" height="35" tilewidth="16" tileheight="16" infinite="0" nextlayerid="64" nextobjectid="1362">
  <tileset firstgid="1" source="tileset_nature.tsx"/>
  <tileset firstgid="376" source="tileset_house.tsx"/>
  <tileset firstgid="1240" name="backdrop" tilewidth="16" tileheight="16" tilecount="15750" columns="450">
@@ -962,7 +962,7 @@
   <object id="1041" name="wall" x="2721" y="444" width="9" height="7"/>
   <object id="1043" name="wall" x="2730" y="449" width="6" height="7"/>
   <object id="1047" name="wall" x="2751" y="467" width="16"/>
-  <object id="1048" name="wall" x="2688" y="531" width="353" height="13"/>
+  <object id="1048" name="wall" x="2688" y="531" width="354" height="13"/>
   <object id="1050" name="boundary" x="2688" y="455" height="76"/>
   <object id="1051" name="wall" x="3042" y="515" width="112" height="13"/>
   <object id="1052" name="wall" x="2242" y="435" width="44" height="13"/>
@@ -1045,6 +1045,7 @@
   <object id="1166" name="wall" x="6725" y="295" width="11" height="8"/>
   <object id="1167" name="wall" x="6849" y="275" width="351" height="11"/>
   <object id="1356" name="boundary" x="7199" y="0" width="1" height="275"/>
+  <object id="1358" name="wall" x="3042" y="528" width="1" height="3"/>
  </objectgroup>
  <objectgroup id="62" name="player">
   <object id="1263" name="player2" x="16" y="432" width="16" height="32"/>
@@ -1088,7 +1089,7 @@
   <object id="1314" name="invis_wall" x="2078" y="465" width="1" height="32"/>
   <object id="1315" name="invis_wall" x="2352" y="384" width="1" height="32"/>
   <object id="1316" name="invis_wall" x="2431" y="384" width="1" height="32"/>
-  <object id="1319" name="invis_wall" x="2688" y="496" width="1" height="32"/>
+  <object id="1319" name="invis_wall" x="2719" y="496" width="1" height="32"/>
   <object id="1320" name="invis_wall" x="3040" y="480" width="1" height="48"/>
   <object id="1321" name="invis_wall" x="3696" y="464" width="1" height="32"/>
   <object id="1322" name="invis_wall" x="3856" y="400" width="1" height="32"/>
@@ -1099,7 +1100,7 @@
   <object id="1327" name="invis_wall" x="4700" y="416" width="1" height="32"/>
   <object id="1328" name="invis_wall" x="4928" y="400" width="1.318" height="32"/>
   <object id="1329" name="invis_wall" x="5279" y="400" width="1" height="32"/>
-  <object id="1330" name="invis_wall" x="5727" y="320" width="1" height="32"/>
+  <object id="1330" name="invis_wall" x="5654" y="320" width="1" height="32"/>
   <object id="1331" name="invis_wall" x="5855" y="256" width="1" height="253"/>
   <object id="1332" name="invis_wall" x="5584" y="496" width="1" height="32"/>
   <object id="1333" name="invis_wall" x="5120" y="496" width="1" height="32"/>
@@ -1193,7 +1194,7 @@
   <object id="1162" name="spike" x="6352" y="548" width="144" height="11.9896"/>
  </objectgroup>
  <objectgroup id="58" name="win/death">
-  <object id="1156" name="death" x="2008" y="605" width="591" height="1"/>
+  <object id="1156" name="death" x="2008" y="605" width="753" height="1"/>
   <object id="1170" name="win_area" x="7136" y="233" width="32.0273" height="38.9283"/>
   <object id="1353" name="death" x="4228" y="605" width="332" height="1"/>
  </objectgroup>
