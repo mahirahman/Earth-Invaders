@@ -326,6 +326,7 @@ def credits():
 class Game:
 
     def __init__(self):
+        self.healthbar = []
         self.load_data()
 
     #Loads Sounds and Text Font and Bullet Sprites
@@ -348,7 +349,9 @@ class Game:
         self.shoot = pygame.mixer.Sound("assets/audio/shoot.wav")
 
         for i in range(0,21):
-            self.__dict__['healthbar_%d' % i] = pygame.image.load('assets/sprites/health/'+ str(i) +'.png')
+##          self.__dict__['healthbar_%d' % i] = pygame.image.load('assets/sprites/health/'+ str(i) +'.png')
+            load_healthbar = pygame.image.load('assets/sprites/health/'+ str(i) +'.png').convert_alpha()
+            self.healthbar.append(load_healthbar)
 
 ##        health = []
 ##        for i in range(0, 21):
@@ -358,52 +361,10 @@ class Game:
     def draw_player_health(self, x, y, percent, playerid):
 
         #health_icon = health[int(100  * percent / 5)]
-
         if percent < 0:
             percent = 0
 
-        if percent > 0.95:
-            health_icon = self.healthbar_20
-        elif percent > 0.9:
-            health_icon = self.healthbar_19
-        elif percent > 0.85:
-            health_icon = self.healthbar_18
-        elif percent > 0.8:
-            health_icon = self.healthbar_17
-        elif percent > 0.75:
-            health_icon = self.healthbar_16
-        elif percent > 0.7:
-            health_icon = self.healthbar_15
-        elif percent > 0.65:
-            health_icon = self.healthbar_14
-        elif percent > 0.6:
-            health_icon = self.healthbar_13
-        elif percent > 0.55:
-            health_icon = self.healthbar_12
-        elif percent > 0.5:
-            health_icon = self.healthbar_11
-        elif percent > 0.45:
-            health_icon = self.healthbar_10
-        elif percent > 0.4:
-            health_icon = self.healthbar_9
-        elif percent > 0.35:
-            health_icon = self.healthbar_8
-        elif percent > 0.3:
-            health_icon = self.healthbar_7
-        elif percent > 0.25:
-            health_icon = self.healthbar_6
-        elif percent > 0.2:
-            health_icon = self.healthbar_5
-        elif percent > 0.15:
-            health_icon = self.healthbar_4
-        elif percent > 0.1:
-            health_icon = self.healthbar_3
-        elif percent > 0.05:
-            health_icon = self.healthbar_2
-        elif percent > 0:
-            health_icon = self.healthbar_1
-        else:
-            health_icon = self.healthbar_0
+        health_icon = self.healthbar[int(percent*20)]
 
         health_scaled = pygame.transform.scale(health_icon, (170, 44))
         if playerid == 2:
