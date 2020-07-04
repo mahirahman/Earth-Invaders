@@ -108,6 +108,12 @@ class TextInput:
                 elif event.key == pl.K_HOME:
                     self.cursor_position = 0
 
+                elif event.key == pl.K_KP_ENTER:
+                    pass
+
+                elif event.key == pl.K_ESCAPE:
+                    pass
+
                 else:
                     # If no special key is pressed, add unicode of key to input_string
                     self.input_string = (
