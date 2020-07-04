@@ -95,9 +95,9 @@ def menu():
                             game.new()
                             game.run()
                             if game.win:
-                                game.game_over(state = "Win")
+                                game.game_over(screencol = (60, 179, 113), screencol2 = (60, 179, 113), endtext = "You Win!", endtextcol = (255, 255, 0), x = 129)
                             else:
-                                game.game_over(state = "Lose")
+                                game.game_over(screencol = (110, 0, 0), screencol2 = (0, 0, 0), endtext = "GAME OVER!", endtextcol = (255, 0, 0), x = 79)   
                     if choice == 'Controls':
                         controls()
                     if choice == 'Highscores':
@@ -840,20 +840,7 @@ class Game:
                 if event.key == pygame.K_p:
                     self.paused = not self.paused
 
-    def game_over(self, state):
-        if state == "Win":
-            screencol = 60, 179, 113
-            screencol2 = 60, 179, 113
-            endtext = "You Win!"
-            endtextcol = 255, 255, 0
-            x = 129
-        else:
-            screencol = 110, 0, 0
-            screencol2 = 0, 0, 0
-            endtext = "GAME OVER!"
-            endtextcol = 255, 0, 0
-            x = 79
-
+    def game_over(self, screencol, screencol2, endtext, endtextcol, x):
         enter = True
         while enter:
             player1name = pygame_textinput.TextInput(font_family = "assets/8bit.ttf", antialias = False)
