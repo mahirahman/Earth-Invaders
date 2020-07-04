@@ -349,18 +349,11 @@ class Game:
         self.shoot = pygame.mixer.Sound("assets/audio/shoot.wav")
 
         for i in range(0,21):
-##          self.__dict__['healthbar_%d' % i] = pygame.image.load('assets/sprites/health/'+ str(i) +'.png')
-            load_healthbar = pygame.image.load('assets/sprites/health/'+ str(i) +'.png').convert_alpha()
-            self.healthbar.append(load_healthbar)
-
-##        health = []
-##        for i in range(0, 21):
-##            health[i] = health.append(pygame.image.load('assets/sprites/health/'+ str(i) +'.png'))
+            self.healthbar.append(pygame.image.load('assets/sprites/health/'+ str(i) +'.png').convert_alpha())
 
     #HUD For Player
     def draw_player_health(self, x, y, percent, playerid):
 
-        #health_icon = health[int(100  * percent / 5)]
         if percent < 0:
             percent = 0
 
