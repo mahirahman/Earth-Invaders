@@ -8,7 +8,7 @@ import pytweening as tween
 from itertools import chain
 PLAYER_HEALTH = 200
 
-def collide_with_walls(sprite, group, dir):
+def wallCollide(sprite, group, dir):
     if dir == 'x':
         hits = pygame.sprite.spritecollide(sprite, group, False, collide_hit_rect)
         if hits:
@@ -294,11 +294,11 @@ class Player(pygame.sprite.Sprite):
         self.pos += self.vel * self.game.dt
         self.rect.center = self.pos
         self.hit_rect.centerx = self.pos.x
-        collide_with_walls(self, self.game.walls, 'x')
-        collide_with_walls(self, self.game.boundary, 'x')
+        wallCollide(self, self.game.walls, 'x')
+        wallCollide(self, self.game.boundary, 'x')
         self.hit_rect.centery = self.pos.y
-        collide_with_walls(self, self.game.walls, 'y')
-        collide_with_walls(self, self.game.boundary, 'y')
+        wallCollide(self, self.game.walls, 'y')
+        wallCollide(self, self.game.boundary, 'y')
         self.rect.center = self.hit_rect.center
         self.death()
 
@@ -582,11 +582,11 @@ class Player2(pygame.sprite.Sprite):
         self.rect.center = self.pos
 
         self.hit_rect.centerx = self.pos.x
-        collide_with_walls(self, self.game.walls, 'x')
-        collide_with_walls(self, self.game.boundary, 'x')
+        wallCollide(self, self.game.walls, 'x')
+        wallCollide(self, self.game.boundary, 'x')
         self.hit_rect.centery = self.pos.y
-        collide_with_walls(self, self.game.walls, 'y')
-        collide_with_walls(self, self.game.boundary, 'y')
+        wallCollide(self, self.game.walls, 'y')
+        wallCollide(self, self.game.boundary, 'y')
         self.rect.center = self.hit_rect.center
         self.death()
 
@@ -733,9 +733,9 @@ class Mob_small(pygame.sprite.Sprite):
         self.moving()
 
         self.hit_rect.centerx = self.pos.x
-        collide_with_walls(self, self.game.invis_wall, 'x')
+        wallCollide(self, self.game.invis_wall, 'x')
         self.hit_rect.centery = self.pos.y
-        collide_with_walls(self, self.game.walls, 'y')
+        wallCollide(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
 
     def movement_equation(self):
@@ -820,9 +820,9 @@ class Mob_Big(pygame.sprite.Sprite):
         self.movement_equation()
         self.moving()
         self.hit_rect.centerx = self.pos.x
-        collide_with_walls(self, self.game.invis_wall, 'x')
+        wallCollide(self, self.game.invis_wall, 'x')
         self.hit_rect.centery = self.pos.y
-        collide_with_walls(self, self.game.walls, 'y')
+        wallCollide(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
         if self.health <= 0:
             self.kill()
@@ -948,9 +948,9 @@ class Mob_flying(pygame.sprite.Sprite):
             self.movement_equation()
 
         self.hit_rect.centerx = self.pos.x
-        collide_with_walls(self, self.game.invis_wall, 'x')
+        wallCollide(self, self.game.invis_wall, 'x')
         self.hit_rect.centery = self.pos.y
-        collide_with_walls(self, self.game.walls, 'y')
+        wallCollide(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
 
     def movement_equation(self):
@@ -1153,9 +1153,9 @@ class Mob_charge(pygame.sprite.Sprite):
                 self.charging = False
 
         self.hit_rect.centerx = self.pos.x
-        collide_with_walls(self, self.game.invis_wall, 'x')
+        wallCollide(self, self.game.invis_wall, 'x')
         self.hit_rect.centery = self.pos.y
-        collide_with_walls(self, self.game.walls, 'y')
+        wallCollide(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
 
     def movement_equation(self):
