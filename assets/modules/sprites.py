@@ -29,8 +29,8 @@ def wallCollide(sprite, group, direction):
             sprite.hit_rect.centery = sprite.pos.y
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, game, pos, direction):
-        self.groups = game.all_sprites, game.bullets
+    def __init__(self, game, pos, direction, playernum):
+        self.groups = game.all_sprites, game.__dict__['bullets%d' % playernum]
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         if direction == 1:
@@ -53,32 +53,7 @@ class Bullet(pygame.sprite.Sprite):
         if pygame.sprite.spritecollideany(self, self.game.walls):
             self.kill()
 
-class Bullet2(pygame.sprite.Sprite):
-    def __init__(self, game, pos, direction):
-        self.groups = game.all_sprites, game.bullets2
-        pygame.sprite.Sprite.__init__(self, self.groups)
-        self.game = game
-        if direction == 1:
-            self.image = game.bullet_img_R
-        else:
-            self.image = game.bullet_img_L
-        self.rect = self.image.get_rect()
-        self.hit_rect = pygame.Rect(0, 0, 17, 8)
-        self.hit_rect.center = self.rect.center
-        self.pos = pygame.math.Vector2(pos)
-        self.rect.center = pos
-        self.vel = pygame.math.Vector2(direction * 7, 0)
-        self.spawn_time = pygame.time.get_ticks()
-
-    def update(self):
-        self.pos += self.vel
-        self.rect.center = self.pos
-        if pygame.time.get_ticks() - self.spawn_time > 1000:
-            self.kill()
-        if pygame.sprite.spritecollideany(self, self.game.walls):
-            self.kill()
-
-class Mob_Bullet(pygame.sprite.Sprite):
+class MobBullet(pygame.sprite.Sprite):
     def __init__(self, game, pos, direction, angle):
         self.groups = game.all_sprites, game.mob_bullets
         pygame.sprite.Sprite.__init__(self, self.groups)
@@ -203,7 +178,7 @@ class Player(pygame.sprite.Sprite):
                         pos = self.pos + pygame.math.Vector2(32 * self.direction, 5)
                     else:
                         pos = self.pos + pygame.math.Vector2(32 * self.direction, -10)
-                    Bullet(self.game, pos, self.direction)
+                    Bullet(self.game, pos, self.direction, 1)
                     self.game.shoot.play()
                     self.shooting = True
         else:
@@ -492,7 +467,7 @@ class Player2(pygame.sprite.Sprite):
                         pos = self.pos + pygame.math.Vector2(32 * self.direction, 5)
                     else:
                         pos = self.pos + pygame.math.Vector2(32 * self.direction, -10)
-                    Bullet2(self.game, pos, self.direction)
+                    Bullet(self.game, pos, self.direction, 2)
                     self.game.shoot.play()
                     self.shooting = True
 
@@ -1026,16 +1001,16 @@ class Mob_flying(pygame.sprite.Sprite):
             self.last_shot = now
             angle = 180
             direction = pygame.math.Vector2(-1, 0)
-            Mob_Bullet(self.game, self.pos, direction, angle)
+            MobBullet(self.game, self.pos, direction, angle)
             angle = 0
             direction = pygame.math.Vector2(1, 0)
-            Mob_Bullet(self.game, self.pos, direction, angle)
+            MobBullet(self.game, self.pos, direction, angle)
             angle = 90
             direction = pygame.math.Vector2(0, -1)
-            Mob_Bullet(self.game, self.pos, direction, angle)
+            MobBullet(self.game, self.pos, direction, angle)
             angle = 270
             direction = pygame.math.Vector2(0, 1)
-            Mob_Bullet(self.game, self.pos, direction, angle)
+            MobBullet(self.game, self.pos, direction, angle)
 
 class Mob_charge(pygame.sprite.Sprite):
     def __init__(self, game, x, y):

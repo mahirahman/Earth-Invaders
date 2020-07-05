@@ -100,9 +100,9 @@ def menu():
                             game.new()
                             game.run()
                             if game.win:
-                                game.gameOver(screencol = (60, 179, 113), screencol2 = (60, 179, 113), endtext = "You Win!", endtextcol = (255, 255, 0), x = 129)
+                                game.gameOver((60, 179, 113), (60, 179, 113), "You Win!", (255, 255, 0), 129)
                             else:
-                                game.gameOver(screencol = (110, 0, 0), screencol2 = (0, 0, 0), endtext = "GAME OVER!", endtextcol = (255, 0, 0), x = 79)
+                                game.gameOver( (110, 0, 0), (0, 0, 0), "GAME OVER!", (255, 0, 0), 79)
                     if choice == 'Controls':
                         controls()
                     if choice == 'Highscores':
@@ -311,10 +311,8 @@ class Game:
     #Loads Sounds and Text Font and Bullet Sprites
     def loadData(self):
         self.pixel_font = ('assets/8bit.ttf')
-        self.bullet_img_R = pygame.image.load('assets/images/bullet_R.png').convert_alpha()
-        self.bullet_img_R = pygame.transform.scale(self.bullet_img_R, (12, 5))
-        self.bullet_img_L = pygame.image.load('assets/images/bullet_L.png').convert_alpha()
-        self.bullet_img_L = pygame.transform.scale(self.bullet_img_L, (12, 5))
+        self.bullet_img_R = pygame.transform.scale(pygame.image.load('assets/images/bullet_R.png').convert_alpha(), (12, 5))
+        self.bullet_img_L = pygame.transform.scale(pygame.image.load('assets/images/bullet_L.png').convert_alpha(), (12, 5))
         self.bullet_mob = pygame.image.load('assets/images/alien_projectile.png').convert_alpha()
         self.bullet_mob = pygame.transform.scale(self.bullet_mob, (17, 8))
 
@@ -363,7 +361,7 @@ class Game:
         self.map_rect = self.map_img.get_rect()
         self.fall_death = pygame.sprite.Group()
         self.boundary = pygame.sprite.Group()
-        self.bullets = pygame.sprite.Group()
+        self.bullets1 = pygame.sprite.Group()
         self.bullets2 = pygame.sprite.Group()
         for tile_object in self.map.tmxdata.objects:    #FOR loop to render all objects and bitmap graphics in the tiled map (TMX)
             obj_center = pygame.math.Vector2(tile_object.x + tile_object.width / 2, tile_object.y + tile_object.height / 2)
@@ -633,7 +631,7 @@ class Game:
                 else:
                     pass
 
-        hits = pygame.sprite.groupcollide(self.mob_small, self.bullets, False, True)
+        hits = pygame.sprite.groupcollide(self.mob_small, self.bullets1, False, True)
         for hit in hits:
             self.enemy_hurt.play()
             self.score += 1
@@ -648,7 +646,7 @@ class Game:
                 else:
                     pass
 
-        hits = pygame.sprite.groupcollide(self.mob_flying, self.bullets, False, True)
+        hits = pygame.sprite.groupcollide(self.mob_flying, self.bullets1, False, True)
         for hit in hits:
             self.enemy_hurt.play()
             self.score += 2
@@ -675,7 +673,7 @@ class Game:
                 hit.kill()
                 self.score2 += 30
 
-        hits = pygame.sprite.groupcollide(self.mob_big, self.bullets, False, True)
+        hits = pygame.sprite.groupcollide(self.mob_big, self.bullets1, False, True)
         for hit in hits:
             self.enemy_hurt.play()
             self.score += 3
@@ -684,7 +682,7 @@ class Game:
                 hit.kill()
                 self.score += 30
 
-        hits = pygame.sprite.groupcollide(self.mob_charge, self.bullets, False, True)
+        hits = pygame.sprite.groupcollide(self.mob_charge, self.bullets1, False, True)
         for hit in hits:
             self.enemy_hurt.play()
             self.score += 5
