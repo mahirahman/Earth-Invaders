@@ -15,15 +15,6 @@ pygame.mouse.set_visible(0)
 screen = pygame.display.set_mode((WIDTH, HEIGHT),pygame.FULLSCREEN)
 display = pygame.Surface((400,250))
 
-#Text
-def get_text_width(text,spacing):
-    global font_dat
-    width = 0
-    for char in text:
-        if char in font_dat:
-            width += font_dat[char][0] + spacing
-    return width
-
 font_dat = {'A':[3],'B':[3],'C':[3],'D':[3],'E':[3],'F':[3],'G':[3],'H':[3],'I':[3],'J':[3],'K':[3],'L':[3],'M':[5],'N':[3],'O':[3],'P':[3],'Q':[3],'R':[3],'S':[3],'T':[3],'U':[3],'V':[3],'W':[5],'X':[3],'Y':[3],'Z':[3],
           'a':[3],'b':[3],'c':[3],'d':[3],'e':[3],'f':[3],'g':[3],'h':[3],'i':[1],'j':[2],'k':[3],'l':[3],'m':[5],'n':[3],'o':[3],'p':[3],'q':[3],'r':[2],'s':[3],'t':[3],'u':[3],'v':[3],'w':[5],'x':[3],'y':[3],'z':[3],
           '.':[1],'-':[3],',':[2],':':[1],'+':[3],'\'':[1],'!':[1],'?':[3],
@@ -32,7 +23,16 @@ font_dat = {'A':[3],'B':[3],'C':[3],'D':[3],'E':[3],'F':[3],'G':[3],'H':[3],'I':
 font = text.generate_font('assets/font.png',font_dat,5,8,(248,248,248))
 font_select = text.generate_font('assets/font.png',font_dat,5,8,(160,239,120))
 
-def bg_render(surface):
+#Text
+def getTextWidth(text,spacing):
+    global font_dat
+    width = 0
+    for char in text:
+        if char in font_dat:
+            width += font_dat[char][0] + spacing
+    return width
+
+def menuBackground(surface):
     surface.fill((9,10,15))
 
     for i in range(25):
@@ -45,9 +45,22 @@ def bg_render(surface):
     pygame.display.flip()
     fps.tick(60)
 
+def menuChoice(options, menu_choice, textarray, x):
+    n = 0
+    for option in options:
+        if textarray == True:
+            text.show_text(option,200-int(getTextWidth(option,1)/2),x+n*20,1,9999,font,display)
+            n += 1
+        else:
+            if menu_choice == n:
+                text.show_text('> ' + option,200-int(getTextWidth(option,1)/2)-5,x+n*20,1,9999,font_select,display)
+            else:
+                text.show_text(option,200-int(getTextWidth(option,1)/2),x+n*20,1,9999,font,display)
+            n += 1
+
 def menu():
     logo = pygame.image.load('assets/images/logo.png')
-    menu_options = ['Play','Controls','Highscores','Settings','Credits','Quit']
+    options = ['Play','Controls','Highscores','Settings','Credits','Quit']
     menu_choice = 0
     in_menu = True
 
@@ -55,18 +68,10 @@ def menu():
     pygame.mixer.music.play(-1)
 
     while in_menu:
-        bg_render(display)
+        menuBackground(display)
         display.blit(logo,(65,46))
-
         text.show_text('Menu Controls: Arrow Keys + Space',2,240,1,9999,font,display)
-
-        n = 0
-        for option in menu_options:
-            if menu_choice == n:
-                text.show_text('> ' + option,200-int(get_text_width(option,1)/2)-5,100+n*20,1,9999,font_select,display)
-            else:
-                text.show_text(option,200-int(get_text_width(option,1)/2),100+n*20,1,9999,font,display)
-            n += 1
+        menuChoice(options, menu_choice, False, 100)
 
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -79,13 +84,13 @@ def menu():
                 if event.key == K_UP:
                     menu_choice -= 1
                     if menu_choice < 0:
-                        menu_choice = len(menu_options)-1
+                        menu_choice = len(options)-1
                 if event.key == K_DOWN:
                     menu_choice += 1
-                    if menu_choice >= len(menu_options):
+                    if menu_choice >= len(options):
                         menu_choice = 0
                 if event.key == K_SPACE:
-                    choice = menu_options[menu_choice]
+                    choice = options[menu_choice]
                     if choice == 'Play':
                         game = Game()
                         while True:
@@ -95,9 +100,9 @@ def menu():
                             game.new()
                             game.run()
                             if game.win:
-                                game.game_over(screencol = (60, 179, 113), screencol2 = (60, 179, 113), endtext = "You Win!", endtextcol = (255, 255, 0), x = 129)
+                                game.gameOver(screencol = (60, 179, 113), screencol2 = (60, 179, 113), endtext = "You Win!", endtextcol = (255, 255, 0), x = 129)
                             else:
-                                game.game_over(screencol = (110, 0, 0), screencol2 = (0, 0, 0), endtext = "GAME OVER!", endtextcol = (255, 0, 0), x = 79)   
+                                game.gameOver(screencol = (110, 0, 0), screencol2 = (0, 0, 0), endtext = "GAME OVER!", endtextcol = (255, 0, 0), x = 79)   
                     if choice == 'Controls':
                         controls()
                     if choice == 'Highscores':
@@ -117,15 +122,11 @@ def menu():
 def controls():
     in_controls = True
     while in_controls:
-        bg_render(display)
+        menuBackground(display)
 
         text.show_text('Press ESC to go back',2,240,1,9999,font,display)
-        text_array = ['Use WASD and Space for Player 1','Use Arrow keys and Right Enter for Player 2','Press P to Pause']
-
-        n = 0
-        for list in text_array:
-            text.show_text(list,200-int(get_text_width(list,2)/2),95+n*20,1,9999,font,display)
-            n += 1
+        options = ['Use WASD and Space for Player 1','Use Arrow keys and Right Enter for Player 2','Press P to Pause']
+        menuChoice(options, 0, True, 95)
 
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -141,7 +142,7 @@ def controls():
 def highscores():
     in_highscores = True
     while in_highscores:
-        bg_render(display)
+        menuBackground(display)
 
         text.show_text('Press ESC to go back',2,240,1,9999,font,display)
 
@@ -152,9 +153,9 @@ def highscores():
         leaderboard.sort(key=lambda line: int(line[1]), reverse=True)
         leaderboard = list(map(lambda line: f"{line[0]} - {line[1]} Points\n", leaderboard))
         for n,score in enumerate(leaderboard):
-            text.show_text(score,200-int(get_text_width(score,2)/2),50+n*20,1,9999,font,display)
+            text.show_text(score,200-int(getTextWidth(score,2)/2),50+n*20,1,9999,font,display)
 
-        text.show_text('LEADERBOARD',200-int(get_text_width('LEADERBOARD',1)/2),20,1,9999,font,display)
+        text.show_text('LEADERBOARD',200-int(getTextWidth('LEADERBOARD',1)/2),20,1,9999,font,display)
 
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -169,19 +170,13 @@ def highscores():
         fps.tick(60)
 
 def settings():
-    menu_options = ['Display Settings','Volume','Back']
+    options = ['Display Settings','Volume','Back']
     menu_choice = 0
     in_settings = True
     while in_settings:
-        bg_render(display)
-
-        n = 0
-        for option in menu_options:
-            if menu_choice == n:
-                text.show_text('> ' + option,200-int(get_text_width(option,1)/2)-5,100+n*20,1,9999,font_select,display)
-            else:
-                text.show_text(option,200-int(get_text_width(option,1)/2),100+n*20,1,9999,font,display)
-            n += 1
+        menuBackground(display)
+        menuChoice(options, menu_choice, False, 100)
+        
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -190,15 +185,15 @@ def settings():
                 if event.key == K_UP:
                     menu_choice -= 1
                     if menu_choice < 0:
-                        menu_choice = len(menu_options)-1
+                        menu_choice = len(options)-1
                 if event.key == K_DOWN:
                     menu_choice += 1
-                    if menu_choice >= len(menu_options):
+                    if menu_choice >= len(options):
                         menu_choice = 0
                 if event.key == K_SPACE:
-                    choice = menu_options[menu_choice]
+                    choice = options[menu_choice]
                     if choice == 'Display Settings':
-                        display_config()
+                        displayConfig()
                     if choice == 'Volume':
                         volume()
                     if choice == 'Back':
@@ -209,21 +204,15 @@ def settings():
         pygame.display.flip()
         fps.tick(60)
 
-def display_config():
+def displayConfig():
     global WIDTH,HEIGHT,screen
-    menu_options = ['Windowed','Fullscreen','Back']
+    options = ['Windowed','Fullscreen','Back']
     menu_choice = 0
     in_config = True
     while in_config:
-        bg_render(display)
+        menuBackground(display)
+        menuChoice(options, menu_choice, False, 100)
 
-        n = 0
-        for option in menu_options:
-            if menu_choice == n:
-                text.show_text('> ' + option,200-int(get_text_width(option,1)/2)-5,100+n*20,1,9999,font_select,display)
-            else:
-                text.show_text(option,200-int(get_text_width(option,1)/2),100+n*20,1,9999,font,display)
-            n += 1
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -232,13 +221,13 @@ def display_config():
                 if event.key == K_UP:
                     menu_choice -= 1
                     if menu_choice < 0:
-                        menu_choice = len(menu_options)-1
+                        menu_choice = len(options)-1
                 if event.key == K_DOWN:
                     menu_choice += 1
-                    if menu_choice >= len(menu_options):
+                    if menu_choice >= len(options):
                         menu_choice = 0
                 if event.key == K_SPACE:
-                    choice = menu_options[menu_choice]
+                    choice = options[menu_choice]
                     if choice == 'Windowed':
                         screen = pygame.display.set_mode((WIDTH, HEIGHT))
                     if choice == 'Fullscreen':
@@ -252,19 +241,13 @@ def display_config():
         fps.tick(60)
 
 def volume():
-    menu_options = ['100/','75/','50/','25/','0/','Back']
+    options = ['100/','75/','50/','25/','0/','Back']
     menu_choice = 0
     in_volume = True
     while in_volume:
-        bg_render(display)
+        menuBackground(display)
+        menuChoice(options, menu_choice, False, 75)
 
-        n = 0
-        for option in menu_options:
-            if menu_choice == n:
-                text.show_text('> ' + option,200-int(get_text_width(option,1)/2)-5,75+n*20,1,9999,font_select,display)
-            else:
-                text.show_text(option,200-int(get_text_width(option,1)/2),75+n*20,1,9999,font,display)
-            n += 1
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -273,13 +256,13 @@ def volume():
                 if event.key == K_UP:
                     menu_choice -= 1
                     if menu_choice < 0:
-                        menu_choice = len(menu_options)-1
+                        menu_choice = len(options)-1
                 if event.key == K_DOWN:
                     menu_choice += 1
-                    if menu_choice >= len(menu_options):
+                    if menu_choice >= len(options):
                         menu_choice = 0
                 if event.key == K_SPACE:
-                    choice = menu_options[menu_choice]
+                    choice = options[menu_choice]
                     if choice == '100/':
                         pygame.mixer.music.set_volume(1)
                     if choice == '75/':
@@ -301,16 +284,12 @@ def volume():
 def credits():
     in_credits = True
     while in_credits:
-        bg_render(display)
+        menuBackground(display)
 
         text.show_text('Press ESC to go back',2,240,1,9999,font,display)
-        credits_array = ['Mahi Rahman','Son Tran','Daniel Nguyen','Tejas Amrale','Peter Sorial','Spandan Kolapkar']
-
-        n = 0
-        for names in credits_array:
-            text.show_text(names,200-int(get_text_width(names,1)/2),70+n*20,1,9999,font,display)
-            n += 1
-
+        options = ['Mahi Rahman','Son Tran','Daniel Nguyen','Tejas Amrale','Peter Sorial','Spandan Kolapkar']
+        menuChoice(options, 0, True, 70)
+        
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -324,13 +303,13 @@ def credits():
         fps.tick(60)
 
 class Game:
-
+    
     def __init__(self):
         self.healthbar = []
-        self.load_data()
+        self.loadData()
 
     #Loads Sounds and Text Font and Bullet Sprites
-    def load_data(self):
+    def loadData(self):
         self.pixel_font = ('assets/8bit.ttf')
         self.bullet_img_R = pygame.image.load('assets/images/bullet_R.png').convert_alpha()
         self.bullet_img_R = pygame.transform.scale(self.bullet_img_R, (12, 5))
@@ -352,13 +331,12 @@ class Game:
             self.healthbar.append(pygame.image.load('assets/sprites/health/'+ str(i) +'.png').convert_alpha())
 
     #HUD For Player
-    def draw_player_health(self, x, y, percent, playerid):
+    def drawPlayerHeath(self, x, y, percent, playerid):
 
         if percent < 0:
             percent = 0
 
         health_icon = self.healthbar[int(percent*20)]
-
         health_scaled = pygame.transform.scale(health_icon, (170, 44))
         if playerid == 2:
             health_scaled = pygame.transform.flip(health_scaled, True, False)
@@ -763,29 +741,29 @@ class Game:
             screen.blit(sprite.image, self.camera.apply(sprite))
 
         #HUD
-        self.draw_player_health(5, 5, self.player.health / PLAYER_HEALTH, 1)
-        self.draw_player_health(337, 5, self.player2.health / PLAYER_HEALTH, 2)
+        self.drawPlayerHeath(5, 5, self.player.health / PLAYER_HEALTH, 1)
+        self.drawPlayerHeath(337, 5, self.player2.health / PLAYER_HEALTH, 2)
 
         #Display player 1's score
-        self.draw_text("SCORE: " + str(self.score), self.pixel_font,15, (255, 255, 255), 77, 38, opx = 1, align = "")
+        self.drawText("SCORE: " + str(self.score), self.pixel_font,15, (255, 255, 255), 77, 38, opx = 1, align = "")
 
         #Display player 2's score
-        self.draw_text("SCORE: " + str(self.score2), self.pixel_font,15, (255, 255, 255), 381, 38, opx = 1, align = "")
+        self.drawText("SCORE: " + str(self.score2), self.pixel_font,15, (255, 255, 255), 381, 38, opx = 1, align = "")
 
         #Enemy counter
-        self.draw_text('ALIENS: {}'.format(len(self.mob_small) + len(self.mob_big) + len(self.mob_flying) + len(self.mob_charge)), self.pixel_font, 15, (255, 255, 255, 0), 223, 11, opx = 1, align = "")
+        self.drawText('ALIENS: {}'.format(len(self.mob_small) + len(self.mob_big) + len(self.mob_flying) + len(self.mob_charge)), self.pixel_font, 15, (255, 255, 255, 0), 223, 11, opx = 1, align = "")
 
         if self.paused:
             self.display = pygame.Surface((self.map.width, self.map.height))
-            self.draw_text("Player 1: Use WASD to move and Space to shoot", self.pixel_font,15, (255, 255, 255), 105, 110, opx = 1, align = "")
-            self.draw_text("Player 2: Use Arrow keys to move and Right Enter to shoot", self.pixel_font,15, (255, 255, 255), 67, 130, opx = 1, align = "")
-            self.draw_text("PAUSE", self.pixel_font,65, (255, 255, 255), 174, 180, opx = 3, align = "")
-            self.draw_text("Press P to unpause", self.pixel_font,15, (255, 255, 255), 193, 225, opx = 1, align = "")
-            self.draw_text("Press ESC to go back to main menu", self.pixel_font,15, (255, 255, 255), 145, 290, opx = 1, align = "")
+            self.drawText("Player 1: Use WASD to move and Space to shoot", self.pixel_font,15, (255, 255, 255), 105, 110, opx = 1, align = "")
+            self.drawText("Player 2: Use Arrow keys to move and Right Enter to shoot", self.pixel_font,15, (255, 255, 255), 67, 130, opx = 1, align = "")
+            self.drawText("PAUSE", self.pixel_font,65, (255, 255, 255), 174, 180, opx = 3, align = "")
+            self.drawText("Press P to unpause", self.pixel_font,15, (255, 255, 255), 193, 225, opx = 1, align = "")
+            self.drawText("Press ESC to go back to main menu", self.pixel_font,15, (255, 255, 255), 145, 290, opx = 1, align = "")
 
         pygame.display.flip()
 
-    def circlepoints(self,r):
+    def circlePoints(self,r):
         r = int(round(r))
         x, y, e = r, 0, 1 - r
         points = []
@@ -803,7 +781,7 @@ class Game:
         points.sort()
         return points
 
-    def draw_text(self, text, font_name, size, color, x, y, opx, align):
+    def drawText(self, text, font_name, size, color, x, y, opx, align):
         font = pygame.font.Font(font_name, size)
 
         if align == "center":
@@ -818,7 +796,7 @@ class Game:
             self.tsurf_rect = self.tsurf.get_rect()
 
             for offset, blendmax in [(0, False), (300, True)]:
-                for dx, dy in self.circlepoints(opx):
+                for dx, dy in self.circlePoints(opx):
                     if blendmax:
                         screen.blit(self.osurf, (dx + x, dy + y), None, pygame.BLEND_RGBA_MAX)
                     else:
@@ -840,48 +818,30 @@ class Game:
                 if event.key == pygame.K_p:
                     self.paused = not self.paused
 
-    def game_over(self, screencol, screencol2, endtext, endtextcol, x):
-        enter = True
-        while enter:
-            player1name = pygame_textinput.TextInput(font_family = "assets/8bit.ttf", antialias = False)
-            enter1 = True
-            while enter1:
-                screen.fill(screencol)
-                events = pygame.event.get()
-                self.draw_text("enter player 1 name", self.pixel_font, 35, (255, 255, 255), 116, 150, opx = 2, align = "")
-                screen.blit(player1name.get_surface(), (221, 200))
+    def getTextInput(self, playerid, screencol):
+        playername = pygame_textinput.TextInput(font_family = "assets/8bit.ttf", antialias = False)
+        textloop = True
+        while textloop:
+            screen.fill(screencol)
+            events = pygame.event.get()
+            self.drawText("enter player " + playerid + " name", self.pixel_font, 35, (255, 255, 255), 116, 150, opx = 2, align = "")
+            screen.blit(playername.get_surface(), (221, 200))
 
-                if player1name.update(events):
-                    pass
+            if playername.update(events):
+                pass
 
-                for event in events:
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_RETURN:
-                            enter1 = False
+            for event in events:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        textloop = False
 
-                pygame.display.flip()
-                fps.tick(60)
+            pygame.display.flip()
+            fps.tick(60)
+        return playername
 
-            player2name = pygame_textinput.TextInput(font_family = "assets/8bit.ttf", antialias = False)
-            enter2 = True
-            while enter2:
-                screen.fill(screencol)
-                events = pygame.event.get()
-                self.draw_text("enter player 2 name", self.pixel_font, 35, (255, 255, 255), 116, 150, opx = 2, align = "")
-                screen.blit(player2name.get_surface(), (221, 200))
-
-                if player2name.update(events):
-                    pass
-
-                for event in events:
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_RETURN:
-                            enter2 = False
-
-                pygame.display.flip()
-                fps.tick(60)
-            enter = False
-
+    def gameOver(self, screencol, screencol2, endtext, endtextcol, x):
+        player1name = self.getTextInput("1", screencol)
+        player2name = self.getTextInput("2", screencol)
         screen.fill(screencol2)
 
         if self.score > 0 and self.score2 > 0:
@@ -897,32 +857,28 @@ class Game:
                 f.write(str(NAME) + ' ' + str(SCORE) + '\n')
                 f.close()
 
-        self.draw_text(endtext, self.pixel_font, 80, endtextcol, x, 200, opx = 2, align = "")
-        self.draw_text("press ENTER to restart", self.pixel_font, 30, (255, 255, 255), 112, 266, opx = 2, align = "")
-        self.draw_text("or ESCAPE to go to main menu", self.pixel_font, 30, (255, 255, 255), 78, 300, opx = 2, align = "")
+        self.drawText(endtext, self.pixel_font, 80, endtextcol, x, 200, opx = 2, align = "")
+        self.drawText("press ENTER to restart", self.pixel_font, 30, (255, 255, 255), 112, 266, opx = 2, align = "")
+        self.drawText("or ESCAPE to go to main menu", self.pixel_font, 30, (255, 255, 255), 78, 300, opx = 2, align = "")
 
-        self.draw_text(player1name.get_text(), self.pixel_font,25, (255, 255, 255), WIDTH/3, 40, opx = 2, align="center")
-        self.draw_text(str(self.score), self.pixel_font,25, (255, 255, 255), WIDTH/3, 60, opx = 2, align="center")
+        self.drawText(player1name.get_text(), self.pixel_font,25, (255, 255, 255), WIDTH/3, 40, opx = 2, align="center")
+        self.drawText(str(self.score), self.pixel_font,25, (255, 255, 255), WIDTH/3, 60, opx = 2, align="center")
 
-        self.draw_text(player2name.get_text(), self.pixel_font,25, (255, 255, 255), WIDTH/1.5, 40, opx = 2, align="center")
-        self.draw_text(str(self.score2), self.pixel_font,25, (255, 255, 255), WIDTH/1.5, 60, opx = 2, align="center")
+        self.drawText(player2name.get_text(), self.pixel_font,25, (255, 255, 255), WIDTH/1.5, 40, opx = 2, align="center")
+        self.drawText(str(self.score2), self.pixel_font,25, (255, 255, 255), WIDTH/1.5, 60, opx = 2, align="center")
 
         pygame.display.flip()
-        self.wait_for_key()
-
-    def wait_for_key(self):
         pygame.event.wait()
-        waiting = True
-        while waiting:
-            fps.tick(60)
+
+        while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    waiting = False
                     self.quit()
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_RETURN:
-                        waiting = False
+                        return False
                     if event.key == pygame.K_ESCAPE:
                         menu()
+        fps.tick(60)
 
 menu()
