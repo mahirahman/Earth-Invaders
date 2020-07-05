@@ -102,7 +102,7 @@ def menu():
                             if game.win:
                                 game.gameOver(screencol = (60, 179, 113), screencol2 = (60, 179, 113), endtext = "You Win!", endtextcol = (255, 255, 0), x = 129)
                             else:
-                                game.gameOver(screencol = (110, 0, 0), screencol2 = (0, 0, 0), endtext = "GAME OVER!", endtextcol = (255, 0, 0), x = 79)   
+                                game.gameOver(screencol = (110, 0, 0), screencol2 = (0, 0, 0), endtext = "GAME OVER!", endtextcol = (255, 0, 0), x = 79)
                     if choice == 'Controls':
                         controls()
                     if choice == 'Highscores':
@@ -176,7 +176,7 @@ def settings():
     while in_settings:
         menuBackground(display)
         menuChoice(options, menu_choice, False, 100)
-        
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -289,7 +289,7 @@ def credits():
         text.show_text('Press ESC to go back',2,240,1,9999,font,display)
         options = ['Mahi Rahman','Son Tran','Daniel Nguyen','Tejas Amrale','Peter Sorial','Spandan Kolapkar']
         menuChoice(options, 0, True, 70)
-        
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -303,7 +303,7 @@ def credits():
         fps.tick(60)
 
 class Game:
-    
+
     def __init__(self):
         self.healthbar = []
         self.loadData()
@@ -629,7 +629,7 @@ class Game:
                 chance = random.randint(0,9)
                 if chance == 0:
                     self.morph.play()
-                    Mob_Big(self, hit.pos.x, hit.pos.y, hit.dir)
+                    Mob_Big(self, hit.pos.x, hit.pos.y, hit.direction)
                 else:
                     pass
 
@@ -644,7 +644,7 @@ class Game:
                 chance = random.randint(0,9)
                 if chance == 0:
                     self.morph.play()
-                    Mob_Big(self, hit.pos.x, hit.pos.y, hit.dir)
+                    Mob_Big(self, hit.pos.x, hit.pos.y, hit.direction)
                 else:
                     pass
 
