@@ -1,6 +1,4 @@
-"""
-Borrowed from https://github.com/DaFluffyPotato under the MIT license.
-"""
+#Borrowed from https://github.com/DaFluffyPotato under the MIT license.
 
 import pygame as pg
 from copy import deepcopy

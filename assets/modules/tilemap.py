@@ -1,3 +1,5 @@
+#Created by Mahi Rahman and Son Tran
+
 import pygame
 import pytmx
 WIDTH = 512
