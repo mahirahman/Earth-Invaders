@@ -311,7 +311,6 @@ class Game:
     #Loads Sounds and Text Font and Bullet Sprites
     def loadData(self):
         self.pixel_font = ('assets/8bit.ttf')
-        self.bullet_img_R = pygame.transform.scale(pygame.image.load('assets/images/bullet_R.png').convert_alpha(), (12, 5))
         self.bullet_img_L = pygame.transform.scale(pygame.image.load('assets/images/bullet_L.png').convert_alpha(), (12, 5))
         self.bullet_mob = pygame.image.load('assets/images/alien_projectile.png').convert_alpha()
         self.bullet_mob = pygame.transform.scale(self.bullet_mob, (17, 8))
