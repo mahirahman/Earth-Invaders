@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.1" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="450" height="35" tilewidth="16" tileheight="16" infinite="0" nextlayerid="64" nextobjectid="1369">
+<map version="1.4" tiledversion="2020.07.21" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="450" height="35" tilewidth="16" tileheight="16" infinite="0" nextlayerid="64" nextobjectid="1373">
  <tileset firstgid="1" source="tileset_nature.tsx"/>
  <tileset firstgid="376" source="tileset_house.tsx"/>
  <tileset firstgid="1240" name="backdrop" tilewidth="16" tileheight="16" tilecount="15750" columns="450">
@@ -1047,10 +1047,12 @@
   <object id="1356" name="boundary" x="7199" y="0" width="1" height="275"/>
   <object id="1367" name="invis_wall" x="6624" y="256" width="1" height="39"/>
   <object id="1368" name="invis_wall" x="6735" y="256" width="1" height="39"/>
+  <object id="1369" name="wall" x="6848" y="272" width="1" height="259"/>
+  <object id="1370" name="wall" x="2687" y="457" width="1" height="74"/>
  </objectgroup>
  <objectgroup id="62" name="player">
   <object id="1364" name="player2" x="48" y="448" width="16" height="32"/>
-  <object id="1365" name="player" x="16" y="448" width="16" height="32"/>
+  <object id="1372" name="player" x="3754" y="389" width="16" height="32"/>
  </objectgroup>
  <objectgroup id="63" name="enemy">
   <object id="1275" name="enemy" x="6912" y="256" width="16" height="16"/>
@@ -1084,8 +1086,8 @@
   <object id="1308" name="invis_wall" x="757" y="464" width="1" height="32"/>
   <object id="1309" name="invis_wall" x="1377" y="464" width="0.318" height="32"/>
   <object id="1310" name="invis_wall" x="934" y="464" width="1" height="32"/>
-  <object id="1311" name="invis_wall" x="1376" y="416" width="1" height="32"/>
-  <object id="1312" name="invis_wall" x="1486" y="417" width="1" height="32"/>
+  <object id="1311" name="invis_wall" x="1381" y="416" width="1" height="32"/>
+  <object id="1312" name="invis_wall" x="1482" y="417" width="1" height="32"/>
   <object id="1313" name="invis_wall" x="1486" y="464" width="1" height="32"/>
   <object id="1314" name="invis_wall" x="2078" y="465" width="1" height="32"/>
   <object id="1315" name="invis_wall" x="2352" y="384" width="1" height="32"/>
@@ -1101,9 +1103,9 @@
   <object id="1327" name="invis_wall" x="4700" y="416" width="1" height="32"/>
   <object id="1328" name="invis_wall" x="4928" y="400" width="1.318" height="32"/>
   <object id="1329" name="invis_wall" x="5279" y="400" width="1" height="32"/>
-  <object id="1330" name="invis_wall" x="5727" y="320" width="1" height="32"/>
+  <object id="1330" name="invis_wall" x="5664" y="320" width="1" height="32"/>
   <object id="1331" name="invis_wall" x="5855" y="256" width="1" height="253"/>
-  <object id="1332" name="invis_wall" x="5584" y="496" width="1" height="32"/>
+  <object id="1332" name="invis_wall" x="5696" y="496" width="1" height="32"/>
   <object id="1333" name="invis_wall" x="5120" y="496" width="1" height="32"/>
   <object id="1336" name="invis_wall" x="6192" y="480" width="1" height="32"/>
   <object id="1337" name="invis_wall" x="6351" y="496" width="1" height="32"/>

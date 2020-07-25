@@ -308,12 +308,11 @@ class Game:
         self.healthbar = []
         self.loadData()
 
-    #Loads Sounds and Text Font and Bullet Sprites
+    #Loads Sounds, Text Font and Bullet Sprites
     def loadData(self):
         self.pixel_font = ('assets/8bit.ttf')
-        self.bullet_img_L = pygame.transform.scale(pygame.image.load('assets/images/bullet_L.png').convert_alpha(), (12, 5))
-        self.bullet_mob = pygame.image.load('assets/images/alien_projectile.png').convert_alpha()
-        self.bullet_mob = pygame.transform.scale(self.bullet_mob, (17, 8))
+        self.bullet_player = pygame.transform.scale(pygame.image.load('assets/images/bullet.png').convert_alpha(), (12, 5))
+        self.bullet_mob = pygame.transform.scale(pygame.image.load('assets/images/alien_projectile.png').convert_alpha(), (17, 8))
 
         self.coin = pygame.mixer.Sound("assets/audio/coin.wav")
         self.enemy_hurt = pygame.mixer.Sound("assets/audio/enemy_hurt.wav")
@@ -362,34 +361,47 @@ class Game:
         self.boundary = pygame.sprite.Group()
         self.bullets1 = pygame.sprite.Group()
         self.bullets2 = pygame.sprite.Group()
-        for tile_object in self.map.tmxdata.objects:    #FOR loop to render all objects and bitmap graphics in the tiled map (TMX)
+        for tile_object in self.map.tmxdata.objects:
             obj_center = pygame.math.Vector2(tile_object.x + tile_object.width / 2, tile_object.y + tile_object.height / 2)
             if tile_object.name == 'player':
-                self.player = Player(self, tile_object.x, tile_object.y)
+                self.player = Player(self, tile_object.x, tile_object.y, 1, pygame.K_a, pygame.K_d, pygame.K_SPACE)
+                
             if tile_object.name == 'player2':
-                self.player2 = Player2(self, tile_object.x, tile_object.y)
+                self.player2 = Player(self, tile_object.x, tile_object.y, 2, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RETURN)
+                
             if tile_object.name == 'enemy':
-                Mob_small(self, obj_center.x, obj_center.y)
+                Mob(self, obj_center.x, obj_center.y, "small", 200, 24, 36, 120, 0.2, 2)
+                
             if tile_object.name == 'flying':
-                Mob_flying(self, obj_center.x, obj_center.y)
+                MobFlying(self, obj_center.x, obj_center.y)
+                
             if tile_object.name == 'charge':
-                Mob_charge(self,obj_center.x, obj_center.y)
+                MobCharge(self,obj_center.x, obj_center.y)
+                
             if tile_object.name in ['health']:
                 Item(self, obj_center, tile_object.name)
+                
             if tile_object.name in ['coin']:
                 Item(self, obj_center, tile_object.name)
+
             if tile_object.name == 'wall':
-                Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+                TileObject(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, "walls")
+                
             if tile_object.name == 'invis_wall':
-                Invis_wall(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+                TileObject(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, "invis_wall")
+                
             if tile_object.name == 'boundary':
-                Boundary(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+                TileObject(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, "boundary")
+                
             if tile_object.name == 'death':
-                Fall(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+                TileObject(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, "fall_death")
+                
             if tile_object.name == 'spike':
-                Spike(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+                TileObject(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, "spike")
+                
             if tile_object.name == 'win_area':
-                Win_area(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+                TileObject(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, "win_game")
+
         self.camera = Camera(self.map.width, self.map.height)
         self.paused = False
 
@@ -427,11 +439,11 @@ class Game:
         if self.player.collision:
             hits = pygame.sprite.spritecollide(self.player, self.items, False, collide_hit_rect)
             for hit in hits:
-                if hit.type == 'health' and self.player.health < PLAYER_HEALTH:
+                if hit.obj_type == 'health' and self.player.health < PLAYER_HEALTH:
                     hit.kill()
                     self.health.play()
-                    self.player.add_health(20)
-                elif hit.type == 'coin':
+                    self.player.addHealth(20)
+                elif hit.obj_type == 'coin':
                     hit.kill()
                     self.coin.play()
                     self.score += 5
@@ -502,7 +514,7 @@ class Game:
                 if self.player.health <= 0:
                     self.player.alive = False
                 if hit.charging:
-                    self.player.knockback_charge(hit)
+                    self.player.knockback(hit)
                 else:
                     self.player.knockback(hit)
                 self.player.hit()
@@ -518,15 +530,14 @@ class Game:
                 if self.player.alive:
                     self.player.hit()
 
-
         if self.player2.collision:
             hits = pygame.sprite.spritecollide(self.player2, self.items, False, collide_hit_rect)
             for hit in hits:
-                if hit.type == 'health' and self.player2.health < PLAYER_HEALTH:
+                if hit.obj_type == 'health' and self.player2.health < PLAYER_HEALTH:
                     hit.kill()
                     self.health.play()
-                    self.player2.add_health(20)
-                elif hit.type == 'coin':
+                    self.player2.addHealth(20)
+                elif hit.obj_type == 'coin':
                     hit.kill()
                     self.coin.play()
                     self.score2 += 5
@@ -598,7 +609,7 @@ class Game:
                 if self.player2.health <= 0:
                     self.player2.alive = False
                 if hit.charging:
-                    self.player2.knockback_charge(hit)
+                    self.player2.knockback(hit)
                 else:
                     self.player2.knockback(hit)
                 self.player2.hit()
@@ -626,7 +637,8 @@ class Game:
                 chance = random.randint(0,9)
                 if chance == 0:
                     self.morph.play()
-                    Mob_Big(self, hit.pos.x, hit.pos.y, hit.direction)
+                    Mob_Big(self, hit.pos.x, hit.pos.y)
+                    Mob(self, obj_center.x, obj_center.y, "small", 200, 24, 36, 120, 0.2, 2)
                 else:
                     pass
 
@@ -641,7 +653,7 @@ class Game:
                 chance = random.randint(0,9)
                 if chance == 0:
                     self.morph.play()
-                    Mob_Big(self, hit.pos.x, hit.pos.y, hit.direction)
+                    Mob(self, hit.pos.x, hit.pos.y, "big", 300, 36, 48, 90, 0.4, 5)
                 else:
                     pass
 

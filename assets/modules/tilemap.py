@@ -1,4 +1,4 @@
-#Created by Mahi Rahman and Son Tran
+#Created and maintained by Mahi Rahman and Son Tran
 
 import pygame
 import pytmx
