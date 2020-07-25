@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="2020.07.21" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="450" height="35" tilewidth="16" tileheight="16" infinite="0" nextlayerid="64" nextobjectid="1373">
+<map version="1.4" tiledversion="2020.07.21" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="450" height="35" tilewidth="16" tileheight="16" infinite="0" nextlayerid="64" nextobjectid="1374">
  <tileset firstgid="1" source="tileset_nature.tsx"/>
  <tileset firstgid="376" source="tileset_house.tsx"/>
  <tileset firstgid="1240" name="backdrop" tilewidth="16" tileheight="16" tilecount="15750" columns="450">
@@ -1052,7 +1052,7 @@
  </objectgroup>
  <objectgroup id="62" name="player">
   <object id="1364" name="player2" x="48" y="448" width="16" height="32"/>
-  <object id="1372" name="player" x="3754" y="389" width="16" height="32"/>
+  <object id="1373" name="player" x="80" y="448" width="16" height="32"/>
  </objectgroup>
  <objectgroup id="63" name="enemy">
   <object id="1275" name="enemy" x="6912" y="256" width="16" height="16"/>
