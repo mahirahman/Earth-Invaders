@@ -305,6 +305,7 @@ def credits():
 class Game:
 
     def __init__(self):
+        self.mob_list = {}
         self.healthbar = []
         self.loadData()
 
@@ -361,44 +362,52 @@ class Game:
         self.boundary = pygame.sprite.Group()
         self.bullets1 = pygame.sprite.Group()
         self.bullets2 = pygame.sprite.Group()
+
+        self.mob_list = {
+            1 : {"mob_name" : self.mob_small, "mob_hit_point" : 1, "mob_kill_point" : 10},
+            2 : {"mob_name" : self.mob_big, "mob_hit_point" : 3, "mob_kill_point" : 30},
+            3 : {"mob_name" : self.mob_flying, "mob_hit_point" : 2, "mob_kill_point" : 20},
+            4 : {"mob_name" : self.mob_charge, "mob_hit_point" : 5, "mob_kill_point" : 40}
+            }
+
         for tile_object in self.map.tmxdata.objects:
             obj_center = pygame.math.Vector2(tile_object.x + tile_object.width / 2, tile_object.y + tile_object.height / 2)
             if tile_object.name == 'player':
                 self.player = Player(self, tile_object.x, tile_object.y, 1, pygame.K_a, pygame.K_d, pygame.K_SPACE)
-                
+
             if tile_object.name == 'player2':
                 self.player2 = Player(self, tile_object.x, tile_object.y, 2, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RETURN)
-                
+
             if tile_object.name == 'enemy':
                 Mob(self, obj_center.x, obj_center.y, "small", 200, 24, 36, 120, 0.2, 2)
-                
+
             if tile_object.name == 'flying':
                 MobFlying(self, obj_center.x, obj_center.y)
-                
+
             if tile_object.name == 'charge':
                 MobCharge(self,obj_center.x, obj_center.y)
-                
+
             if tile_object.name in ['health']:
                 Item(self, obj_center, tile_object.name)
-                
+
             if tile_object.name in ['coin']:
                 Item(self, obj_center, tile_object.name)
 
             if tile_object.name == 'wall':
                 TileObject(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, "walls")
-                
+
             if tile_object.name == 'invis_wall':
                 TileObject(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, "invis_wall")
-                
+
             if tile_object.name == 'boundary':
                 TileObject(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, "boundary")
-                
+
             if tile_object.name == 'death':
                 TileObject(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, "fall_death")
-                
+
             if tile_object.name == 'spike':
                 TileObject(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, "spike")
-                
+
             if tile_object.name == 'win_area':
                 TileObject(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, "win_game")
 
@@ -626,90 +635,34 @@ class Game:
                     self.player2.hit()
 
         #Bullet Collisions to Mobs
-        hits = pygame.sprite.groupcollide(self.mob_small, self.bullets2, False, True)
-        for hit in hits:
-            self.enemy_hurt.play()
-            self.score2 += 1
-            hit.health -= 10
-            if hit.health <= 0:
-                hit.kill()
-                self.score2 += 10
-                chance = random.randint(0,9)
-                if chance == 0:
-                    self.morph.play()
-                    Mob_Big(self, hit.pos.x, hit.pos.y)
-                    Mob(self, obj_center.x, obj_center.y, "small", 200, 24, 36, 120, 0.2, 2)
-                else:
-                    pass
+        for id, mob in self.mob_list.items():
+            hits = pygame.sprite.groupcollide(mob["mob_name"], self.bullets1, False, True)
+            for hit in hits:
+                self.enemy_hurt.play()
+                self.score += mob["mob_hit_point"]
+                hit.health -= 10
+                if hit.health <= 0:
+                    hit.kill()
+                    self.score += mob["mob_kill_point"]
+                    if id == 1:
+                        chance = random.randint(0,9)
+                        if chance == 0:
+                            self.morph.play()
+                            Mob(self, hit.pos.x, hit.pos.y, "big", 300, 36, 48, 90, 0.4, 5)
 
-        hits = pygame.sprite.groupcollide(self.mob_small, self.bullets1, False, True)
-        for hit in hits:
-            self.enemy_hurt.play()
-            self.score += 1
-            hit.health -= 10
-            if hit.health <= 0:
-                hit.kill()
-                self.score += 10
-                chance = random.randint(0,9)
-                if chance == 0:
-                    self.morph.play()
-                    Mob(self, hit.pos.x, hit.pos.y, "big", 300, 36, 48, 90, 0.4, 5)
-                else:
-                    pass
-
-        hits = pygame.sprite.groupcollide(self.mob_flying, self.bullets1, False, True)
-        for hit in hits:
-            self.enemy_hurt.play()
-            self.score += 2
-            hit.health -= 10
-            if hit.health <= 0:
-                hit.kill()
-                self.score += 15
-
-        hits = pygame.sprite.groupcollide(self.mob_flying, self.bullets2, False, True)
-        for hit in hits:
-            self.enemy_hurt.play()
-            self.score2 += 2
-            hit.health -= 10
-            if hit.health <= 0:
-                hit.kill()
-                self.score2 += 15
-
-        hits = pygame.sprite.groupcollide(self.mob_big, self.bullets2, False, True)
-        for hit in hits:
-            self.enemy_hurt.play()
-            self.score2 += 3
-            hit.health -= 10
-            if hit.health <= 0:
-                hit.kill()
-                self.score2 += 30
-
-        hits = pygame.sprite.groupcollide(self.mob_big, self.bullets1, False, True)
-        for hit in hits:
-            self.enemy_hurt.play()
-            self.score += 3
-            hit.health -= 10
-            if hit.health <= 0:
-                hit.kill()
-                self.score += 30
-
-        hits = pygame.sprite.groupcollide(self.mob_charge, self.bullets1, False, True)
-        for hit in hits:
-            self.enemy_hurt.play()
-            self.score += 5
-            hit.health -= 10
-            if hit.health <= 0:
-                hit.kill()
-                self.score += 40
-
-        hits = pygame.sprite.groupcollide(self.mob_charge, self.bullets2, False, True)
-        for hit in hits:
-            self.enemy_hurt.play()
-            self.score2 += 5
-            hit.health -= 10
-            if hit.health <= 0:
-                hit.kill()
-                self.score2 += 40
+            hits = pygame.sprite.groupcollide(mob["mob_name"], self.bullets2, False, True)
+            for hit in hits:
+                self.enemy_hurt.play()
+                self.score2 += mob["mob_hit_point"]
+                hit.health -= 10
+                if hit.health <= 0:
+                    hit.kill()
+                    self.score2 += mob["mob_kill_point"]
+                    if id == 1:
+                        chance = random.randint(0,9)
+                        if chance == 0:
+                            self.morph.play()
+                            Mob(self, hit.pos.x, hit.pos.y, "big", 300, 36, 48, 90, 0.4, 5)
 
         if self.score < 0:
             self.score = 0
