@@ -364,10 +364,11 @@ class Game:
         self.bullets2 = pygame.sprite.Group()
 
         self.mob_list = {
-            1 : {"mob_name" : self.mob_small, "mob_hit_point" : 1, "mob_kill_point" : 10},
-            2 : {"mob_name" : self.mob_big, "mob_hit_point" : 3, "mob_kill_point" : 30},
-            3 : {"mob_name" : self.mob_flying, "mob_hit_point" : 2, "mob_kill_point" : 20},
-            4 : {"mob_name" : self.mob_charge, "mob_hit_point" : 5, "mob_kill_point" : 40}
+            1 : {"mob_name" : self.mob_small, "mob_hit_point" : 1, "mob_kill_point" : 10, "damage" : 10},
+            2 : {"mob_name" : self.mob_big, "mob_hit_point" : 3, "mob_kill_point" : 30, "damage" : 20},
+            3 : {"mob_name" : self.mob_flying, "mob_hit_point" : 2, "mob_kill_point" : 20, "damage" : 10},
+            4 : {"mob_name" : self.mob_charge, "mob_hit_point" : 5, "mob_kill_point" : 40, "damage" : 10},
+            5 : {"mob_name" : self.mob_bullets, "mob_hit_point" : 1, "mob_kill_point" : 1, "damage" : 10}          #The mob_kill_point for mob_bullet isn't actually use, the mob_hit_point is use to deduct point from player when they get hit
             }
 
         for tile_object in self.map.tmxdata.objects:
@@ -483,62 +484,6 @@ class Game:
                 self.player_hurt.play()
                 self.player.hit()
 
-            hits = pygame.sprite.spritecollide(self.player, self.mob_small, False, collide_hit_rect)
-            for hit in hits:
-                self.player_hurt.play()
-                self.score -= 5
-                self.player.health -= 10
-                if self.player.health <= 0:
-                    self.player.alive = False
-                if self.player.alive:
-                    self.player.hit()
-                self.player.knockback(hit)
-
-            hits = pygame.sprite.spritecollide(self.player, self.mob_big, False, collide_hit_rect)
-            for hit in hits:
-                self.player_hurt.play()
-                self.score -= 5
-                self.player.health -= 20
-                if self.player.health <= 0:
-                    self.player.alive = False
-                if self.player.alive:
-                    self.player.hit()
-                self.player.knockback(hit)
-
-            hits = pygame.sprite.spritecollide(self.player, self.mob_flying, False, collide_hit_rect)
-            for hit in hits:
-                self.player_hurt.play()
-                self.score -= 5
-                self.player.health -= 10
-                if self.player.health <= 0:
-                    self.player.alive = False
-                self.player.hit()
-                self.player.knockback(hit)
-
-            hits = pygame.sprite.spritecollide(self.player, self.mob_charge, False, collide_hit_rect)
-            for hit in hits:
-                self.player_hurt.play()
-                self.score -= 5
-                self.player.health -= 10
-                if self.player.health <= 0:
-                    self.player.alive = False
-                if hit.charging:
-                    self.player.knockback(hit)
-                else:
-                    self.player.knockback(hit)
-                self.player.hit()
-
-            hits = pygame.sprite.spritecollide(self.player, self.mob_bullets, False, collide_hit_rect)
-            for hit in hits:
-                hit.kill()
-                self.player_hurt.play()
-                self.score -= 1
-                self.player.health -= 10
-                if self.player.health <= 0:
-                    self.player.alive = False
-                if self.player.alive:
-                    self.player.hit()
-
         if self.player2.collision:
             hits = pygame.sprite.spritecollide(self.player2, self.items, False, collide_hit_rect)
             for hit in hits:
@@ -577,65 +522,20 @@ class Game:
                 self.player_hurt.play()
                 self.player2.hit()
 
-            hits = pygame.sprite.spritecollide(self.player2, self.mob_small, False, collide_hit_rect)
-            for hit in hits:
-                self.player_hurt.play()
-                self.score2 -= 5
-                self.player2.health -= 10
-                if self.player2.health <= 0:
-                    self.player2.alive = False
-                if self.player2.alive:
-                    self.player2.hit()
-                self.player2.knockback(hit)
-
-            hits = pygame.sprite.spritecollide(self.player2, self.mob_big, False, collide_hit_rect)
-            for hit in hits:
-                self.player_hurt.play()
-                self.score2 -= 5
-                self.player2.health -= 20
-                if self.player2.health <= 0:
-                    self.player2.alive = False
-                if self.player2.alive:
-                    self.player2.hit()
-                self.player2.knockback(hit)
-
-            hits = pygame.sprite.spritecollide(self.player2, self.mob_flying, False, collide_hit_rect)
-            for hit in hits:
-                self.player_hurt.play()
-                self.score2 -= 5
-                self.player2.health -= 10
-                if self.player2.health <= 0:
-                    self.player2.alive = False
-                if self.player2.alive:
-                    self.player2.hit()
-                self.player2.knockback(hit)
-
-            hits = pygame.sprite.spritecollide(self.player2, self.mob_charge, False, collide_hit_rect)
-            for hit in hits:
-                self.player_hurt.play()
-                self.score2 -= 5
-                self.player2.health -= 10
-                if self.player2.health <= 0:
-                    self.player2.alive = False
-                if hit.charging:
-                    self.player2.knockback(hit)
-                else:
-                    self.player2.knockback(hit)
-                self.player2.hit()
-
-            hits = pygame.sprite.spritecollide(self.player2, self.mob_bullets, False, collide_hit_rect)
-            for hit in hits:
-                hit.kill()
-                self.player_hurt.play()
-                self.score2 -= 1
-                self.player2.health -= 10
-                if self.player2.health <= 0:
-                    self.player2.alive = False
-                if self.player2.alive:
-                    self.player2.hit()
-
         #Bullet Collisions to Mobs
         for id, mob in self.mob_list.items():
+
+            hits = pygame.sprite.spritecollide(self.player, mob["mob_name"], False, collide_hit_rect)
+            for hit in hits:
+                self.player_hurt.play()
+                self.score -= 5
+                self.player.health -= mob["damage"]
+                if self.player.health <= 0:
+                    self.player.alive = False
+                self.player.hit()
+                if id != 5:                                     #No knockback when player hit by bullet
+                    self.player.knockback(hit)
+
             hits = pygame.sprite.groupcollide(mob["mob_name"], self.bullets1, False, True)
             for hit in hits:
                 self.enemy_hurt.play()
@@ -649,6 +549,17 @@ class Game:
                         if chance == 0:
                             self.morph.play()
                             Mob(self, hit.pos.x, hit.pos.y, "big", 300, 36, 48, 90, 0.4, 5)
+
+            hits = pygame.sprite.spritecollide(self.player2, mob["mob_name"], False, collide_hit_rect)
+            for hit in hits:
+                self.player_hurt.play()
+                self.score2 -= 5
+                self.player2.health -= mob["damage"]
+                if self.player2.health <= 0:
+                    self.player2.alive = False
+                self.player2.hit()
+                if id != 5:                                     #No knockback when player hit by bullet
+                    self.player2.knockback(hit)
 
             hits = pygame.sprite.groupcollide(mob["mob_name"], self.bullets2, False, True)
             for hit in hits:
