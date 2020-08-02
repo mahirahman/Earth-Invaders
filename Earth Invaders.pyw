@@ -524,7 +524,6 @@ class Game:
 
         #Bullet Collisions to Mobs
         for id, mob in self.mob_list.items():
-
             hits = pygame.sprite.spritecollide(self.player, mob["mob_name"], False, collide_hit_rect)
             for hit in hits:
                 self.player_hurt.play()
@@ -535,20 +534,23 @@ class Game:
                 self.player.hit()
                 if id != 5:                                     #No knockback when player hit by bullet
                     self.player.knockback(hit)
-
-            hits = pygame.sprite.groupcollide(mob["mob_name"], self.bullets1, False, True)
-            for hit in hits:
-                self.enemy_hurt.play()
-                self.score += mob["mob_hit_point"]
-                hit.health -= 10
-                if hit.health <= 0:
+                else:
                     hit.kill()
-                    self.score += mob["mob_kill_point"]
-                    if id == 1:
-                        chance = random.randint(0,9)
-                        if chance == 0:
-                            self.morph.play()
-                            Mob(self, hit.pos.x, hit.pos.y, "big", 300, 36, 48, 90, 0.4, 5)
+
+            if id != 5:
+                hits = pygame.sprite.groupcollide(mob["mob_name"], self.bullets1, False, True)
+                for hit in hits:
+                    self.enemy_hurt.play()
+                    self.score += mob["mob_hit_point"]
+                    hit.health -= 10
+                    if hit.health <= 0:
+                        hit.kill()
+                        self.score += mob["mob_kill_point"]
+                        if id == 1:
+                            chance = random.randint(0,9)
+                            if chance == 0:
+                                self.morph.play()
+                                Mob(self, hit.pos.x, hit.pos.y, "big", 300, 36, 48, 90, 0.4, 5)
 
             hits = pygame.sprite.spritecollide(self.player2, mob["mob_name"], False, collide_hit_rect)
             for hit in hits:
@@ -560,20 +562,23 @@ class Game:
                 self.player2.hit()
                 if id != 5:                                     #No knockback when player hit by bullet
                     self.player2.knockback(hit)
-
-            hits = pygame.sprite.groupcollide(mob["mob_name"], self.bullets2, False, True)
-            for hit in hits:
-                self.enemy_hurt.play()
-                self.score2 += mob["mob_hit_point"]
-                hit.health -= 10
-                if hit.health <= 0:
+                else:
                     hit.kill()
-                    self.score2 += mob["mob_kill_point"]
-                    if id == 1:
-                        chance = random.randint(0,9)
-                        if chance == 0:
-                            self.morph.play()
-                            Mob(self, hit.pos.x, hit.pos.y, "big", 300, 36, 48, 90, 0.4, 5)
+
+            if id != 5:
+                hits = pygame.sprite.groupcollide(mob["mob_name"], self.bullets2, False, True)
+                for hit in hits:
+                    self.enemy_hurt.play()
+                    self.score2 += mob["mob_hit_point"]
+                    hit.health -= 10
+                    if hit.health <= 0:
+                        hit.kill()
+                        self.score2 += mob["mob_kill_point"]
+                        if id == 1:
+                            chance = random.randint(0,9)
+                            if chance == 0:
+                                self.morph.play()
+                                Mob(self, hit.pos.x, hit.pos.y, "big", 300, 36, 48, 90, 0.4, 5)
 
         if self.score < 0:
             self.score = 0
