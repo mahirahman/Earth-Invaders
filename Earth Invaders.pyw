@@ -1,3 +1,6 @@
+#Created and maintained by Mahi Rahman and Son Tran
+#MIT License
+
 import pygame, sys, random, time, os, math
 from pygame.locals import *
 import assets.modules.text as text
