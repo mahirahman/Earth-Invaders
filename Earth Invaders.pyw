@@ -290,8 +290,14 @@ def credits():
         menuBackground(display)
 
         text.show_text('Press ESC to go back',2,240,1,9999,font,display)
-        options = ['Mahi Rahman','Son Tran','Daniel Nguyen','Tejas Amrale','Peter Sorial','Spandan Kolapkar']
-        menuChoice(options, 0, True, 70)
+        text.show_text('PROGRAMMING',162,55,4,9999,font,display)
+        text.show_text('ASSETS FROM',162,125,4,9999,font,display)
+        
+        programming = ['Mahi Rahman','Son Tran']
+        assets = ['Art - itch.io','SFX - bfxr.net']
+        
+        menuChoice(programming, 0, True, 70)
+        menuChoice(assets, 0, True, 140)
 
         for event in pygame.event.get():
             if event.type == QUIT:

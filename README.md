@@ -49,6 +49,3 @@ We use [SemVer](http://semver.org/) for versioning.
 
 * **Mahi Rahman**
 * **Son Tran**
-* **Daniel Nguyen**
-* **Tejas Amrale**
-* **Peter Sorial**
