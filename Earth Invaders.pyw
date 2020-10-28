@@ -1,12 +1,11 @@
 #Created and maintained by Mahi Rahman and Son Tran
-#MIT License
 
 import pygame, sys, random, time, os, math
 from pygame.locals import *
-import assets.modules.text as text
-from assets.modules.sprites import *
-from assets.modules.tilemap import *
-import assets.modules.pygame_textinput as pygame_textinput
+import src.text as text
+from src.sprites import *
+from src.tilemap import *
+import src.textinput as textinput
 
 pygame.init()
 fps = pygame.time.Clock()
@@ -706,7 +705,7 @@ class Game:
                     self.paused = not self.paused
 
     def getTextInput(self, playerid, screencol):
-        playername = pygame_textinput.TextInput(font_family = "assets/8bit.ttf", antialias = False)
+        playername = textinput.TextInput(font_family = "assets/8bit.ttf", antialias = False)
         textloop = True
         while textloop:
             screen.fill(screencol)

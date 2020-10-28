@@ -2,7 +2,7 @@
 
 import pygame
 import random
-from assets.modules.tilemap import collide_hit_rect
+from src.tilemap import collide_hit_rect
 from os import path
 import pytweening as tween
 from itertools import chain
