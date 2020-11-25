@@ -37,7 +37,7 @@ We use [SemVer](http://semver.org/) for versioning.
 
 ## License
 
-* [General Public License v2.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+* [General Public License v2.0](https://github.com/mahirahman/Earth-Invaders/blob/master/LICENSE)
 
 ## Modules From
 
