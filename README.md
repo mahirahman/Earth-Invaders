@@ -11,7 +11,7 @@ Side Scrolling Shooter Game ✨
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See below for prerequisite libraries and notes on how to deploy the project on a live system.
 
-`git clone https://github.com/starexify/earth-invaders --branch 2.0.0`
+`git clone https://github.com/mahirahman/earth-invaders --branch 2.0.0`
 
 ### Prerequisites
 
@@ -37,7 +37,7 @@ We use [SemVer](http://semver.org/) for versioning.
 
 ## License
 
-* [MIT](https://mit-license.org)
+* [General Public License v2.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 
 ## Modules From
 
