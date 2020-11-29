@@ -2,15 +2,19 @@
 
 import pygame
 import random
-from src.tilemap import collide_hit_rect
 from os import path
 import pytweening as tween
 from itertools import chain
 PLAYER_HEALTH = 200
 
+#Check player collisions with each other
+def collideHitRect(one, two):
+    return one.hit_rect.colliderect(two.rect)
+
+#Player sprite collision with walls
 def wallCollide(sprite, group, direction):
     if direction == 'x':
-        hits = pygame.sprite.spritecollide(sprite, group, False, collide_hit_rect)
+        hits = pygame.sprite.spritecollide(sprite, group, False, collideHitRect)
         if hits:
             if hits[0].rect.centerx > sprite.hit_rect.centerx:
                 sprite.pos.x = hits[0].rect.left - sprite.hit_rect.width / 2
@@ -19,7 +23,7 @@ def wallCollide(sprite, group, direction):
             sprite.vel.x = 0
             sprite.hit_rect.centerx = sprite.pos.x
     if direction == 'y':
-        hits = pygame.sprite.spritecollide(sprite, group, False, collide_hit_rect)
+        hits = pygame.sprite.spritecollide(sprite, group, False, collideHitRect)
         if hits:
             if hits[0].rect.centery > sprite.hit_rect.centery:
                 sprite.pos.y = hits[0].rect.top - sprite.hit_rect.height / 2
@@ -28,6 +32,7 @@ def wallCollide(sprite, group, direction):
             sprite.vel.y = 0
             sprite.hit_rect.centery = sprite.pos.y
 
+#Main player bullet class
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, game, pos, direction, playernum):
         self.groups = game.all_sprites, game.__dict__['bullets%d' % playernum]
@@ -53,6 +58,7 @@ class Bullet(pygame.sprite.Sprite):
         if pygame.sprite.spritecollideany(self, self.game.walls):
             self.kill()
 
+#Flying enemy bullet class
 class MobBullet(pygame.sprite.Sprite):
     def __init__(self, game, pos, direction, angle):
         self.groups = game.all_sprites, game.mob_bullets
@@ -76,6 +82,7 @@ class MobBullet(pygame.sprite.Sprite):
         if pygame.sprite.spritecollideany(self, self.game.walls):
             self.kill()
 
+#Main player class
 class Player(pygame.sprite.Sprite):
     def __init__(self, game, x, y, playerid, left, right, shoot):
         self.groups = game.all_sprites
@@ -115,6 +122,7 @@ class Player(pygame.sprite.Sprite):
         self.shooting = False
         self.damaged = False
 
+    #Load all sprite images
     def loadImages(self, playerid):
         self.idle_frame = []
         self.shoot_frame = []
@@ -140,6 +148,7 @@ class Player(pygame.sprite.Sprite):
 
         self.jump_frame.append(pygame.transform.scale(pygame.image.load('assets/sprites/player/' + str(playerid) + '/jump/jump.png').convert_alpha(), (64, 64)))
 
+    #Set movement keys for the player
     def setKeys(self, left, right, shoot):
         if self.control:
             keys = pygame.key.get_pressed()
@@ -151,17 +160,7 @@ class Player(pygame.sprite.Sprite):
             if keys[right]:
                 self.acc.x = 0.5
                 self.direction = 1
-                
-            #if keys[leap]:
-                #self.jump()
 
-##            for event in pygame.event.get():
-##                if event.type == pygame.QUIT:
-##                    self.quit()
-##                if event.type == pygame.KEYDOWN:
-##                  if event.key == leap:
-##                     self.jump()
-                
             if keys[shoot]:
                 currenttick = pygame.time.get_ticks()
                 if currenttick - self.last_shot > 150:
@@ -174,10 +173,12 @@ class Player(pygame.sprite.Sprite):
                     self.game.shoot.play()
                     self.shooting = True
 
+    #If a player is damaged a flickering effect on the sprite is applied
     def hit(self):
         self.damaged = True
         self.damage_alpha = chain([i for i in range(40, 255, 25)] * 2)
 
+    #Player knockback once a player is hit with enemy mob
     def knockback(self, hit):
         if self.jumping:
             if self.direction == 1:
@@ -212,6 +213,7 @@ class Player(pygame.sprite.Sprite):
             self.pos += pygame.math.Vector2(30, 0)
             self.vel += pygame.math.Vector2(8, -5)
 
+    #Update player position and movement
     def update(self):
         self.animate()
         self.acc = pygame.math.Vector2(0, 0.5)
@@ -243,15 +245,13 @@ class Player(pygame.sprite.Sprite):
         self.rect.center = self.hit_rect.center
         self.death()
 
+    #Checks if player health does not go over the maximum health
     def addHealth(self, amount):
-
-        #Takes <amount> as a parameter which indicates the amount of health player will gain.
-        #Checks if player health does not go over the maximum health.
-        
         self.health += amount
         if self.health > PLAYER_HEALTH:
             self.health = PLAYER_HEALTH
 
+    #Animate all sprite images into animations
     def animate(self):
         currenttick = pygame.time.get_ticks()
 
@@ -319,6 +319,7 @@ class Player(pygame.sprite.Sprite):
                 self.game.__dict__['jump_%d' % self.playerid].play()
                 self.vel.y = -8.5
 
+    #Death animation
     def death(self):
         if not self.alive:
             self.control = False
@@ -340,6 +341,7 @@ class Player(pygame.sprite.Sprite):
                 self.game.playersalive += 1
                 self.kill()
 
+#Main mob class
 class Mob(pygame.sprite.Sprite):
     def __init__(self, game, x, y, mobtype, mobhealth, spritex, spritey, framespeed, acceleration, detect_wall_range):
         self.mobtype = mobtype
@@ -371,6 +373,7 @@ class Mob(pygame.sprite.Sprite):
         self.HEALTH = mobhealth
         self.direction = 1
 
+    #Load all sprite images
     def loadImages(self):
         self.walk_frame = []
 
@@ -379,6 +382,7 @@ class Mob(pygame.sprite.Sprite):
             self.walk_frame.append(pygame.transform.scale(pygame.image.load('assets/sprites/enemy/' + self.mobtype + '/run_' + str(i) + '.png').convert_alpha(), (self.spritex, self.spritey)))
             i += 1
 
+    #Animate all sprite images into animations
     def animate(self):
         currenttick = pygame.time.get_ticks()
 
@@ -392,6 +396,7 @@ class Mob(pygame.sprite.Sprite):
                 self.image = pygame.transform.flip(self.walk_frame[self.current_frame], True, False)
             self.rect = self.image.get_rect()
 
+    #Update mob position and movement when it collides with walls
     def update(self):
         self.drawHealth()
         self.animate()
@@ -404,6 +409,7 @@ class Mob(pygame.sprite.Sprite):
         wallCollide(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
 
+    #Update mob position and movement
     def position(self):
         self.acc.x += self.vel.x * -0.12
         self.vel += self.acc
@@ -411,6 +417,7 @@ class Mob(pygame.sprite.Sprite):
         self.pos += self.vel * self.game.dt
         self.rect.center = self.pos
 
+    #Switches (x) coordinate position after it collides with wall
     def moving(self):
         self.acc = pygame.math.Vector2(self.acceleration * self.direction, 0.5)
         self.rect.centerx += self.detect_wall_range * self.direction
@@ -419,6 +426,7 @@ class Mob(pygame.sprite.Sprite):
         if hits:
             self.direction = self.direction * - 1
 
+    #Mob health HUD
     def drawHealth(self):
         if self.health > int(self.HEALTH/1.5):
             self.col = (0, 255, 0)
@@ -432,6 +440,7 @@ class Mob(pygame.sprite.Sprite):
             pygame.draw.rect(self.image, self.col, self.health_bar)
             self.loadImages()
 
+#Flying mob class
 class MobFlying(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.mob_flying
@@ -461,6 +470,7 @@ class MobFlying(pygame.sprite.Sprite):
         self.target2 = game.player2
         self.fix = True
 
+    #Load all sprite images
     def loadImages(self):
         self.walk_frame = []
 
@@ -469,6 +479,7 @@ class MobFlying(pygame.sprite.Sprite):
             self.walk_frame.append(pygame.transform.scale(pygame.image.load('assets/sprites/enemy/med/run_' + str(i) + '.png').convert_alpha(), (24, 36)))
             i += 1
 
+    #Animate all sprite images into animations
     def animate(self):
         currenttick = pygame.time.get_ticks()
 
@@ -482,6 +493,7 @@ class MobFlying(pygame.sprite.Sprite):
                 self.image = pygame.transform.flip(self.walk_frame[self.current_frame], True, False)
             self.rect = self.image.get_rect()
 
+    #Update flying mob position and movement
     def update(self):
         self.drawHealth()
         self.animate()
@@ -530,6 +542,7 @@ class MobFlying(pygame.sprite.Sprite):
         self.pos += self.vel * self.game.dt
         self.rect.center = self.pos
 
+    #Chases the players when in range and fires projectiles at them
     def chase(self, player_num):
         if player_num == "1":
             self.rot = (self.game.player.pos - self.pos).angle_to(pygame.math.Vector2(1, 0))
@@ -577,6 +590,7 @@ class MobFlying(pygame.sprite.Sprite):
         if hits:
             self.direction = self.direction * -1
 
+    #Flying mob health HUD
     def drawHealth(self):
         if self.health > 120:
             self.col = (0, 255, 0)
@@ -590,6 +604,7 @@ class MobFlying(pygame.sprite.Sprite):
             pygame.draw.rect(self.image, self.col, self.health_bar)
             self.loadImages()
 
+    #Projectiles
     def shoot(self):
         currenttick = pygame.time.get_ticks()
         if currenttick - self.last_shot > 2500:
@@ -599,6 +614,7 @@ class MobFlying(pygame.sprite.Sprite):
             MobBullet(self.game, self.pos, pygame.math.Vector2(-1, 0), 180)
             MobBullet(self.game, self.pos, pygame.math.Vector2(0, 1), 270)
 
+#Charged mob class
 class MobCharge(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.mob_charge
@@ -630,6 +646,7 @@ class MobCharge(pygame.sprite.Sprite):
         self.charge_time = 0
         self.round = 1
 
+    #Load all sprite images
     def loadImages(self):
         self.walk_frame = []
 
@@ -638,6 +655,7 @@ class MobCharge(pygame.sprite.Sprite):
             self.walk_frame.append(pygame.transform.scale(pygame.image.load('assets/sprites/enemy/low/run_' + str(i) + '.png').convert_alpha(), (24, 36)))
             i += 1
 
+    #Animate all sprite images into animations
     def animate(self):
         currenttick = pygame.time.get_ticks()
         if self.charging:
@@ -655,6 +673,7 @@ class MobCharge(pygame.sprite.Sprite):
                 self.image = pygame.transform.flip(self.walk_frame[self.current_frame], True, False)
             self.rect = self.image.get_rect()
 
+    #Update charged mob position and movement
     def update(self):
         self.drawHealth()
         target_dist = self.target.pos - self.pos
@@ -722,6 +741,7 @@ class MobCharge(pygame.sprite.Sprite):
         self.pos += self.vel * self.game.dt
         self.rect.center = self.pos
 
+    #If a player is within range, mob will play a charging animation
     def chargeMotion(self):
         self.acc = pygame.math.Vector2(-0.5 * self.direction, 0.5)
         self.rect.centerx -=2 * self.direction
@@ -738,6 +758,7 @@ class MobCharge(pygame.sprite.Sprite):
         if hits:
             self.direction = self.direction * -1
 
+    #Flying mob health HUD
     def drawHealth(self):
         if self.health > 60:
             self.col = (0, 255, 0)
@@ -750,7 +771,8 @@ class MobCharge(pygame.sprite.Sprite):
         if self.health < 100:
             pygame.draw.rect(self.image, self.col, self.health_bar)
             self.loadImages()
-            
+
+#Initialise all TMX objects
 class TileObject(pygame.sprite.Sprite):
     def __init__(self, game, x, y, w, h, obj_type):
         self.groups = game.__dict__['%s' % obj_type]
@@ -762,6 +784,7 @@ class TileObject(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
+#Initialise/Configure all TMX items
 class Item(pygame.sprite.Sprite):
     def __init__(self, game, pos, obj_type):
         self.groups = game.all_sprites, game.items
@@ -780,6 +803,7 @@ class Item(pygame.sprite.Sprite):
         self.step = 0
         self.direction = 1
 
+    #Animates item with a smooth tween effect
     def update(self):
         offset = 5 * (tween.easeInOutSine(self.step / 11) - 0.5)
         self.rect.centery = self.pos.y + offset * self.direction
@@ -788,6 +812,7 @@ class Item(pygame.sprite.Sprite):
             self.step = 0
             self.direction *= -1
 
+    #Load item images
     def load_image(self):
         self.item_images = {}
         self.item_images.update(health = pygame.image.load('assets/images/chicken.png').convert_alpha())

@@ -7,6 +7,7 @@ from src.sprites import *
 from src.tilemap import *
 import src.textinput as textinput
 
+#Initialise some game settings
 pygame.init()
 fps = pygame.time.Clock()
 stars = []
@@ -17,6 +18,7 @@ pygame.mouse.set_visible(0)
 screen = pygame.display.set_mode((WIDTH, HEIGHT),pygame.FULLSCREEN)
 display = pygame.Surface((400,250))
 
+#Generate text using font for main menu
 font_dat = {'A':[3],'B':[3],'C':[3],'D':[3],'E':[3],'F':[3],'G':[3],'H':[3],'I':[3],'J':[3],'K':[3],'L':[3],'M':[5],'N':[3],'O':[3],'P':[3],'Q':[3],'R':[3],'S':[3],'T':[3],'U':[3],'V':[3],'W':[5],'X':[3],'Y':[3],'Z':[3],
           'a':[3],'b':[3],'c':[3],'d':[3],'e':[3],'f':[3],'g':[3],'h':[3],'i':[1],'j':[2],'k':[3],'l':[3],'m':[5],'n':[3],'o':[3],'p':[3],'q':[3],'r':[2],'s':[3],'t':[3],'u':[3],'v':[3],'w':[5],'x':[3],'y':[3],'z':[3],
           '.':[1],'-':[3],',':[2],':':[1],'+':[3],'\'':[1],'!':[1],'?':[3],
@@ -34,19 +36,28 @@ def getTextWidth(text,spacing):
             width += font_dat[char][0] + spacing
     return width
 
+#Scrolling star background in main menu
 def menuBackground(surface):
     surface.fill((9,10,15))
 
-    for i in range(25):
+    for i in range(25): #25 stars
+        
+        #Randomly generates 2 numbers from 0 to WIDTH and HEIGHT
+        #Places them into a list as (x,y) coordinate
         stars.append([random.randint(0, WIDTH), random.randint(0, HEIGHT)])
+        
         pygame.draw.circle(screen, (200, 200, 200), stars[i], 2, 0)
+
+        #Shifts star 5px to give moving effect
         stars[i][0] -= 5
         if stars[i][0] < 0:
+            #Once it reaches 0 (Edge) it loops back to WIDTH
             stars[i][0] = WIDTH
 
     pygame.display.flip()
     fps.tick(60)
 
+#Function that displays hovered text with "> "
 def menuChoice(options, menu_choice, textarray, x):
     n = 0
     for option in options:
@@ -60,6 +71,7 @@ def menuChoice(options, menu_choice, textarray, x):
                 text.show_text(option,200-int(getTextWidth(option,1)/2),x+n*20,1,9999,font,display)
             n += 1
 
+#Main Menu Function
 def menu():
     logo = pygame.image.load('assets/images/logo.png')
     options = ['Play','Controls','Highscores','Settings','Credits','Quit']
@@ -121,6 +133,7 @@ def menu():
         pygame.display.flip()
         fps.tick(60)
 
+#Controls Menu Function
 def controls():
     in_controls = True
     while in_controls:
@@ -141,13 +154,15 @@ def controls():
         pygame.display.flip()
         fps.tick(60)
 
+#Controls Menu Function
 def highscores():
     in_highscores = True
     while in_highscores:
         menuBackground(display)
 
         text.show_text('Press ESC to go back',2,240,1,9999,font,display)
-
+        
+        #Uses the scores in highscores.txt and sorts them then displays them in correct format
         with open("assets/highscores.txt", "r") as array:
             leaderboard = array.readlines()
 
@@ -171,6 +186,7 @@ def highscores():
         pygame.display.flip()
         fps.tick(60)
 
+#Settings Menu Function
 def settings():
     options = ['Display Settings','Volume','Back']
     menu_choice = 0
@@ -206,6 +222,7 @@ def settings():
         pygame.display.flip()
         fps.tick(60)
 
+#Display Options Menu Function
 def displayConfig():
     global WIDTH,HEIGHT,screen
     options = ['Windowed','Fullscreen','Back']
@@ -242,6 +259,7 @@ def displayConfig():
         pygame.display.flip()
         fps.tick(60)
 
+#Volume Options Menu Function
 def volume():
     options = ['100/','75/','50/','25/','0/','Back']
     menu_choice = 0
@@ -265,6 +283,8 @@ def volume():
                         menu_choice = 0
                 if event.key == K_SPACE:
                     choice = options[menu_choice]
+
+                    #Changes volume to specified level
                     if choice == '100/':
                         pygame.mixer.music.set_volume(1)
                     if choice == '75/':
@@ -283,6 +303,7 @@ def volume():
         pygame.display.flip()
         fps.tick(60)
 
+#Credits Menu Function
 def credits():
     in_credits = True
     while in_credits:
@@ -310,8 +331,8 @@ def credits():
         pygame.display.flip()
         fps.tick(60)
 
+#Main game class that utilises others classes and functions from /src/
 class Game:
-
     def __init__(self):
         self.mob_list = {}
         self.healthbar = []
@@ -338,6 +359,7 @@ class Game:
     #HUD For Player
     def drawPlayerHeath(self, x, y, percent, playerid):
 
+        #Detect if health ratio is negative
         if percent < 0:
             percent = 0
 
@@ -347,7 +369,7 @@ class Game:
             health_scaled = pygame.transform.flip(health_scaled, True, False)
         screen.blit(health_scaled,(x, y))
 
-    #Initialize variables and sets up tilemap
+    #Initialize variables and load tilemap data
     def new(self):
         self.score = 0
         self.score2 = 0
@@ -371,14 +393,15 @@ class Game:
         self.bullets1 = pygame.sprite.Group()
         self.bullets2 = pygame.sprite.Group()
 
+        #Different types of mobs with corresponding hit damage, player damage and points for killing one
         self.mob_list = {
             1 : {"mob_name" : self.mob_small, "mob_hit_point" : 1, "mob_kill_point" : 10, "damage" : 10},
             2 : {"mob_name" : self.mob_big, "mob_hit_point" : 3, "mob_kill_point" : 30, "damage" : 20},
             3 : {"mob_name" : self.mob_flying, "mob_hit_point" : 2, "mob_kill_point" : 20, "damage" : 10},
             4 : {"mob_name" : self.mob_charge, "mob_hit_point" : 5, "mob_kill_point" : 40, "damage" : 10},
-            5 : {"mob_name" : self.mob_bullets, "mob_hit_point" : 1, "mob_kill_point" : 1, "damage" : 10}          #The mob_kill_point for mob_bullet isn't actually use, the mob_hit_point is use to deduct point from player when they get hit
-            }
+            5 : {"mob_name" : self.mob_bullets, "mob_hit_point" : 1, "mob_kill_point" : 1, "damage" : 10}}
 
+        #Initialisation of all the map objects, items, mobs and player positions
         for tile_object in self.map.tmxdata.objects:
             obj_center = pygame.math.Vector2(tile_object.x + tile_object.width / 2, tile_object.y + tile_object.height / 2)
             if tile_object.name == 'player':
@@ -455,7 +478,7 @@ class Game:
             self.camera.update(self.player2)
 
         if self.player.collision:
-            hits = pygame.sprite.spritecollide(self.player, self.items, False, collide_hit_rect)
+            hits = pygame.sprite.spritecollide(self.player, self.items, False, collideHitRect)
             for hit in hits:
                 if hit.obj_type == 'health' and self.player.health < PLAYER_HEALTH:
                     hit.kill()
@@ -466,7 +489,7 @@ class Game:
                     self.coin.play()
                     self.score += 5
 
-            hits = pygame.sprite.spritecollide(self.player, self.spike, False, collide_hit_rect)
+            hits = pygame.sprite.spritecollide(self.player, self.spike, False, collideHitRect)
             for hit in hits:
                 if self.player.vel.x > 0:
                     self.player.vel.x -= 10
@@ -493,7 +516,7 @@ class Game:
                 self.player.hit()
 
         if self.player2.collision:
-            hits = pygame.sprite.spritecollide(self.player2, self.items, False, collide_hit_rect)
+            hits = pygame.sprite.spritecollide(self.player2, self.items, False, collideHitRect)
             for hit in hits:
                 if hit.obj_type == 'health' and self.player2.health < PLAYER_HEALTH:
                     hit.kill()
@@ -504,7 +527,7 @@ class Game:
                     self.coin.play()
                     self.score2 += 5
 
-            hits = pygame.sprite.spritecollide(self.player2, self.spike, False, collide_hit_rect)
+            hits = pygame.sprite.spritecollide(self.player2, self.spike, False, collideHitRect)
             for hit in hits:
                 if self.player2.vel.x > 0:
                     self.player2.vel.x -= 10
@@ -532,7 +555,7 @@ class Game:
 
         #Bullet Collisions to Mobs
         for id, mob in self.mob_list.items():
-            hits = pygame.sprite.spritecollide(self.player, mob["mob_name"], False, collide_hit_rect)
+            hits = pygame.sprite.spritecollide(self.player, mob["mob_name"], False, collideHitRect)
             for hit in hits:
                 self.player_hurt.play()
                 self.score -= 5
@@ -540,7 +563,8 @@ class Game:
                 if self.player.health <= 0:
                     self.player.alive = False
                 self.player.hit()
-                if id != 5:                                     #No knockback when player hit by bullet
+                #No knockback when player hit by bullet
+                if id != 5:
                     self.player.knockback(hit)
                 else:
                     hit.kill()
@@ -560,7 +584,7 @@ class Game:
                                 self.morph.play()
                                 Mob(self, hit.pos.x, hit.pos.y, "big", 300, 36, 48, 90, 0.4, 5)
 
-            hits = pygame.sprite.spritecollide(self.player2, mob["mob_name"], False, collide_hit_rect)
+            hits = pygame.sprite.spritecollide(self.player2, mob["mob_name"], False, collideHitRect)
             for hit in hits:
                 self.player_hurt.play()
                 self.score2 -= 5
@@ -568,7 +592,8 @@ class Game:
                 if self.player2.health <= 0:
                     self.player2.alive = False
                 self.player2.hit()
-                if id != 5:                                     #No knockback when player hit by bullet
+                #No knockback when player hit by bullet
+                if id != 5:
                     self.player2.knockback(hit)
                 else:
                     hit.kill()
@@ -588,12 +613,14 @@ class Game:
                                 self.morph.play()
                                 Mob(self, hit.pos.x, hit.pos.y, "big", 300, 36, 48, 90, 0.4, 5)
 
+        #Score cannot be negative
         if self.score < 0:
             self.score = 0
 
         if self.score2 < 0:
             self.score2 = 0
 
+        #Checks if either player has fallen off the map
         out_of_map = pygame.sprite.spritecollide(self.player, self.fall_death, False)
         out_of_map2 = pygame.sprite.spritecollide(self.player2, self.fall_death, False)
 
@@ -608,7 +635,7 @@ class Game:
         if self.playersalive == 2:
             self.playing = False
 
-        #Player 1 and 2 when level is finished displays WIN
+        #Logic for if player(s) collides with the win_game collider
         win1 = pygame.sprite.spritecollide(self.player, self.win_game, False)
         win2 = pygame.sprite.spritecollide(self.player2, self.win_game, False)
         if self.player.alive and not self.player2.alive:
@@ -639,6 +666,7 @@ class Game:
         #Enemy counter
         self.drawText('ALIENS: {}'.format(len(self.mob_small) + len(self.mob_big) + len(self.mob_flying) + len(self.mob_charge)), self.pixel_font, 15, (255, 255, 255, 0), 223, 11, opx = 1, align = "")
 
+        #Pause screen
         if self.paused:
             self.display = pygame.Surface((self.map.width, self.map.height))
             self.drawText("Player 1: Use WASD to move and Space to shoot", self.pixel_font,15, (255, 255, 255), 105, 110, opx = 1, align = "")
@@ -649,6 +677,7 @@ class Game:
 
         pygame.display.flip()
 
+    #Used to render outlines for text
     def circlePoints(self,r):
         r = int(round(r))
         x, y, e = r, 0, 1 - r
@@ -667,6 +696,7 @@ class Game:
         points.sort()
         return points
 
+    #Draws text with outline border around it
     def drawText(self, text, font_name, size, color, x, y, opx, align):
         font = pygame.font.Font(font_name, size)
 
@@ -704,6 +734,7 @@ class Game:
                 if event.key == pygame.K_p:
                     self.paused = not self.paused
 
+    #Receive player username after game ends for highscores
     def getTextInput(self, playerid, screencol):
         playername = textinput.TextInput(font_family = "assets/8bit.ttf", antialias = False)
         textloop = True
@@ -725,6 +756,7 @@ class Game:
             fps.tick(60)
         return playername
 
+    #End screen for when game is completed or both player dies
     def gameOver(self, screencol, screencol2, endtext, endtextcol, x):
         player1name = self.getTextInput("1", screencol)
         player2name = self.getTextInput("2", screencol)
@@ -737,6 +769,7 @@ class Game:
         if self.score == 0 and self.score2 > 0:
             highscore = {player2name.get_text(): self.score2}
 
+        #Write score data into a txt file (To be used later for highscore menu)
         if self.score > 0  or self.score2 > 0:
             for NAME, SCORE in highscore.items():
                 f = open("assets/highscores.txt", "a")

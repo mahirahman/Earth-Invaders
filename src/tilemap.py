@@ -2,15 +2,13 @@
 
 import pygame
 import pytmx
+pygame.init()
+
+#Constant values for resolution of the game
 WIDTH = 512
 HEIGHT = 400
-pygame.init()
-#WIDTH = pygame.display.Info().current_w
-#HEIGHT = pygame.display.Info().current_h
 
-def collide_hit_rect(one, two):
-    return one.hit_rect.colliderect(two.rect)
-
+#Default class used to load the data from the TMX map file
 class TiledMap:
     def __init__(self, filename):
         tm = pytmx.load_pygame(filename, pixelalpha=True)
@@ -33,6 +31,7 @@ class TiledMap:
         self.render(temp_surface)
         return temp_surface
 
+#Main camera class used to track the position based on WIDTH, HEIGHT and player location.
 class Camera:
     def __init__(self, width, height):
         self.camera = pygame.Rect(0, 0, width, height)
