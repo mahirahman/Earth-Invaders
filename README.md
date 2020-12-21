@@ -17,7 +17,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ```
 Python 3.6+
-Pygame 1.9.5+
+Pygame 1.9.5
 PyTMX 3.21.7
 PyTweening 1.0.3
 ```
