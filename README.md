@@ -16,11 +16,15 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 
 ```
-Python 3.6+
+Python 3.7
 Pygame 1.9.5
 PyTMX 3.21.7
 PyTweening 1.0.3
 ```
+
+## Notes
+
+Recommended to install Pygame 1.9.5, Pygame 2.0.0+ breaks many core features of the game!
 
 ## Built With
 
