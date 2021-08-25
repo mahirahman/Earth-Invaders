@@ -13,10 +13,16 @@ These instructions will get you a copy of the project up and running on your loc
 
 `git clone https://github.com/mahirahman/earth-invaders --branch 2.0.0`
 
+To run the application locally:
+
+1. CD to the directory of the project
+2. Install the requirements by using the command `pip install -r requirements.txt`
+3. Run Earth_Invaders.py
+
 ### Prerequisites
 
 ```
-Python 3.7
+Python 3.7.x
 Pygame 1.9.5
 PyTMX 3.21.7
 PyTweening 1.0.3
